@@ -2,7 +2,7 @@
 
 GlossCode is a G-code editor that shows a plain-English line above every line of code, with each code lined up under its English word. It tracks active modes, colors rapid and feed moves, and expands subprogram calls inline.
 
-> **Status: design stage.** Nothing is built yet. The screenshots below come from the clickable mockup in [`docs/mockup/`](docs/mockup/index.html), which predates the GlossCode name and still says "G-Code Reader" in its title bar.
+> **Status: design stage.** Nothing is built yet. The screenshots below come from the clickable mockup in [`docs/mockup/`](docs/mockup/index.html).
 
 ![GlossCode editor mockup](docs/images/editor-overview.png)
 
@@ -24,9 +24,14 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Long words](docs/images/editor-overview.png) | ![Short words](docs/images/short-words.png) | ![English only](docs/images/english-only.png) |
 
+| Columns by word type | Simulation | Find |
+|---|---|---|
+| ![Columns by word type](docs/images/columns-layout.png) | ![Simulation](docs/images/simulation.png) | ![Find](docs/images/find.png) |
+
 ## Planned features
 
 **Editing**
+- Menu bar (File, Edit, View, Program, Simulate), undo and redo, and Find that matches both G-code and English.
 - Edit either line. A toggle switches between typing G-code and typing English, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
 - Automatic N numbers on new lines (step 10, or the midpoint when there's no room), plus a Renumber command that leaves subprogram labels alone.
 - Warnings when a word clashes with the active mode, such as an inches-per-rev feed while G94 is on.
@@ -34,12 +39,14 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 
 **Reading**
 - Show both lines, English only, or G-code only.
+- Two layouts: words in program order, or columns by word type (X, Y, Z, F and so on each keep their own column, with rare words at the end). A Sort command puts the words on each line in a consistent order.
 - Subprogram and canned-cycle calls (for example Haas `M97 P1000`) expand inline below the call, marked with purple N numbers. Editing an expanded row edits the subprogram itself.
 - An active-modes panel for the selected line: motion, units, absolute or incremental, plane, feed mode and rate, spindle, coolant, tool and offsets. A dot marks modes set on that line.
 - Line colors by motion: amber for rapid, blue for feed, teal for arcs, magenta for drilling cycles.
 
 **Previews**
-- XY toolpath view that follows subprogram calls.
+- XY toolpath view that follows subprogram calls, colored by move type or by tool. Moves after the selected line can be greyed out, hidden, or shown normally.
+- Simulation playback that draws the tool moves one line at a time, with step, play and speed controls.
 - A "Z by line" timeline in execution order that keeps the selected line centered.
 
 **Machines**
