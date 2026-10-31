@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>G-Code Reader for Windows</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: short header, one large working app window (the point of the page), then four notes in a grid. Page uses the shop-drawing palette; the app frame uses fixed Windows 11 light colors. */
+:root{
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f3f5f8; --surface:#ffffff; --fg:#17202b; --muted:#566273; --line:#d6dce4;
+  --accent:#2a56c6; --accent-soft:#e3eafb;
+  --display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  /* app (Windows 11 light), fixed in both page themes */
+  --w-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --w-mono:"Cascadia Mono","JetBrains Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161d; --surface:#18202a; --fg:#e4e9f0; --muted:#97a3b3; --line:#2a3542; --accent:#7d9dff; --accent-soft:#1d2a4a; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11161d; --surface:#18202a; --fg:#e4e9f0; --muted:#97a3b3; --line:#2a3542; --accent:#7d9dff; --accent-soft:#1d2a4a; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding-block:36px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:30px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,4.2vw,40px);font-weight:700}
+h3{font-size:18px;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:flex;flex-direction:column;gap:12px;max-width:780px}
+.lede{font-size:17.5px}
+.try{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14.5px;color:var(--muted)}
+.try b{color:var(--fg);font-weight:600}
+kbd{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--surface);color:var(--fg)}
+code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:1px 5px;border-radius:3px}
+.scroller{overflow-x:auto;padding-bottom:6px}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.note p{font-size:15px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- App window ---------- */
+.app{position:relative;width:1100px;height:750px;background:#f3f3f3;color:#1b1b1b;font:13px/1.35 var(--w-ui);border:1px solid #c7c7c7;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 40px rgba(0,0,0,.22)}
+.tbar{height:32px;display:flex;align-items:center;gap:10px;padding-left:12px;background:#ebeef3;flex:none}
+.tbar .logo{width:16px;height:16px;border-radius:3px;background:#0f6cbd;color:#fff;font:700 10px/16px var(--w-mono);text-align:center}
+.tbar .ttl{flex:1;font-size:12px;color:#333}
+.tbar .cap{display:flex;height:100%}
+.tbar .cap span{width:46px;display:grid;place-items:center;color:#333;font-size:12px}
+.tbar .cap span:last-child:hover{background:#c42b1c;color:#fff}
+.cmd{height:44px;display:flex;align-items:center;gap:6px;padding:0 10px;background:#fbfbfb;border-bottom:1px solid #e5e5e5;flex:none}
+.btn{font:13px var(--w-ui);border:1px solid #d1d1d1;border-bottom-color:#b9b9b9;background:#fff;color:#1b1b1b;border-radius:4px;padding:4px 11px;cursor:pointer}
+.btn:hover{background:#f6f6f6}
+.btn.pri{background:#0f6cbd;border-color:#0f6cbd;color:#fff}
+.btn.pri:hover{background:#115ea3}
+.vsep{width:1px;height:22px;background:#e0e0e0;margin:0 6px}
+.lab{font-size:12px;color:#616161}
+select.wsel{font:13px var(--w-ui);border:1px solid #d1d1d1;border-radius:4px;padding:3px 6px;background:#fff;color:#1b1b1b}
+.toggle{display:inline-flex;border:1px solid #d1d1d1;border-radius:4px;overflow:hidden;background:#fff}
+.toggle button{font:13px var(--w-ui);border:0;background:transparent;padding:4px 11px;cursor:pointer;color:#1b1b1b}
+.toggle button+button{border-left:1px solid #e0e0e0}
+.toggle button[aria-pressed="true"]{background:#0f6cbd;color:#fff}
+.toggle button:disabled{opacity:.45;cursor:default}
+.main{flex:1;display:grid;grid-template-columns:1fr 300px;min-height:0}
+.edwrap{position:relative;background:#fff;border-right:1px solid #e5e5e5;min-width:0;min-height:0;display:flex;flex-direction:column}
+.tabs{display:flex;align-items:center;gap:8px;height:32px;border-bottom:1px solid #e5e5e5;background:#fafafa;flex:none;padding-right:8px}
+.tabs .tab{align-self:stretch;display:flex;align-items:center}
+.legend{margin-left:auto;display:flex;align-items:center;gap:4px 6px;font-size:11.5px;color:#555}
+.legend .sw{width:10px;height:10px;border-radius:2px;margin-left:6px}
+.sw.rapid{background:#e8a33d}.sw.feed{background:#0f6cbd}.sw.arc{background:#0e9384}.sw.cyc{background:#c03d9a}
+.toggle.sm button{padding:2px 9px;font-size:12px}
+.show-en .r.gc,.show-gc .r.en{display:none}
+.r.en .cmx{display:none}
+.show-en .r.en .cmx{display:inline;color:#8a8a8a;font-style:italic;font-weight:400}
+.show-en .ln,.show-gc .ln{padding:1px 0}
+.r .gut{border-left:4px solid transparent}
+.ln.k-rapid .gut{border-left-color:#e8a33d}
+.ln.k-feed .gut{border-left-color:#0f6cbd}
+.ln.k-arc .gut{border-left-color:#0e9384}
+.ln.k-cyc .gut{border-left-color:#c03d9a}
+.ln.k-rapid:not(.ins){background:#fffaf0}
+.ln.k-rapid .r.gc .cell:not(.n):not(.cm){color:#9a5b00}
+.ln.cur:not(.ins){outline:1px solid #9cc3ec;outline-offset:-1px}
+.tl{position:relative;overflow:hidden;background:#fff;border:1px solid #e5e5e5;border-radius:4px;height:106px;cursor:pointer}
+.tl svg{position:absolute;left:0;top:0;transition:transform .25s ease}
+.tlmid{position:absolute;left:50%;top:0;bottom:0;width:0;border-left:1px dashed #d13438;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.tl svg{transition:none}}
+.modes{flex:1;min-height:0;overflow:auto}
+.mt{display:grid;grid-template-columns:auto auto 1fr;gap:1px 10px;font-size:11.5px;line-height:1.3;align-items:baseline}
+.mt .lb{color:#666}
+.mt .cd{font:12px var(--w-mono);color:#333}
+.mt .ew{font:700 12px var(--w-mono);color:#0f6cbd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mt .chg .lb,.mt .chg.cd,.mt .chg.ew{}
+.mt .new{color:#d13438;font-weight:700}
+.tab{padding:6px 14px;font-size:12.5px;color:#1b1b1b;background:#fff;border-right:1px solid #e5e5e5;box-shadow:inset 0 2px #0f6cbd}
+.colhead{display:flex;font:10.5px var(--w-mono);color:#9a9a9a;padding:4px 0 2px;border-bottom:1px solid #f0f0f0;flex:none;white-space:pre}
+.ed{flex:1;min-height:0;overflow:auto;position:relative;padding:4px 0 40px;font:13px var(--w-mono)}
+.ln{display:flex;flex-direction:column;padding:1px 0 4px}
+.r{display:flex;height:19px;align-items:center;white-space:pre}
+.gut{width:5ch;flex:none;text-align:right;padding-right:1.4ch;color:#a0a0a0;font-size:12px}
+.cell{flex:none;height:19px;line-height:19px;overflow:hidden;text-overflow:ellipsis;cursor:text;border-left:1px dotted #eaeaea;padding-left:.5ch}
+.cell.cm{width:auto!important;color:#8a8a8a;font-style:italic;border-left-color:transparent}
+.cell.unk{color:#b35c00}
+.cell.add{color:#c8c8c8;border-left-color:transparent;cursor:pointer}
+.r .cell.n{color:#5d6b7c;font-weight:400}
+.ln.ins{background:#f7f3fe;box-shadow:inset 3px 0 #8a3ffc}
+.ln.ins .gut{color:#8a3ffc;font-weight:700}
+.ln.ins .r.gc,.ln.ins .r.en{background:transparent}
+.ln.ins .cell.n{color:#8a3ffc;font-weight:700}
+.ln.ins .r.en{color:#7a5bc0}
+.ln.ins + .ln:not(.ins){border-top:1px dashed #cdb8f5}
+.xp{font:11px var(--w-ui);margin-left:1ch;border:1px solid #cdb8f5;background:#f7f3fe;color:#6a2fd6;border-radius:10px;padding:0 8px;height:17px;line-height:15px;cursor:pointer;white-space:nowrap}
+.xp:hover{background:#ece2fd}
+.xp.bad{border-color:#f7c27a;background:#fff4e5;color:#8a4b00;cursor:default}
+.chk{display:inline-flex;align-items:center;gap:5px;color:#1b1b1b;font-size:13px;cursor:pointer}
+.chk input{accent-color:#0f6cbd;margin:0}
+.ln:hover .cell.add{color:#0f6cbd}
+.r.en{color:#0f6cbd}
+.r.gc{color:#1b1b1b}
+.mode-en .r.en{font-weight:700;background:#f2f7fd}
+.mode-en .r.gc{color:#6b6b6b}
+.mode-gc .r.gc{font-weight:600;background:#f7f7f7}
+.mode-gc .r.en{color:#6f95c8;font-weight:400}
+.ln.cur .gut{color:#0f6cbd;font-weight:700}
+.cell.hot{background:#fff3c4}
+.cell input{font:inherit;font-weight:700;width:100%;height:19px;border:0;outline:2px solid #0f6cbd;outline-offset:-1px;padding:0 .3ch;background:#fff;color:#1b1b1b;text-transform:uppercase}
+.ac{position:absolute;z-index:5;background:#fff;border:1px solid #d1d1d1;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,.16);min-width:330px;max-height:236px;overflow:auto;padding:4px;font:12.5px var(--w-ui)}
+.ac .it{display:grid;grid-template-columns:9ch 7ch 1fr;gap:10px;padding:4px 8px;border-radius:4px;cursor:pointer;align-items:baseline}
+.ac .it.sel{background:#e8f1fb}
+.ac .w{font:700 12.5px var(--w-mono);color:#0f6cbd}
+.ac .g{font:12px var(--w-mono);color:#444}
+.ac .d{color:#616161;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac .hint{padding:4px 8px;color:#8a8a8a;font-size:11.5px}
+.side{display:flex;flex-direction:column;background:#fafafa;min-height:0}
+.panel{display:flex;flex-direction:column;border-bottom:1px solid #e5e5e5;padding:8px 10px;gap:6px}
+.panel .h{font-size:11.5px;font-weight:600;color:#444;display:flex;justify-content:space-between}
+.panel .h span{font-weight:400;color:#888}
+.panel > svg{background:#fff;border:1px solid #e5e5e5;border-radius:4px;display:block;width:100%}
+.info{font-size:12px;color:#333;display:flex;flex-direction:column;gap:5px}
+.info .k{font:700 12px var(--w-mono);color:#0f6cbd}
+.info .warn{background:#fff4e5;border-left:3px solid #f7a128;padding:4px 7px;border-radius:3px;color:#6a3b00}
+.status{height:24px;display:flex;align-items:center;gap:16px;padding:0 10px;background:#f3f3f3;border-top:1px solid #e5e5e5;font-size:11.5px;color:#555;flex:none;white-space:nowrap;overflow:hidden}
+.status .w{color:#b35c00}
+.status .msg{margin-left:auto;color:#0f6cbd;overflow:hidden;text-overflow:ellipsis}
+.status .msg.bad{color:#b35c00}
+
+/* ---------- Windows Open dialog ---------- */
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.28);display:grid;place-items:center;z-index:10}
+.dlg{width:720px;height:470px;background:#f9f9f9;border:1px solid #bdbdbd;border-radius:8px;box-shadow:0 24px 60px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden;font:12.5px var(--w-ui)}
+.dlg .tbar{background:#f3f3f3}
+.dlg .nav{display:flex;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid #e5e5e5;background:#fff}
+.dlg .crumb{flex:1;border:1px solid #d6d6d6;border-radius:4px;padding:4px 8px;color:#333;white-space:nowrap}
+.dlg .crumb b{font-weight:400;color:#888;margin:0 6px}
+.dlg .search{width:190px;border:1px solid #d6d6d6;border-radius:4px;padding:4px 8px;color:#999}
+.dlg .arrows{color:#999;letter-spacing:8px}
+.dlg .body{flex:1;display:grid;grid-template-columns:170px 1fr;min-height:0}
+.dlg .places{background:#f3f3f3;padding:8px 6px;display:flex;flex-direction:column;gap:1px;border-right:1px solid #e5e5e5}
+.dlg .places span{padding:4px 10px;border-radius:4px;color:#1b1b1b}
+.dlg .places span.on{background:#e3e3e3;font-weight:600}
+.dlg .places .grp{color:#777;font-size:11px;padding:8px 10px 2px}
+.dlg table{border-collapse:collapse;width:100%;font-size:12.5px;background:#fff}
+.dlg th{font-weight:400;color:#555;text-align:left;padding:5px 10px;border-bottom:1px solid #eee}
+.dlg td{padding:4px 10px;white-space:nowrap}
+.dlg tr.f{cursor:default}
+.dlg tr.f:hover td{background:#f2f7fd}
+.dlg tr.f.sel td{background:#cce4f7}
+.dlg .ic{display:inline-block;width:14px;height:14px;margin-right:8px;vertical-align:-2px;border-radius:2px}
+.dlg .ic.dir{background:#f4c542}
+.dlg .ic.nc{background:#fff;border:1px solid #9aa9bd;box-shadow:inset 0 3px #0f6cbd}
+.dlg .foot{display:grid;grid-template-columns:auto 1fr 250px;gap:8px 10px;align-items:center;padding:10px 12px;border-top:1px solid #e5e5e5;background:#f3f3f3}
+.dlg .foot .fname{border:1px solid #d1d1d1;border-bottom:2px solid #0f6cbd;border-radius:4px;padding:4px 8px;background:#fff;min-height:26px}
+.dlg .foot .ftype{border:1px solid #d1d1d1;border-radius:4px;padding:4px 8px;background:#fff;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dlg .foot .btns{grid-column:3;display:flex;gap:8px;justify-content:flex-end}
+.dlg .foot .btn{min-width:90px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Windows build · WebView2 window · fixed columns</span>
+    <h1>G-Code Reader for Windows</h1>
+    <p class="lede">This is a working mockup of the Windows app. Every word sits in a fixed-width column with its English word directly above it. You can edit either line, and changes to one update the other.</p>
+    <div class="try">
+      <span><b>Click any word</b> to edit it</span>
+      <span><b>Edit</b> toggle switches between G-code and English</span>
+      <span>Type <kbd>SP</kbd>, <kbd>COOL</kbd> or <kbd>RPM</kbd> for suggestions</span>
+      <span><kbd>Tab</kbd> next word · <kbd>Enter</kbd> done · <kbd>Esc</kbd> cancel</span>
+      <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> or <b>New line</b> adds a numbered line</span>
+      <span><b>▸ show N1000</b> opens the subprogram inline</span>
+      <span><b>Show</b> switches between both lines, English only, or G-code only</span>
+      <span><kbd>↑</kbd> <kbd>↓</kbd> move the selected line, and the Z timeline follows</span>
+      <span><b>Open…</b> shows the standard Windows dialog</span>
+    </div>
+  </header>
+
+  <div class="scroller">
+    <div class="app" id="app">
+      <div class="tbar"><span class="logo">G</span><span class="ttl" id="wtitle">POCKET_2X1.nc - G-Code Reader</span><span class="cap"><span>&#x2013;</span><span>&#x25A2;</span><span>&#x2715;</span></span></div>
+      <div class="cmd">
+        <button class="btn" id="b-open">Open…</button>
+        <button class="btn" id="b-save">Save</button>
+        <span class="vsep"></span>
+        <button class="btn" id="b-new">New line</button>
+        <button class="btn" id="b-renum">Renumber</button>
+        <label class="lab chk"><input type="checkbox" id="autoN" checked> Auto N</label>
+        <span class="vsep"></span>
+        <span class="lab">Machine</span>
+        <select class="wsel" id="machine" aria-label="Machine definition">
+          <option value="haas_vf2">Haas VF-2 (mill)</option>
+          <option value="fanuc_0imf">Fanuc 0i-MF (mill)</option>
+          <option value="haas_st10">Haas ST-10 (lathe)</option>
+        </select>
+        <span class="vsep"></span>
+        <span class="lab">Edit</span>
+        <span class="toggle" role="group" aria-label="Edit mode"><button id="m-gc" aria-pressed="false">G-code</button><button id="m-en" aria-pressed="true">English</button></span>
+        <span class="lab" style="margin-left:8px">Words</span>
+        <span class="toggle" role="group" aria-label="Word length"><button id="w-long" aria-pressed="true">Long</button><button id="w-short" aria-pressed="false">Short</button></span>
+      </div>
+      <div class="main">
+        <div class="edwrap">
+          <div class="tabs"><span class="tab" id="tabname">POCKET_2X1.nc</span>
+            <span class="legend"><span class="sw rapid"></span>Rapid<span class="sw feed"></span>Feed<span class="sw arc"></span>Arc<span class="sw cyc"></span>Cycle</span>
+            <span class="lab">Show</span>
+            <span class="toggle sm" role="group" aria-label="Rows shown"><button id="v-both" aria-pressed="true">Both</button><button id="v-en" aria-pressed="false">English</button><button id="v-gc" aria-pressed="false">G-code</button></span>
+          </div>
+          <div class="colhead" id="colhead"></div>
+          <div class="ed mode-en" id="ed" tabindex="0" aria-label="Program editor. Up and down arrows move the selected line."></div>
+        </div>
+        <div class="side">
+          <div class="panel">
+            <div class="h" id="v1h">Toolpath XY <span>top view</span></div>
+            <svg id="v1" viewBox="0 0 268 118" height="118"></svg>
+          </div>
+          <div class="panel">
+            <div class="h" id="tlh">Z by line <span>selected line centered</span></div>
+            <div class="tl" id="tl"><svg id="tlsvg" height="104"></svg><div class="tlmid"></div></div>
+          </div>
+          <div class="panel modes">
+            <div class="h" id="mh">Active modes · N70</div>
+            <div class="mt" id="modes"></div>
+          </div>
+          <div class="panel" style="border-bottom:0">
+            <div class="info" id="info"><span>Hover a word to see what it means.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="status"><span id="st-pos">Ln 1</span><span id="st-mode">Editing English</span><span id="st-modal"></span><span id="st-warn" class="w"></span><span class="msg" id="st-msg"></span></div>
+
+      <div class="dim" id="dlg" hidden>
+        <div class="dlg" role="dialog" aria-label="Open">
+          <div class="tbar"><span class="ttl" style="padding-left:2px">Open</span><span class="cap"><span id="dlg-x">&#x2715;</span></span></div>
+          <div class="nav"><span class="arrows">← → ↑</span><span class="crumb">This PC<b>›</b>Documents<b>›</b>CNC Jobs</span><span class="search">Search CNC Jobs</span></div>
+          <div class="body">
+            <div class="places">
+              <span>Home</span><span>Gallery</span>
+              <span class="grp">Quick access</span>
+              <span>Desktop</span><span>Downloads</span><span>Documents</span><span class="on">CNC Jobs</span>
+              <span class="grp">This PC</span>
+              <span>Local Disk (C:)</span><span>Shop NAS (S:)</span><span>USB Drive (E:)</span>
+            </div>
+            <div style="overflow:auto">
+              <table>
+                <thead><tr><th>Name</th><th>Date modified</th><th>Type</th><th>Size</th></tr></thead>
+                <tbody id="dlg-files"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="foot">
+            <span>File name:</span><span class="fname" id="dlg-name"></span><span class="ftype">G-code files (*.nc;*.tap;*.ngc;*.gcode;*.txt)</span>
+            <span class="btns"><button class="btn pri" id="dlg-open">Open</button><button class="btn" id="dlg-cancel">Cancel</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><h3>Line colors</h3><p>Each line gets a colored bar from the motion mode that's active when it moves: amber for rapid, blue for straight feed, teal for arcs and magenta for drilling cycles. Rapid lines also get a warm tint, so a rapid near the part stands out. Lines that don't move have no bar.</p></div>
+    <div class="note"><h3>Active modes</h3><p>The panel shows every mode that's in effect on the selected line: motion, units, positions, plane, feed mode and rate, spindle, coolant, tool, offsets and work offset. A red dot marks modes set on that line, so you can see which line turned each one on.</p></div>
+    <div class="note"><h3>Z by line</h3><p>The timeline gives each line, in the order the machine runs it, one step showing the Z height after that line. The selected line sits on the center mark and the strip slides as you move. Subprogram lines appear every time they're called, so both rectangle passes show. Heights above Z0.3 are drawn at the top with an arrow. Click a step to jump to its line.</p></div>
+    <div class="note"><h3>Automatic N numbers</h3><p>With Auto N on, a new line gets the next free number counting by 10, or the midpoint when there's no room, like <code>N75</code> between N70 and N80. When there's no gap at all, the status bar says so and <b>Renumber</b> respaces the main program by 10. Subprogram labels are left alone so their calls keep working.</p></div>
+    <div class="note"><h3>Subprograms shown inline</h3><p>A call like <code>N100 M97 P1000</code> gets a <b>▸ show N1000</b> button. It inserts the subprogram's lines between the call and the next line. Those rows have a purple bar, a <b>↳</b> in the margin and purple N numbers, so they never look like part of the main program. Editing an inserted row edits the subprogram itself, so every call sees the change. The toolpath follows the calls too, which is why the rectangle is cut at two depths.</p></div>
+    <div class="note"><h3>Fixed-width columns</h3><p>Every column is the same width: 10 characters in Long mode and 8 in Short mode. Words line up down the whole file, not just within one line. The rare word that doesn't fit is cut off with an ellipsis, and hovering shows it in full. Column width can be a setting.</p></div>
+    <div class="note"><h3>Two ways to edit</h3><p>In G-code mode you type codes and the English updates. In English mode you type words like <code>COOLON</code> or <code>RPM600</code> and the G-code is written for you. The file only ever stores G-code. If a word clashes with the active mode, like <code>IPR25</code> while G94 is on, the status bar says so.</p></div>
+    <div class="note"><h3>Autocomplete</h3><p>Suggestions come from the dictionary plus the selected machine's file, so a Haas mill offers <code>TSCON</code> (M88) and a Fanuc mill doesn't. Matching works on the word, the code or the description, so typing <code>coolant</code> also finds <code>COOLON</code>.</p></div>
+    <div class="note"><h3>Standard file dialogs</h3><p>Open and Save call the real system dialog from C. On Windows that's <code>IFileOpenDialog</code>, and on Linux it's the GTK or desktop-portal dialog. The <a href="https://github.com/btzy/nativefiledialog-extended">nativefiledialog-extended</a> library wraps both behind one call. An HTML file input would also show the Windows dialog, but it hides the file's real path, so Save couldn't write back to the same file.</p></div>
+  </div>
+</div>
+
+<script>
+const DICT = {"about":"Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry.","version":1,"codes":{"G00":{"long":"RAPID","short":"RPD","desc":"Rapid move"},"G01":{"long":"LINEAR","short":"LIN","desc":"Straight move at feed rate"},"G02":{"long":"ARCCW","short":"ACW","desc":"Clockwise arc"},"G03":{"long":"ARCCCW","short":"ACCW","desc":"Counterclockwise arc"},"G04":{"long":"DWELL","short":"DWL","desc":"Pause for a set time"},"G17":{"long":"PLANEXY","short":"PXY","desc":"Arcs in the XY plane"},"G18":{"long":"PLANEXZ","short":"PXZ","desc":"Arcs in the XZ plane"},"G19":{"long":"PLANEYZ","short":"PYZ","desc":"Arcs in the YZ plane"},"G20":{"long":"INCH","short":"IN","desc":"Inch units"},"G21":{"long":"METRIC","short":"MM","desc":"Millimeter units"},"G28":{"long":"HOMEREF","short":"HOME","desc":"Return to machine home"},"G40":{"long":"COMPOFF","short":"CCOFF","desc":"Cutter compensation off"},"G41":{"long":"COMPLEFT","short":"CCL","desc":"Cutter compensation left"},"G42":{"long":"COMPRGHT","short":"CCR","desc":"Cutter compensation right"},"G43":{"long":"TLENON","short":"TLON","desc":"Tool length offset on"},"G49":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off"},"G50":{"mill":{"long":"SCALEOFF","short":"SCLOFF","desc":"Scaling off"},"lathe":{"long":"MAXRPM","short":"SMAX","desc":"Clamp spindle to a max RPM"}},"G53":{"long":"MACHCRD","short":"MCS","desc":"Move in machine coordinates"},"G54":{"long":"WORK1","short":"W1","desc":"Work offset 1"},"G55":{"long":"WORK2","short":"W2","desc":"Work offset 2"},"G56":{"long":"WORK3","short":"W3","desc":"Work offset 3"},"G57":{"long":"WORK4","short":"W4","desc":"Work offset 4"},"G58":{"long":"WORK5","short":"W5","desc":"Work offset 5"},"G59":{"long":"WORK6","short":"W6","desc":"Work offset 6"},"G70":{"lathe":{"long":"FINCYC","short":"FIN","desc":"Finishing cycle"}},"G71":{"lathe":{"long":"RUFCYC","short":"RUF","desc":"OD/ID roughing cycle"}},"G76":{"mill":{"long":"FINBORE","short":"FBOR","desc":"Fine boring cycle"},"lathe":{"long":"THREAD","short":"THD","desc":"Threading cycle"}},"G80":{"long":"CYCOFF","short":"CYOFF","desc":"Cancel canned cycle"},"G81":{"long":"DRILL","short":"DRL","desc":"Drilling cycle"},"G83":{"long":"PECKDRL","short":"PCK","desc":"Peck drilling cycle"},"G84":{"long":"TAP","short":"TAP","desc":"Tapping cycle"},"G90":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G94":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G96":{"long":"MODESFM","short":"CSS","desc":"Constant surface speed"},"G97":{"long":"MODERPM","short":"RPM","desc":"Constant RPM"},"G98":{"mill":{"long":"RETINIT","short":"RINI","desc":"Cycle returns to initial Z"},"lathe":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"}},"G99":{"mill":{"long":"RETRPLN","short":"RRPL","desc":"Cycle returns to R plane"},"lathe":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"}},"M00":{"long":"STOP","short":"STP","desc":"Program stop"},"M01":{"long":"OPTSTOP","short":"OSTP","desc":"Optional stop"},"M03":{"long":"SPINFWD","short":"SFWD","desc":"Spindle on, forward (CW)"},"M04":{"long":"SPINREV","short":"SREV","desc":"Spindle on, reverse (CCW)"},"M05":{"long":"SPINOFF","short":"SOFF","desc":"Spindle off"},"M06":{"long":"TOOLCHG","short":"TCHG","desc":"Tool change"},"M08":{"long":"COOLON","short":"CON","desc":"Flood coolant on"},"M09":{"long":"COOLOFF","short":"COFF","desc":"Coolant off"},"M30":{"long":"ENDRESET","short":"END","desc":"End program and rewind"},"M98":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram"},"M99":{"long":"SUBRET","short":"RET","desc":"Return from subprogram"}},"address":{"N":{"long":"SEQ","short":"N","desc":"Sequence number"},"O":{"long":"PROG","short":"O","desc":"Program number"},"T":{"long":"TOOL","short":"T","desc":"Tool number"},"H":{"long":"LOFS","short":"H","desc":"Tool length offset number"},"D":{"long":"DOFS","short":"D","desc":"Tool diameter offset number"},"X":{"abs":{"long":"X","short":"X"},"inc":{"long":"INCX","short":"iX"}},"Y":{"abs":{"long":"Y","short":"Y"},"inc":{"long":"INCY","short":"iY"}},"Z":{"abs":{"long":"Z","short":"Z"},"inc":{"long":"INCZ","short":"iZ"}},"U":{"lathe":{"long":"INCX","short":"iX","desc":"Incremental X (lathe)"}},"W":{"lathe":{"long":"INCZ","short":"iZ","desc":"Incremental Z (lathe)"}},"I":{"long":"ARCI","short":"I","desc":"Arc center offset in X"},"J":{"long":"ARCJ","short":"J","desc":"Arc center offset in Y"},"K":{"long":"ARCK","short":"K","desc":"Arc center offset in Z"},"R":{"arc":{"long":"RAD","short":"R"},"cycle":{"long":"RPLN","short":"R"}},"Q":{"long":"PECK","short":"Q","desc":"Peck depth"},"P":{"dwell":{"long":"SEC","short":"P"},"sub":{"long":"PROG","short":"P"}},"F":{"perMin":{"inch":"IPM","mm":"MMPM"},"perRev":{"inch":"IPR","mm":"MMPR"}},"S":{"rpm":{"long":"RPM","short":"RPM"},"css":{"inch":"SFM","mm":"SMM"}}},"machineOverrides":{"haas":{"M88":{"long":"TSCON","short":"TSC","desc":"Through-spindle coolant on"},"M89":{"long":"TSCOFF","short":"TSCO","desc":"Through-spindle coolant off"},"M97":{"long":"LOCSUB","short":"LSUB","desc":"Local subprogram call"}}}};
+
+const MACHINES = {
+  haas_vf2:   { type:"mill",  brand:"haas" },
+  fanuc_0imf: { type:"mill",  brand:"fanuc" },
+  haas_st10:  { type:"lathe", brand:"haas" }
+};
+const FILES = {
+  "POCKET_2X1.nc": { machine:"haas_vf2", expand:"N100", src:[
+    "O1001 (POCKET 2X1)",
+    "N10 G20 G90 G17 G40 G49 G80",
+    "N20 T1 M06 (1/4 END MILL)",
+    "N30 G54 G00 X0. Y0.",
+    "N40 M03 G97 S6000",
+    "N50 G43 H01 Z1.0 M08",
+    "N60 G00 X0.25 Y0.25 Z0.1",
+    "N70 G01 Z-0.1 F10.",
+    "N100 M97 P1000 (RECT PASS)",
+    "N110 G01 Z-0.2 F10.",
+    "N120 M97 P1000",
+    "N130 G00 Z0.1",
+    "N140 X1.0 Y0.25",
+    "N150 G01 Z-0.2 F10.",
+    "N160 G03 X1.0 Y0.25 I0. J0.25 F20.",
+    "N170 G00 Z1.0 M09",
+    "N180 M05",
+    "N190 M30",
+    "(RECT PASS SUBPROGRAM)",
+    "N1000 G01 X1.75 F25.",
+    "N1010 Y0.75",
+    "N1020 X0.25",
+    "N1030 Y0.25",
+    "N1040 M99"]},
+  "FLANGE_OP1.nc": { machine:"haas_vf2", src:[
+    "O1002 (FLANGE BOLT HOLES)",
+    "N10 G20 G90 G17 G40 G49 G80",
+    "N20 T4 M06 (#7 DRILL)",
+    "N30 G54 G00 X1.5 Y0.",
+    "N40 M03 G97 S2400",
+    "N50 G43 H04 Z1.0 M88",
+    "N60 G98 G83 X1.5 Y0. Z-0.6 R0.1 Q0.15 F6.",
+    "N70 X0. Y1.5",
+    "N80 X-1.5 Y0.",
+    "N90 X0. Y-1.5",
+    "N100 G80 G00 Z1.0 M89",
+    "N110 M05",
+    "N120 M30"]},
+  "SHAFT_OD.nc": { machine:"haas_st10", src:[
+    "O2001 (SHAFT OD)",
+    "N10 G20 G18 G99",
+    "N20 T0101 (OD TURN)",
+    "N30 G50 S3000",
+    "N40 G96 S400 M03",
+    "N50 G00 X1.6 Z0.1 M08",
+    "N60 G01 X1.25 F.01",
+    "N70 Z-1.5 F.008",
+    "N80 X1.5 Z-1.75",
+    "N90 Z-2.5",
+    "N100 G00 U0.1",
+    "N110 Z0.1",
+    "N120 M03 G97 S600",
+    "N130 M05 M09",
+    "N140 M30"]}
+};
+
+let fileName = "POCKET_2X1.nc", machineId = "haas_vf2", editMode = "en", style = "long";
+let doc = [];           // array of lines; each line is an array of word strings (comments kept whole)
+let view = [];          // translated cells per line
+let lineState = [];     // modal state after each line's G-codes
+let editing = null;     // {li, ci, input, items, sel}
+let curLine = 0;
+let expanded = new Set(); // call lines whose subprogram is shown inline
+let autoN = true;
+let showMode = "both";
+const N_STEP = 10;
+
+const COLW = () => style === "long" ? 10 : 8;
+const mtype = () => MACHINES[machineId].type;
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const pad2 = w => w[0] + (w.slice(1).length < 2 ? "0" + w.slice(1) : w.slice(1));
+const clean = v => v.endsWith(".") && v.length > 1 ? v.slice(0, -1) : v;
+
+function tokenize(line){ const out = []; const re = /\([^)]*\)?|[A-Za-z][-+]?[\d.]*/g; let m; while ((m = re.exec(line))) out.push(m[0].startsWith("(") ? m[0] : m[0].toUpperCase()); return out; }
+function load(name){
+  fileName = name; machineId = FILES[name].machine;
+  document.getElementById("machine").value = machineId;
+  doc = FILES[name].src.map(tokenize);
+  expanded = new Set();
+  const ex = FILES[name].expand; if (ex) doc.forEach((t, i) => { if (t[0]===ex) expanded.add(i); });
+  document.getElementById("wtitle").textContent = name + " - G-Code Reader";
+  document.getElementById("tabname").textContent = name;
+  curLine = 0; render(); setMsg("Opened " + name);
+}
+
+function entry(key){
+  const brand = MACHINES[machineId].brand;
+  const ov = DICT.machineOverrides[brand]?.[key];
+  if (ov) return ov;
+  const e = DICT.codes[key]; if (!e) return null;
+  return e.long ? e : (e[mtype()] ?? null);
+}
+function newState(){
+  const lathe = mtype()==="lathe";
+  return { units:"inch", dist:"abs", feed: lathe ? "perRev" : "perMin", spin:"rpm", cycle:false, dwell:false, sub:false,
+    motion:null, cycleCode:null, plane: lathe ? "G18" : "G17", unitCode:"G20", distCode:"G90", feedCode: lathe ? "G99" : "G94", spinCode:"G97",
+    comp:"G40", tlen:"G49", wcs:"G54", spinDir:"M05", cool:"M09", F:null, S:null, T:null, H:null, chg:[] };
+}
+
+function applyModes(toks, st){
+  st.dwell = false; st.sub = false; st.local = false; st.chg = [];
+  const set = (f, v) => { st[f] = v; st.chg.push(f); };
+  for (const t of toks){
+    if (/^[FSTH][-+]?[\d.]+$/.test(t)) { set(t[0], t); continue; }
+    if (!/^[GM]\d/.test(t)) continue;
+    const k = pad2(t), lathe = mtype()==="lathe";
+    if (["G00","G01","G02","G03"].includes(k)){ set("motion", k); st.cycleCode = null; }
+    if (["G17","G18","G19"].includes(k)) set("plane", k);
+    if (k==="G20"||k==="G21") set("unitCode", k);
+    if (k==="G90"||k==="G91") set("distCode", k);
+    if (k==="G94"||k==="G95"||(lathe && (k==="G98"||k==="G99"))) set("feedCode", k);
+    if (k==="G96"||k==="G97") set("spinCode", k);
+    if (["G40","G41","G42"].includes(k)) set("comp", k);
+    if (k==="G43"||k==="G49") set("tlen", k);
+    if (/^G5[4-9]$/.test(k)) set("wcs", k);
+    if (["G81","G83","G84"].includes(k) || (k==="G76" && !lathe)) set("cycleCode", k);
+    if (k==="G80") set("cycleCode", null);
+    if (["M03","M04","M05"].includes(k)) set("spinDir", k);
+    if (["M08","M09","M88","M89"].includes(k)) set("cool", k);
+    if (k==="G20") st.units="inch"; if (k==="G21") st.units="mm";
+    if (k==="G90") st.dist="abs";   if (k==="G91") st.dist="inc";
+    if (k==="G94") st.feed="perMin"; if (k==="G95") st.feed="perRev";
+    if (lathe && k==="G98") st.feed="perMin"; if (lathe && k==="G99") st.feed="perRev";
+    if (k==="G96") st.spin="css";   if (k==="G97") st.spin="rpm";
+    if (["G00","G01","G02","G03"].includes(k)) st.cycle=false;
+    if (["G81","G83","G84"].includes(k) || (k==="G76" && !lathe)) st.cycle = true;
+    if (k==="G80") st.cycle=false;
+    if (k==="G04") st.dwell = true;
+    if (k==="M98" || k==="M97" || k==="G65") st.sub = true;
+    if (k==="M97") st.local = true;
+  }
+}
+function word(t, st){
+  if (t.startsWith("(")) return { g:t, e:"", cm:true, d:"Comment, kept as written" };
+  const L = t[0], v = clean(t.slice(1));
+  if (L==="G" || L==="M"){
+    const k = pad2(t), e = entry(k);
+    if (!e) return { g:t, e:"?"+k, unk:true, d:`${k} isn't in the dictionary or this machine's file.` };
+    return { g:t, e:e[style], d:e.desc, code:k, long:e.long };
+  }
+  const a = DICT.address[L];
+  if (!a) return { g:t, e:"?"+L, unk:true, d:`Address letter ${L} isn't in the dictionary.` };
+  if (L==="F"){ const u = a[st.feed][st.units]; return { g:t, e:u+v, d:`Feed rate ${v} ${u}` }; }
+  if (L==="S") return st.spin==="css" ? { g:t, e:a.css[st.units]+v, d:`Surface speed ${v} ${a.css[st.units]}` } : { g:t, e:"RPM"+v, d:`Spindle speed ${v} RPM` };
+  if ("XYZ".includes(L)){ const x = a[st.dist]; return { g:t, e:x[style]+v, d: st.dist==="inc" ? `Move ${v} in ${L} from where the tool is` : `${L} position ${v}` }; }
+  if (L==="U"||L==="W"){ if (mtype()!=="lathe") return { g:t, e:"?"+L, unk:true, d:`${L} is only used on lathes.` }; return { g:t, e:a.lathe[style]+v, d:a.lathe.desc+" "+v }; }
+  if (L==="R"){ const x = st.cycle ? a.cycle : a.arc; return { g:t, e:x[style]+v, d: st.cycle ? "Retract plane for the drilling cycle" : "Arc radius" }; }
+  if (L==="P" && st.local) return { g:t, e:"LBL"+v, d:`Jump to the line labeled N${v} and run it until M99` };
+  if (L==="P"){ const x = st.sub ? a.sub : a.dwell; return { g:t, e:x[style]+v, d: st.sub ? `Program number ${v}` : `Dwell for ${v} seconds` }; }
+  return { g:t, e:a[style]+v, d:`${a.desc} ${v}` };
+}
+function lineKind(li){
+  const st = lineState[li], toks = doc[li] || [];
+  if (!st || !toks.some(t => /^[XYZUW][-+]?[\d.]/.test(t))) return null;
+  if (toks.some(t => /^[GM]/.test(t) && ["G28","G53"].includes(pad2(t)))) return "rapid";
+  if (st.cycleCode) return "cyc";
+  return st.motion==="G00" ? "rapid" : st.motion==="G01" ? "feed" : (st.motion==="G02"||st.motion==="G03") ? "arc" : null;
+}
+function translateAll(){
+  const st = newState(); view = []; lineState = [];
+  doc.forEach(toks => { applyModes(toks, st); lineState.push({...st}); view.push(toks.map(t => word(t, st))); });
+}
+
+/* ---------- English → G-code ---------- */
+const PREFIXES = [
+  ["RPM","S","Spindle speed in RPM", st => st.spin==="rpm" ? null : "G96 (surface speed) is active, so this S reads as surface speed. Add MODERPM (G97) first."],
+  ["SFM","S","Surface speed, ft/min", st => st.spin==="css" ? null : "G97 (RPM) is active, so this S reads as RPM. Add MODESFM (G96) first."],
+  ["SMM","S","Surface speed, m/min", st => st.spin==="css" ? null : "G97 (RPM) is active. Add MODESFM (G96) first."],
+  ["IPM","F","Feed, inches per minute", st => st.feed==="perMin" ? null : "Feed per rev is active here, so this F reads as IPR. Add FEEDMIN (G94) first."],
+  ["IPR","F","Feed, inches per rev", st => st.feed==="perRev" ? null : "Feed per minute (G94) is active here, so this F reads as IPM. Add FEEDREV (G95) first."],
+  ["MMPM","F","Feed, mm per minute", null], ["MMPR","F","Feed, mm per rev", null],
+  ["INCX","X","Incremental X move", st => st.dist==="inc" || mtype()==="lathe" ? null : "Absolute mode (G90) is active, so this reads as an X position. Add INCR (G91) first."],
+  ["INCY","Y","Incremental Y move", st => st.dist==="inc" ? null : "Absolute mode (G90) is active. Add INCR (G91) first."],
+  ["INCZ","Z","Incremental Z move", st => st.dist==="inc" || mtype()==="lathe" ? null : "Absolute mode (G90) is active. Add INCR (G91) first."],
+  ["TOOL","T","Tool number", null], ["LOFS","H","Tool length offset", null], ["DOFS","D","Tool diameter offset", null],
+  ["ARCI","I","Arc center offset X", null], ["ARCJ","J","Arc center offset Y", null], ["ARCK","K","Arc center offset Z", null],
+  ["RAD","R","Arc radius", null], ["RPLN","R","Cycle retract plane", null], ["PECK","Q","Peck depth", null],
+  ["SEC","P","Dwell seconds", null], ["LBL","P","Subprogram label (N number) to call", null], ["PROG","O","Program number", null], ["SEQ","N","Sequence number", null],
+  ["X","X","X position", null], ["Y","Y","Y position", null], ["Z","Z","Z position", null]
+].map(([p,l,d,chk]) => ({p,l,d,chk}));
+
+function codeWords(){
+  const out = [], seen = new Set();
+  const add = (k, e) => { if (!e || seen.has(k)) return; seen.add(k); out.push({ k, long:e.long, short:e.short, d:e.desc }); };
+  const brand = MACHINES[machineId].brand;
+  for (const k of Object.keys(DICT.machineOverrides[brand] || {})) add(k, entry(k));
+  for (const k of Object.keys(DICT.codes)) add(k, entry(k));
+  return out;
+}
+function fromEnglish(txt, st){
+  const T = txt.trim().toUpperCase(); if (!T) return { g:"" };
+  if (T.startsWith("?")) return { g:T.slice(1) };
+  for (const c of codeWords()) if (c.long===T || c.short===T) return { g:c.k };
+  const m = T.match(/^([A-Z]+)([-+]?\d*\.?\d+\.?)$/);
+  if (m){
+    let p = PREFIXES.find(x => x.p===m[1]);
+    if (!p && m[1]==="IX") p = PREFIXES.find(x => x.p==="INCX");
+    if (!p && m[1]==="IY") p = PREFIXES.find(x => x.p==="INCY");
+    if (!p && m[1]==="IZ") p = PREFIXES.find(x => x.p==="INCZ");
+    if (p){
+      let L = p.l;
+      if (mtype()==="lathe" && p.p==="INCX") L = "U";
+      if (mtype()==="lathe" && p.p==="INCZ") L = "W";
+      return { g:L+m[2], warn: p.chk ? p.chk(st) : null };
+    }
+  }
+  if (/^[A-Z][-+]?[\d.]*$/.test(T) || /^[GM]\d+$/.test(T)) return { g:T };
+  return { g:null, err:`"${T}" isn't a known word. Pick one from the list, or switch to G-code mode.` };
+}
+
+/* ---------- Autocomplete ---------- */
+function suggestions(q){
+  const Q = q.trim().toUpperCase(), items = [];
+  if (editMode==="en"){
+    const m = Q.match(/^([A-Z]*)([-+]?[\d.]*)$/) || ["", Q, ""];
+    const letters = m[1], num = m[2];
+    for (const c of codeWords()){
+      const w = c[style], other = style==="long" ? c.short : c.long;
+      const hit = !Q ? 0 : (w.startsWith(Q) ? 3 : other.startsWith(Q) ? 2 : (Q.length>=3 && c.d.toUpperCase().includes(Q)) ? 1 : 0);
+      if (hit && !num) items.push({ w, g:c.k, d:c.d, score:hit });
+    }
+    for (const p of PREFIXES){
+      if (!letters) continue;
+      if (num ? p.p===letters : p.p.startsWith(letters)) items.push({ w:p.p + (num || "…"), g:p.l + (num || ""), d:p.d, prefix:!num, fill:p.p+num, score: num ? 4 : 2.5 });
+    }
+    if (Q.length >= 3) for (const p of PREFIXES) if (p.d.toUpperCase().includes(Q) && !items.some(i => i.fill===p.p)) items.push({ w:p.p+"…", g:p.l, d:p.d, prefix:true, fill:p.p, score:0.5 });
+  } else {
+    for (const c of codeWords()) if (Q && c.k.startsWith(pad2(Q.length>1?Q:Q+"0").slice(0, Math.max(Q.length,1))) || (Q && c.k.startsWith(Q))) items.push({ w:c.k, g:c[style], d:c.d, score: c.k===pad2(Q)?3:2, code:true });
+    const m = Q.match(/^([A-Z])([-+]?[\d.]+)$/);
+    if (m && !/[GM]/.test(m[1])){ const w = word(Q, lineState[editing?.li ?? 0] || newState()); items.unshift({ w:Q, g:w.e, d:w.d, score:5, code:true }); }
+  }
+  const seen = new Set();
+  return items.sort((a,b) => b.score - a.score).filter(i => { const k = i.w+i.g; if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 8);
+}
+
+/* ---------- Rendering ---------- */
+const ed = document.getElementById("ed");
+function render(){
+  translateAll();
+  const W = COLW();
+  const maxCols = Math.max(...doc.map(l => l.filter(t => !t.startsWith("(")).length)) + 1;
+  document.getElementById("colhead").innerHTML = `<span class="gut"></span>` + Array.from({length:maxCols}, (_,i) => `<span style="width:${W}ch;flex:none;padding-left:.5ch">${i+1}</span>`).join("");
+  ed.className = "ed mode-" + editMode + " show-" + showMode;
+  const rows = [];
+  doc.forEach((_, li) => {
+    rows.push({ li, key:"m"+li });
+    const tgt = callTarget(doc[li]), rg = tgt!=null && expanded.has(li) ? subRange(tgt) : null;
+    if (rg) for (let j = rg[0]; j <= rg[1]; j++) rows.push({ li:j, key:`x${li}-${j}`, ins:true, from:doc[li][0] });
+  });
+  ed.innerHTML = rows.map(({li, key, ins, from}) => {
+    const cells = view[li];
+    const cls = (c, ci) => `cell${c.unk?" unk":""}${c.cm?" cm":""}${ci===0 && /^N\d/.test(c.g)?" n":""}`;
+    const en = cells.map((c, ci) => `<span class="${cls(c,ci)}" data-k="${key}" data-l="${li}" data-c="${ci}" style="width:${W}ch" title="${esc(c.e || c.g)}">${c.cm ? `<span class="cmx">${esc(c.g)}</span>` : esc(c.e)}</span>`).join("");
+    const gc = cells.map((c, ci) => `<span class="${cls(c,ci)}" data-k="${key}" data-l="${li}" data-c="${ci}" style="width:${W}ch" title="${esc(c.g)}">${esc(c.g)}</span>`).join("");
+    const add = `<span class="cell add" data-k="${key}" data-l="${li}" data-c="${cells.length}" style="width:${W}ch">+</span>`;
+    const tgt = ins ? null : callTarget(doc[li]);
+    const xp = tgt!=null ? (subRange(tgt) ? `<button class="xp" data-x="${li}">${expanded.has(li) ? "▾ hide" : "▸ show"} N${tgt}</button>` : `<span class="xp bad">N${tgt} not found</span>`) : "";
+    const kind = lineKind(li);
+    return `<div class="ln${li===curLine && !ins?" cur":""}${ins?" ins":""}${kind?" k-"+kind:""}" data-key="${key}" data-li="${li}"${ins?` title="Inserted from the subprogram called on ${from}. Edits here change the subprogram itself."`:""}><div class="r en"><span class="gut"></span>${en}${add}</div><div class="r gc"><span class="gut">${ins?"↳":li+1}</span>${gc}${xp}</div></div>`;
+  }).join("");
+  drawViews(); drawModes(); status();
+}
+const MODE_ROWS = [
+  ["Motion", st => st.cycleCode || st.motion, ["motion","cycleCode"]],
+  ["Units", st => st.unitCode, ["unitCode"]],
+  ["Positions", st => st.distCode, ["distCode"]],
+  ["Plane", st => st.plane, ["plane"]],
+  ["Feed mode", st => st.feedCode, ["feedCode"]],
+  ["Feed rate", st => st.F, ["F"]],
+  ["Spindle", st => st.spinDir, ["spinDir"]],
+  ["Speed mode", st => st.spinCode, ["spinCode"]],
+  ["Speed", st => st.S, ["S"]],
+  ["Coolant", st => st.cool, ["cool"]],
+  ["Tool", st => st.T, ["T"]],
+  ["Length offset", st => st.tlen + (st.tlen==="G43" && st.H ? " " + st.H : ""), ["tlen","H"]],
+  ["Cutter comp", st => st.comp, ["comp"]],
+  ["Work offset", st => st.wcs, ["wcs"]]
+];
+function drawModes(){
+  const st = lineState[curLine] || newState();
+  const n = doc[curLine]?.[0]?.match(/^N\d+$/) ? doc[curLine][0] : "line " + (curLine+1);
+  document.getElementById("mh").innerHTML = `Active modes at ${n} <span style="font-weight:400;color:#888">● set on this line</span>`;
+  document.getElementById("modes").innerHTML = MODE_ROWS.map(([lb, f, keys]) => {
+    const code = f(st); const isNew = keys.some(k => st.chg.includes(k));
+    const en = !code ? "—" : code.split(" ").map(w => word(w, st).e).join(" ");
+    return `<span class="lb">${isNew ? '<span class="new">●</span> ' : ""}${lb}</span><span class="cd">${esc(code || "not set")}</span><span class="ew"${isNew?' style="color:#d13438"':""}>${esc(en)}</span>`;
+  }).join("");
+}
+function status(){
+  const st = lineState[curLine] || newState();
+  document.getElementById("st-pos").textContent = `Ln ${curLine+1}`;
+  document.getElementById("st-mode").textContent = editMode==="en" ? "Editing English" : "Editing G-code";
+  document.getElementById("st-modal").textContent = [st.units==="inch"?"INCH":"METRIC", st.dist==="abs"?"ABS":"INCR", st.feed==="perMin"?"FEEDMIN":"FEEDREV", st.spin==="rpm"?"MODERPM":"MODESFM"].join("  ");
+  const n = view.flat().filter(c => c.unk).length;
+  document.getElementById("st-warn").textContent = n ? `⚠ ${n} unknown word${n>1?"s":""}` : "";
+}
+function setMsg(t, bad){ const m = document.getElementById("st-msg"); m.textContent = t || ""; m.className = "msg" + (bad ? " bad" : ""); }
+function showInfo(li, ci, warn){
+  const c = view[li]?.[ci]; const box = document.getElementById("info");
+  if (!c){ box.innerHTML = "<span>Click or hover a word to see what it means.</span>"; return; }
+  box.innerHTML = `<span><span class="k">${esc(c.g)}</span> &nbsp;→&nbsp; <span class="k">${esc(c.e || "—")}</span></span><span>${esc(c.d)}</span>` + (c.long && c.long!==c.e ? `<span style="color:#777">Long form: ${esc(c.long)}</span>` : "") + (warn ? `<span class="warn">${esc(warn)}</span>` : "") + (c.unk ? `<span class="warn">Unknown words are flagged instead of guessed. Add it to the dictionary or the machine file.</span>` : "");
+}
+
+ed.addEventListener("mouseover", e => {
+  if (editing) return;
+  const c = e.target.closest(".cell"); ed.querySelectorAll(".hot").forEach(x => x.classList.remove("hot"));
+  if (!c || c.classList.contains("add")) return;
+  ed.querySelectorAll(`.cell[data-k="${c.dataset.k}"][data-c="${c.dataset.c}"]`).forEach(x => x.classList.add("hot"));
+  showInfo(+c.dataset.l, +c.dataset.c);
+});
+ed.addEventListener("mousedown", e => {
+  const x = e.target.closest(".xp[data-x]");
+  if (x){ e.preventDefault(); if (editing) commit(); const li = +x.dataset.x; expanded.has(li) ? expanded.delete(li) : expanded.add(li); render(); return; }
+  const c = e.target.closest(".cell");
+  if (!c){ const ln = e.target.closest(".ln"); if (ln && !editing){ e.preventDefault(); selectLine(+ln.dataset.li); } return; }
+  if (e.target.tagName==="INPUT") return;
+  e.preventDefault();
+  if (editing) commit();
+  startEdit(+c.dataset.l, +c.dataset.c, c.dataset.k);
+});
+
+/* ---------- N numbers and subprograms ---------- */
+const nOf = toks => toks && /^N\d+$/.test(toks[0]||"") ? parseInt(toks[0].slice(1)) : null;
+function labels(){ const m = {}; doc.forEach((t, i) => { const n = nOf(t); if (n!=null) m[n] = i; }); return m; }
+function callTarget(toks){ if (!toks.some(t => /^M/.test(t) && pad2(t)==="M97")) return null; const p = toks.find(t => t[0]==="P"); return p ? parseInt(p.slice(1)) : null; }
+function subRange(n){
+  const s = labels()[n]; if (s===undefined) return null;
+  let e = s; while (e < doc.length-1 && !doc[e].some(t => /^M/.test(t) && pad2(t)==="M99")) e++;
+  return [s, e];
+}
+function mainEnd(){ const i = doc.findIndex(t => t.some(w => /^M/.test(w) && pad2(w)==="M30")); return i < 0 ? doc.length-1 : i; }
+function newLine(after){
+  let words = [], msg = "New line";
+  if (autoN){
+    let cur = null, next = null;
+    for (let i = after; i >= 0 && cur===null; i--) cur = nOf(doc[i]);
+    for (let i = after+1; i < doc.length && next===null; i++) next = nOf(doc[i]);
+    let n = (cur ?? 0) + N_STEP;
+    if (next!=null && n >= next) n = next - (cur ?? 0) > 1 ? (cur ?? 0) + Math.floor((next - (cur ?? 0)) / 2) : null;
+    if (n!=null){ words = ["N"+n]; msg = `New line numbered N${n}`; }
+    else msg = `No free N number between N${cur} and N${next}. Use Renumber to make room.`;
+  }
+  doc.splice(after+1, 0, words);
+  expanded = new Set([...expanded].map(i => i > after ? i+1 : i));
+  curLine = after+1; render(); setMsg(msg, !words.length && autoN);
+  startEdit(after+1, words.length, "m"+(after+1));
+}
+function renumber(){
+  const called = new Set(doc.map(callTarget).filter(n => n!=null));
+  const end = mainEnd(); let n = N_STEP, count = 0;
+  for (let i = 0; i <= end; i++){
+    const t = doc[i]; if (!t.length || t[0].startsWith("O") || t.every(w => w.startsWith("("))) continue;
+    const old = nOf(t); if (old!=null && called.has(old)) continue;
+    const w = "N"+n; if (old!=null) t[0] = w; else t.unshift(w);
+    n += N_STEP; count++;
+  }
+  render(); setMsg(`Renumbered ${count} lines by ${N_STEP}. Subprogram labels were left alone so their calls still work.`);
+}
+
+/* ---------- Editing ---------- */
+let ac = null;
+function startEdit(li, ci, key){
+  key = key || "m"+li;
+  const toks = doc[li];
+  if (ci > toks.length) ci = toks.length;
+  const isComment = toks[ci]?.startsWith("(");
+  if (isComment && editMode==="en"){ setMsg("Comments are edited in G-code mode.", true); return; }
+  curLine = li; render();
+  const ln = ed.querySelector(`.ln[data-key="${key}"]`) || ed.querySelector(`.ln[data-key="m${li}"]`);
+  scrollToLn(ln);
+  const row = ln.querySelector(editMode==="en" ? ".r.en" : ".r.gc");
+  const cell = row.querySelector(`.cell[data-c="${ci}"]`);
+  const cur = ci < toks.length ? (editMode==="en" ? view[li][ci].e : toks[ci]) : "";
+  cell.classList.remove("cm"); cell.style.width = isComment ? Math.max(cur.length+2, COLW())+"ch" : COLW()+"ch";
+  cell.innerHTML = `<input id="cell-input" aria-label="Edit word" autocomplete="off" spellcheck="false" value="${esc(cur)}">`;
+  const input = cell.querySelector("input");
+  editing = { li, ci, key, input, cell, items:[], sel:0, orig:cur };
+  input.focus(); input.select();
+  input.addEventListener("input", () => openAC());
+  input.addEventListener("keydown", onKey);
+  input.addEventListener("blur", () => setTimeout(() => { if (editing && editing.input===input) { commit(); render(); } }, 120));
+  showInfo(li, ci);
+  openAC();
+}
+function openAC(){
+  closeAC();
+  if (!editing) return;
+  const q = editing.input.value;
+  const items = suggestions(q); editing.items = items; editing.sel = 0;
+  ac = document.createElement("div"); ac.className = "ac";
+  ac.innerHTML = items.length ? items.map((it,i) => `<div class="it${i===0?" sel":""}" data-i="${i}"><span class="w">${esc(it.w)}</span><span class="g">${esc(it.g)}</span><span class="d">${esc(it.d)}</span></div>`).join("")
+    : `<div class="hint">${q ? "No matches. Enter keeps what you typed." : (editMode==="en" ? "Start typing a word, like SPIN, COOL or RPM" : "Start typing a code, like G0 or M3")}</div>`;
+  const r = editing.cell.getBoundingClientRect(), pr = ed.getBoundingClientRect();
+  ac.style.left = (r.left - pr.left + ed.scrollLeft) + "px";
+  ac.style.top = (r.bottom - pr.top + ed.scrollTop + 2) + "px";
+  ed.appendChild(ac);
+  ac.addEventListener("mousedown", e => { const it = e.target.closest(".it"); if (!it) return; e.preventDefault(); pick(+it.dataset.i); });
+}
+function closeAC(){ if (ac){ ac.remove(); ac = null; } }
+function moveSel(d){
+  if (!editing.items.length) return;
+  editing.sel = (editing.sel + d + editing.items.length) % editing.items.length;
+  ac.querySelectorAll(".it").forEach((el,i) => el.classList.toggle("sel", i===editing.sel));
+  ac.querySelector(".it.sel")?.scrollIntoView({block:"nearest"});
+}
+function pick(i){
+  const it = editing.items[i]; if (!it) return false;
+  if (it.prefix){ editing.input.value = it.fill; editing.input.focus(); openAC(); return true; }
+  editing.input.value = it.code ? it.w : it.w;
+  return false;
+}
+function onKey(e){
+  if (e.key==="ArrowDown"){ e.preventDefault(); moveSel(1); }
+  else if (e.key==="ArrowUp"){ e.preventDefault(); moveSel(-1); }
+  else if (e.key==="Escape"){ e.preventDefault(); editing = null; closeAC(); render(); setMsg(""); ed.focus({preventScroll:true}); }
+  else if (e.key==="Enter" && (e.ctrlKey || (!editing.input.value.trim() && editing.ci >= doc[editing.li].length))){
+    e.preventDefault();
+    const li = editing.li;
+    if (!commit()) return;
+    newLine(li);
+  }
+  else if (e.key==="Enter" || e.key==="Tab"){
+    e.preventDefault();
+    const q = editing.input.value.trim().toUpperCase();
+    const top = editing.items[editing.sel];
+    const exact = top && (top.w===q || top.fill===q);
+    if (top && q && !exact && (e.key==="Tab" || editing.sel>0 || top.score>=2)){ if (pick(editing.sel)) return; }
+    const { li, ci, key } = editing;
+    const before = doc[li].length;
+    if (!commit()) return;
+    if (e.key==="Tab"){
+      let n = e.shiftKey ? ci-1 : ci+1;
+      if (doc[li].length < before) n = e.shiftKey ? ci-1 : ci;
+      if (n < 0) return render();
+      startEdit(li, Math.min(n, doc[li].length), key);
+    } else { render(); ed.focus({preventScroll:true}); }
+  }
+}
+function commit(){
+  if (!editing) return true;
+  const { li, ci, input } = editing; const toks = doc[li];
+  const v = input.value.trim(); let warn = null;
+  let g;
+  if (editMode==="en" && !(toks[ci]||"").startsWith("(")){
+    const r = fromEnglish(v, lineState[li]);
+    if (r.err){ setMsg(r.err, true); input.focus(); return false; }
+    g = r.g; warn = r.warn;
+  } else g = v.startsWith("(") ? v : v.toUpperCase().replace(/\s+/g,"");
+  closeAC(); editing = null;
+  if (!g){ if (ci < toks.length) toks.splice(ci, 1); setMsg(ci < toks.length+1 ? "Word removed" : ""); }
+  else if (ci < toks.length) toks[ci] = g; else toks.push(g);
+  translateAll();
+  if (warn) setMsg(warn, true); else if (g) setMsg(`${g} → ${view[li][Math.min(ci, view[li].length-1)]?.e || ""}`);
+  showInfo(li, Math.min(ci, doc[li].length-1), warn);
+  return true;
+}
+
+/* ---------- Toolpath ---------- */
+function interpret(){
+  const lathe = mtype()==="lathe";
+  let p = {x: lathe ? 2 : 0, y:0, z: lathe ? 1 : 1}, mode = 0, segs = [], dist = "abs", steps = [], moved = false;
+  const L = labels(), stack = []; let i = 0, guard = 0;
+  while (i < doc.length && guard++ < 5000){
+    const li = i, toks = doc[i];
+    const has = c => toks.some(t => /^[GM]\d/.test(t) && pad2(t)===c);
+    moved = false; step(toks, li);
+    steps.push({ li, v: lathe ? p.x/2 : p.z, kind: moved ? lineKind(li) : null });
+    if (has("M30")) break;
+    if (has("M99") && stack.length){ i = stack.pop(); continue; }
+    const tgt = callTarget(toks);
+    if (tgt!=null && L[tgt]!==undefined && stack.length < 8){ stack.push(i+1); i = L[tgt]; continue; }
+    i++;
+  }
+  return { segs, steps };
+  function step(toks, li){
+    const w = {};
+    for (const t of toks){
+      if (t.startsWith("(")) continue;
+      const k = t[0], v = parseFloat(t.slice(1));
+      if (k==="G"){ if ([0,1,2,3].includes(v)) mode = v; if (v===90) dist="abs"; if (v===91) dist="inc"; if (v===28||v===53||v===50||v===4) return; }
+      else if (k==="M" && (v===97 || v===98)) return;
+      else if (!isNaN(v)) w[k] = v;
+    }
+    if (!("X" in w || "Y" in w || "Z" in w || "U" in w || "W" in w)) return;
+    const inc = dist==="inc";
+    const n = { x: "U" in w ? p.x + w.U : ("X" in w ? (inc ? p.x + w.X : w.X) : p.x),
+                y: "Y" in w ? (inc ? p.y + w.Y : w.Y) : p.y,
+                z: "W" in w ? p.z + w.W : ("Z" in w ? (inc ? p.z + w.Z : w.Z) : p.z) };
+    if (!lathe && (mode===2 || mode===3)){
+      const cx = p.x + (w.I||0), cy = p.y + (w.J||0), r = Math.hypot(p.x-cx, p.y-cy);
+      const a0 = Math.atan2(p.y-cy, p.x-cx), a1 = Math.atan2(n.y-cy, n.x-cx);
+      let sw = a1 - a0; if (mode===3){ if (sw <= 0) sw += 2*Math.PI; } else { if (sw >= 0) sw -= 2*Math.PI; }
+      let q = {...p};
+      for (let s=1; s<=48; s++){ const a = a0 + sw*s/48; const nn = {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a), z:p.z+(n.z-p.z)*s/48}; segs.push({a:q, b:nn, rapid:false, li}); q = nn; }
+    } else segs.push({a:{...p}, b:n, rapid: mode===0, li});
+    moved = true; p = n;
+  }
+}
+function plot(svg, segs, fx, fy, opts){
+  const [ , , W, H] = svg.getAttribute("viewBox").split(" ").map(Number), pad = 14;
+  if (!segs.length){ svg.innerHTML = ""; return; }
+  const xs = segs.flatMap(s => [fx(s.a), fx(s.b)]), ys = segs.flatMap(s => [fy(s.a), fy(s.b)]);
+  let x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  if (x1-x0 < 1e-6){ x0 -= .5; x1 += .5; } if (y1-y0 < 1e-6){ y0 -= .5; y1 += .5; }
+  const sx = (W-2*pad)/(x1-x0), sy = (H-2*pad)/(y1-y0), s = opts.equal ? Math.min(sx, sy) : null;
+  const kx = s ?? sx, ky = s ?? sy;
+  const ox = (W - (x1-x0)*kx)/2, oy = (H - (y1-y0)*ky)/2;
+  const X = v => ox + (v-x0)*kx, Y = v => H - oy - (v-y0)*ky;
+  let g = "";
+  if (opts.zeroY !== undefined && opts.zeroY >= y0 && opts.zeroY <= y1) g += `<line x1="${pad/2}" x2="${W-pad/2}" y1="${Y(opts.zeroY)}" y2="${Y(opts.zeroY)}" stroke="#b9c2cf" stroke-dasharray="2 3" stroke-width=".8"/><text x="${pad/2}" y="${Y(opts.zeroY)-3}" font-size="8" text-anchor="start" fill="#8a8a8a" font-family="Consolas,monospace">${opts.zeroLabel}</text>`;
+  segs.forEach(sg => {
+    const hot = sg.li===curLine;
+    g += `<line x1="${X(fx(sg.a)).toFixed(1)}" y1="${Y(fy(sg.a)).toFixed(1)}" x2="${X(fx(sg.b)).toFixed(1)}" y2="${Y(fy(sg.b)).toFixed(1)}" stroke="${hot?"#d13438":sg.rapid?"#e8a33d":"#0f6cbd"}" stroke-width="${hot?2.4:sg.rapid?.9:1.4}" ${sg.rapid&&!hot?'stroke-dasharray="3 3"':""} stroke-linecap="round"/>`;
+  });
+  svg.innerHTML = g;
+}
+const KCOL = { rapid:"#e8a33d", feed:"#0f6cbd", arc:"#0e9384", cyc:"#c03d9a" };
+const SLOT = 18;
+let tlSteps = [], tlShift = 0;
+function drawViews(){
+  const { segs, steps } = interpret();
+  const v1 = document.getElementById("v1"), lathe = mtype()==="lathe";
+  if (lathe){
+    document.getElementById("v1h").innerHTML = "Toolpath XZ <span>side profile, X as radius</span>";
+    plot(v1, segs, p => p.z, p => p.x/2, { equal:true, zeroY:0, zeroLabel:"centerline" });
+  } else {
+    document.getElementById("v1h").innerHTML = "Toolpath XY <span>top view</span>";
+    plot(v1, segs.filter(s => Math.hypot(s.a.x-s.b.x, s.a.y-s.b.y) > 1e-6), p => p.x, p => p.y, { equal:true });
+  }
+  drawTimeline(steps, lathe);
+}
+function drawTimeline(steps, lathe){
+  tlSteps = steps;
+  const box = document.getElementById("tl"), svg = document.getElementById("tlsvg");
+  const BW = box.clientWidth || 278, H = 104, top = 12, bot = 20, half = BW/2;
+  const W = steps.length*SLOT + BW;
+  svg.setAttribute("width", W); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const CLIP = 0.3;
+  const vals = steps.map(s => lathe ? s.v : Math.min(s.v, CLIP));
+  const lo = Math.min(...vals, 0), hi = Math.max(...vals, lathe ? 0.1 : 0.05);
+  const Y = v => top + (hi - v) / (hi - lo || 1) * (H - top - bot);
+  const X = i => half + i*SLOT;
+  let idx = steps.findIndex(s => s.li===curLine);
+  if (idx < 0) idx = steps.findIndex(s => s.li > curLine);
+  if (idx < 0) idx = steps.length-1;
+  let g = "";
+  steps.forEach((s, i) => { if (s.li===curLine) g += `<rect x="${X(i)}" y="0" width="${SLOT}" height="${H-bot+4}" fill="#fde7e8"/>`; });
+  g += `<line x1="${half-8}" x2="${W-half+8}" y1="${Y(0)}" y2="${Y(0)}" stroke="#b9c2cf" stroke-dasharray="2 3" stroke-width=".8"/>`;
+  let prev = null;
+  steps.forEach((s, i) => {
+    const v = vals[i], col = s.kind ? KCOL[s.kind] : "#a9b1bc", dash = s.kind==="rapid" ? ' stroke-dasharray="3 2"' : "";
+    if (prev!==null && Math.abs(prev - v) > 1e-9) g += `<line x1="${X(i)}" x2="${X(i)}" y1="${Y(prev)}" y2="${Y(v)}" stroke="${col}" stroke-width="1.6"${dash}/>`;
+    g += `<line x1="${X(i)}" x2="${X(i)+SLOT}" y1="${Y(v)}" y2="${Y(v)}" stroke="${col}" stroke-width="${s.kind?2.2:1.2}"${dash}/>`;
+    if (!lathe && s.v > CLIP) g += `<text x="${X(i)+SLOT/2}" y="${Y(v)-3}" font-size="7" text-anchor="middle" fill="#9a9a9a">↑</text>`;
+    const nw = doc[s.li]?.[0]; const lab = /^N\d+$/.test(nw||"") ? nw : "L" + (s.li+1);
+    const cur = s.li===curLine;
+    if (cur || i % 2 === 0) g += `<text x="${X(i)+SLOT/2}" y="${H-6}" font-size="${cur?8:6.5}" text-anchor="middle" fill="${cur?"#d13438":"#9a9a9a"}" font-weight="${cur?700:400}" font-family="Consolas,monospace">${lab}</text>`;
+    prev = v;
+  });
+  g += `<text x="${half-6}" y="${Y(0)-3}" font-size="7.5" text-anchor="end" fill="#8a8a8a" font-family="Consolas,monospace">${lathe ? "CL" : "Z0"}</text>`;
+  svg.innerHTML = g;
+  tlShift = -(idx*SLOT + SLOT/2);
+  svg.style.transform = `translateX(${tlShift}px)`;
+  const st = steps[idx];
+  document.getElementById("tlh").innerHTML = `${lathe ? "X radius" : "Z"} by line <span>${st ? `${lathe ? "X" : "Z"} ${(lathe ? st.v*2 : st.v).toFixed(3)} at ${/^N\d+$/.test(doc[st.li]?.[0]||"") ? doc[st.li][0] : "line "+(st.li+1)}` : ""}</span>`;
+}
+document.getElementById("tl").addEventListener("click", e => {
+  const box = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - box.left - tlShift - box.width/2;
+  const i = Math.floor(x / SLOT);
+  if (tlSteps[i]) selectLine(tlSteps[i].li);
+});
+function scrollToLn(el){
+  if (!el) return;
+  const t = el.offsetTop, b = t + el.offsetHeight;
+  if (t < ed.scrollTop + 8) ed.scrollTop = t - 8;
+  else if (b > ed.scrollTop + ed.clientHeight - 8) ed.scrollTop = b - ed.clientHeight + 8;
+}
+function selectLine(li){
+  if (editing) commit();
+  curLine = Math.max(0, Math.min(li, doc.length-1)); render();
+  scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`));
+  ed.focus({preventScroll:true});
+}
+ed.addEventListener("keydown", e => {
+  if (editing || e.target!==ed) return;
+  if (e.key==="ArrowDown"){ e.preventDefault(); selectLine(curLine+1); }
+  if (e.key==="ArrowUp"){ e.preventDefault(); selectLine(curLine-1); }
+  if (e.key==="Enter"){ e.preventDefault(); startEdit(curLine, 0); }
+});
+
+/* ---------- Controls ---------- */
+function setPressed(a, b, on){ a.setAttribute("aria-pressed", on); b.setAttribute("aria-pressed", !on); }
+const mgc = document.getElementById("m-gc"), men = document.getElementById("m-en"), wl = document.getElementById("w-long"), ws = document.getElementById("w-short");
+mgc.onclick = () => { if (editing) commit(); editMode = "gc"; setPressed(mgc, men, true); render(); setMsg("Editing G-code. English updates as you type."); };
+men.onclick = () => { if (editing) commit(); editMode = "en"; setPressed(mgc, men, false); render(); setMsg("Editing English. G-code is written for you."); };
+wl.onclick = () => { style = "long"; setPressed(wl, ws, true); render(); };
+ws.onclick = () => { style = "short"; setPressed(wl, ws, false); render(); };
+const vb = ["both","en","gc"].map(m => document.getElementById("v-"+m));
+vb.forEach((btn, i) => btn.onclick = () => {
+  if (editing) commit();
+  showMode = ["both","en","gc"][i];
+  vb.forEach((b, j) => b.setAttribute("aria-pressed", i===j));
+  if (showMode!=="both"){ editMode = showMode; setPressed(mgc, men, showMode==="gc"); }
+  mgc.disabled = men.disabled = showMode!=="both";
+  render();
+  setMsg(showMode==="both" ? "Showing English and G-code" : showMode==="en" ? "Showing English only. Edits write the G-code for you." : "Showing G-code only");
+});
+document.getElementById("machine").onchange = e => { machineId = e.target.value; render(); setMsg("Machine file: " + e.target.selectedOptions[0].text); };
+document.getElementById("b-new").onclick = () => { const li = editing ? editing.li : curLine; if (editing && !commit()) return; newLine(li); };
+document.getElementById("b-renum").onclick = () => { if (editing && !commit()) return; renumber(); };
+document.getElementById("autoN").onchange = e => { autoN = e.target.checked; setMsg(autoN ? `New lines get the next free N number, counting by ${N_STEP}.` : "New lines get no N number."); };
+document.getElementById("b-save").onclick = () => setMsg(`Saved ${fileName}. Only the G-code is written, with its original CRLF line endings.`);
+
+const dlg = document.getElementById("dlg"), dlgName = document.getElementById("dlg-name");
+const LIST = [
+  ["Archive", "10/12/2026 4:10 PM", "File folder", "", true],
+  ["Fixtures", "9/30/2026 8:02 AM", "File folder", "", true],
+  ["FLANGE_OP1.nc", "10/29/2026 2:44 PM", "NC File", "1 KB"],
+  ["POCKET_2X1.nc", "10/31/2026 6:20 AM", "NC File", "1 KB"],
+  ["SHAFT_OD.nc", "10/30/2026 11:15 AM", "NC File", "1 KB"]
+];
+let dlgSel = null;
+function drawDlg(){
+  document.getElementById("dlg-files").innerHTML = LIST.map(([n,d,t,s,dir]) => `<tr class="f${n===dlgSel?" sel":""}" data-n="${n}" data-dir="${dir?1:""}"><td><span class="ic ${dir?"dir":"nc"}"></span>${n}</td><td>${d}</td><td>${t}</td><td>${s}</td></tr>`).join("");
+  dlgName.textContent = dlgSel || "";
+}
+document.getElementById("b-open").onclick = () => { if (editing) commit(); dlgSel = fileName; drawDlg(); dlg.hidden = false; };
+document.getElementById("dlg-files").addEventListener("click", e => { const r = e.target.closest("tr"); if (!r || r.dataset.dir) return; dlgSel = r.dataset.n; document.querySelectorAll("#dlg-files tr").forEach(x => x.classList.toggle("sel", x===r)); dlgName.textContent = dlgSel; });
+document.getElementById("dlg-files").addEventListener("dblclick", e => { const r = e.target.closest("tr"); if (!r || r.dataset.dir) return; dlg.hidden = true; load(r.dataset.n); });
+document.getElementById("dlg-open").onclick = () => { dlg.hidden = true; if (dlgSel && FILES[dlgSel]) load(dlgSel); };
+document.getElementById("dlg-cancel").onclick = document.getElementById("dlg-x").onclick = () => { dlg.hidden = true; };
+
+load("POCKET_2X1.nc");
+setMsg("Click a word to edit it");
+</script>
+</body>
+</html>

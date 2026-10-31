@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+# G-code samples keep their exact bytes and line endings (often CRLF)
+*.nc    -text
+*.ngc   -text
+*.tap   -text
+*.gcode -text
+
+*.png binary
+*.jpg binary
