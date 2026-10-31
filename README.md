@@ -32,6 +32,10 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Problems panel](docs/images/problems.png) | ![Lathe checks](docs/images/lathe-checks.png) | ![Okuma mill](docs/images/okuma-mill.png) |
 
+| Machine picker | Machine profiles | Open dialog |
+|---|---|---|
+| ![Machine picker](docs/images/machine-menu.png) | ![Machine profiles](docs/images/machine-profiles.png) | ![Open dialog](docs/images/native-open-dialog.png) |
+
 ## Planned features
 
 **Editing**
