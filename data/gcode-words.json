@@ -1,5 +1,5 @@
 {
-  "about": "Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry.",
+  "about": "Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry. machineOverrides keys are a brand ('haas') or a brand and machine type ('okuma.mill'); the more specific key wins.",
   "version": 1,
   "codes": {
     "G00": { "long": "RAPID",    "short": "RPD",   "desc": "Rapid move" },
@@ -13,6 +13,8 @@
     "G20": { "long": "INCH",     "short": "IN",    "desc": "Inch units" },
     "G21": { "long": "METRIC",   "short": "MM",    "desc": "Millimeter units" },
     "G28": { "long": "HOMEREF",  "short": "HOME",  "desc": "Return to machine home" },
+    "G30": { "long": "HOME2",    "short": "HOM2",  "desc": "Return to a second reference point" },
+    "G32": { "lathe": { "long": "THDCUT", "short": "THC", "desc": "Single thread cut" } },
     "G40": { "long": "COMPOFF",  "short": "CCOFF", "desc": "Cutter compensation off" },
     "G41": { "long": "COMPLEFT", "short": "CCL",   "desc": "Cutter compensation left" },
     "G42": { "long": "COMPRGHT", "short": "CCR",   "desc": "Cutter compensation right" },
@@ -31,17 +33,38 @@
     "G59": { "long": "WORK6",    "short": "W6",    "desc": "Work offset 6" },
     "G70": { "lathe": { "long": "FINCYC", "short": "FIN", "desc": "Finishing cycle" } },
     "G71": { "lathe": { "long": "RUFCYC", "short": "RUF", "desc": "OD/ID roughing cycle" } },
+    "G72": { "lathe": { "long": "FACERUF", "short": "FRUF", "desc": "Face roughing cycle" } },
+    "G73": {
+      "mill":  { "long": "PECKHS",  "short": "PKHS", "desc": "High-speed peck drilling cycle" },
+      "lathe": { "long": "PATHRUF", "short": "PRUF", "desc": "Irregular-path roughing cycle" }
+    },
+    "G74": {
+      "mill":  { "long": "TAPLEFT", "short": "LTAP", "desc": "Left-hand (reverse) tapping cycle" },
+      "lathe": { "long": "FACEGRV", "short": "FGRV", "desc": "Face grooving or peck drilling cycle" }
+    },
+    "G75": { "lathe": { "long": "GROOVE", "short": "GRV", "desc": "OD/ID grooving cycle" } },
     "G76": {
       "mill":  { "long": "FINBORE", "short": "FBOR", "desc": "Fine boring cycle" },
       "lathe": { "long": "THREAD",  "short": "THD",  "desc": "Threading cycle" }
     },
     "G80": { "long": "CYCOFF",   "short": "CYOFF", "desc": "Cancel canned cycle" },
     "G81": { "long": "DRILL",    "short": "DRL",   "desc": "Drilling cycle" },
+    "G82": { "long": "SPOTDWL",  "short": "SPDW",  "desc": "Spot drill cycle with dwell" },
     "G83": { "long": "PECKDRL",  "short": "PCK",   "desc": "Peck drilling cycle" },
     "G84": { "long": "TAP",      "short": "TAP",   "desc": "Tapping cycle" },
-    "G90": { "long": "ABS",      "short": "ABS",   "desc": "Absolute positions" },
+    "G85": { "long": "BORE",     "short": "BOR",   "desc": "Boring cycle, feed out" },
+    "G86": { "long": "BORESTOP", "short": "BORS",  "desc": "Boring cycle, spindle stop and rapid out" },
+    "G89": { "long": "BOREDWL",  "short": "BORD",  "desc": "Boring cycle with dwell" },
+    "G90": {
+      "mill":  { "long": "ABS",     "short": "ABS",  "desc": "Absolute positions" },
+      "lathe": { "long": "TURNCYC", "short": "TCY",  "desc": "OD/ID turning cycle" }
+    },
     "G91": { "long": "INCR",     "short": "INC",   "desc": "Incremental positions" },
-    "G94": { "long": "FEEDMIN",  "short": "FPM",   "desc": "Feed per minute" },
+    "G92": { "lathe": { "long": "THDCYC", "short": "TCYC", "desc": "Threading cycle" } },
+    "G94": {
+      "mill":  { "long": "FEEDMIN", "short": "FPM",  "desc": "Feed per minute" },
+      "lathe": { "long": "FACECYC", "short": "FCY",  "desc": "End facing cycle" }
+    },
     "G95": { "long": "FEEDREV",  "short": "FPR",   "desc": "Feed per revolution" },
     "G96": { "long": "MODESFM",  "short": "CSS",   "desc": "Constant surface speed" },
     "G97": { "long": "MODERPM",  "short": "RPM",   "desc": "Constant RPM" },
@@ -55,6 +78,7 @@
     },
     "M00": { "long": "STOP",     "short": "STP",   "desc": "Program stop" },
     "M01": { "long": "OPTSTOP",  "short": "OSTP",  "desc": "Optional stop" },
+    "M02": { "long": "PRGEND",   "short": "PEND",  "desc": "End program" },
     "M03": { "long": "SPINFWD",  "short": "SFWD",  "desc": "Spindle on, forward (CW)" },
     "M04": { "long": "SPINREV",  "short": "SREV",  "desc": "Spindle on, reverse (CCW)" },
     "M05": { "long": "SPINOFF",  "short": "SOFF",  "desc": "Spindle off" },
@@ -95,7 +119,36 @@
     "haas": {
       "M88": { "long": "TSCON",  "short": "TSC",  "desc": "Through-spindle coolant on" },
       "M89": { "long": "TSCOFF", "short": "TSCO", "desc": "Through-spindle coolant off" },
-      "M97": { "long": "LOCSUB", "short": "LSUB", "desc": "Local subprogram call" }
+      "M97": { "long": "LOCSUB", "short": "LSUB", "desc": "Local subprogram call" },
+      "G77": { "long": "BACKBORE", "short": "BKBR", "desc": "Back boring cycle" }
+    },
+    "okuma": {
+      "CALL": { "long": "SUBCALL", "short": "SUB",  "desc": "Call subprogram (Okuma)" },
+      "RTS":  { "long": "SUBRET",  "short": "RET",  "desc": "Return from subprogram (Okuma)" },
+      "GOTO": { "long": "JUMP",    "short": "JMP",  "desc": "Jump to a sequence name (Okuma)" },
+      "G30":  { "long": "HOMEZP",  "short": "ZPT",  "desc": "Return to zero point P (Okuma)" }
+    },
+    "okuma.mill": {
+      "G15": { "long": "WORKSEL",  "short": "WSEL", "desc": "Select work offset by H number (Okuma)" },
+      "G53": { "long": "TLENOFF",  "short": "TLOFF","desc": "Tool length offset off (Okuma)" },
+      "G54": { "long": "TLENX",    "short": "TLX",  "desc": "Tool length offset on X (Okuma, not a work offset)" },
+      "G55": { "long": "TLENY",    "short": "TLY",  "desc": "Tool length offset on Y (Okuma, not a work offset)" },
+      "G56": { "long": "TLENON",   "short": "TLON", "desc": "Tool length offset on Z (Okuma)" }
+    },
+    "okuma.lathe": {
+      "G90": { "long": "ABS",      "short": "ABS",  "desc": "Absolute positions" },
+      "G91": { "long": "INCR",     "short": "INC",  "desc": "Incremental positions" },
+      "G94": { "long": "FEEDMIN",  "short": "FPM",  "desc": "Feed per minute" },
+      "G95": { "long": "FEEDREV",  "short": "FPR",  "desc": "Feed per revolution" },
+      "G33": { "long": "THREAD",   "short": "THD",  "desc": "Single thread cut (Okuma)" },
+      "G71": { "long": "THDLONG",  "short": "THL",  "desc": "Compound threading, longitudinal (Okuma)" },
+      "G72": { "long": "THDFACE",  "short": "THF",  "desc": "Compound threading, face (Okuma)" },
+      "G80": { "long": "CONTEND",  "short": "CEND", "desc": "End of LAP contour definition (Okuma)" },
+      "G81": { "long": "CONTZ",    "short": "CTZ",  "desc": "Start of longitudinal LAP contour (Okuma)" },
+      "G82": { "long": "CONTX",    "short": "CTX",  "desc": "Start of face LAP contour (Okuma)" },
+      "G85": { "long": "LAPRUF",   "short": "LRUF", "desc": "LAP roughing, longitudinal (Okuma)" },
+      "G86": { "long": "LAPCOPY",  "short": "LCPY", "desc": "LAP copy roughing (Okuma)" },
+      "G87": { "long": "LAPFIN",   "short": "LFIN", "desc": "LAP finishing (Okuma)" }
     }
   }
 }

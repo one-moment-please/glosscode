@@ -33,11 +33,23 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Z-by-line timeline in execution order, centered on the selected line
 
 **Files and machines**
-- [ ] Machine selector (mill or lathe, with brand overrides)
+- [ ] Machine selector (mill or lathe, with brand overrides): Haas, Fanuc and Okuma
+- [ ] English numbers always show a decimal point; distance words without one show what the control reads (X1 → X0.0001)
+- [ ] F and S keep their letter with a small unit (ipm, ipr, mmpm, mmpr, rpm, sfm, smm)
+
+**Checks** (see [checks.md](checks.md))
+- [ ] Problems panel with severity filters, margin marks, click or F8 to jump to the line
+- [ ] Canned cycles missing required words, per control (Haas, Fanuc, Okuma)
+- [ ] Feed move with no F, F left over from the other feed mode, cutting with the spindle off
+- [ ] Word repeated in a line, two codes from one modal group, contradicting M-codes
+- [ ] Missing decimal point, arc geometry, cutter comp start, tool length offset after a tool change
+- [ ] Codes that mean something else on the selected control
 - [ ] System Open and Save dialogs
 
 ## Later
 
 - [ ] Native Linux build
 - [ ] Machine definition file format and a few starter machines
-- [ ] Logic checks beyond mode clashes
+- [ ] Okuma checked against an OSP manual and real programs; LAP cycles, sequence names, User Task variables
+- [ ] Macro programs (#vars, IF, WHILE) and 4th/5th axis checks
+- [ ] Machine limits (travel, max RPM and feed) and part/fixture models for rapid-into-part checks

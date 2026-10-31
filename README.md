@@ -11,14 +11,14 @@ GlossCode is a G-code editor that shows a plain-English line above every line of
 Every G-code word sits in a fixed-width column, and its English word sits directly above it:
 
 ```
-SEQ40      SPINFWD    MODERPM    RPM6000
+SEQ40      SPINFWD    MODERPM    S6000rpm
 N40        M03        G97        S6000
 
 SEQ50      TLENON     LOFS01     Z1.0       COOLON
 N50        G43        H01        Z1.0       M08
 ```
 
-The English words come from a dictionary of consistent abbreviations ([`data/gcode-words.json`](data/gcode-words.json)). Each word has a long style (`SPINFWD`, 10 columns wide) and a short style (`SFWD`, 8 columns wide). Values carry their unit as a prefix that depends on the active modes, so `S600` reads `RPM600` under G97 and `SFM600` under G96.
+The English words come from a dictionary of consistent abbreviations ([`data/gcode-words.json`](data/gcode-words.json)). Each word has a long style (`SPINFWD`, 10 columns wide) and a short style (`SFWD`, 8 columns wide). Numbers always show their decimal point (`X1.` reads `X1.0`), and a distance written without one is shown the way the control reads it, so `X1` reads `X0.0001`. Feeds and speeds keep their letter and get a small unit that follows the active modes, so `S600` reads `S600 rpm` under G97 and `S600 sfm` under G96.
 
 | Long words | Short words | English only |
 |---|---|---|
@@ -28,6 +28,10 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Columns by word type](docs/images/columns-layout.png) | ![Simulation](docs/images/simulation.png) | ![Find](docs/images/find.png) |
 
+| Problems panel | Lathe checks | Okuma mill |
+|---|---|---|
+| ![Problems panel](docs/images/problems.png) | ![Lathe checks](docs/images/lathe-checks.png) | ![Okuma mill](docs/images/okuma-mill.png) |
+
 ## Planned features
 
 **Editing**
@@ -35,6 +39,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 - Edit either line. A toggle switches between typing G-code and typing English, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
 - Automatic N numbers on new lines (step 10, or the midpoint when there's no room), plus a Renumber command that leaves subprogram labels alone.
 - Warnings when a word clashes with the active mode, such as an inches-per-rev feed while G94 is on.
+- A Problems panel that checks the program as you type: canned cycles missing words (G83 with no Q), feed moves with no F or with the spindle off, a word repeated in a line, two codes from one group, numbers with no decimal point, arcs that don't close, missing length offsets, and codes that mean something else on the selected control (G54 on an Okuma). See [`docs/checks.md`](docs/checks.md).
 - Opens and saves through the standard system file dialog, and keeps each file's original line endings.
 
 **Reading**
@@ -52,6 +57,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 **Machines**
 - Mill and lathe modes, since some codes mean different things on each (G50, G76, G98, G99).
 - Per-machine definition files that override dictionary entries (for example Haas M88/M89 and M97).
+- Haas and Fanuc mills and lathes, plus a first draft of Okuma OSP (G15 H work offsets, G56 H length offsets, CALL and RTS). [`docs/checks.md`](docs/checks.md) lists what each control covers so far.
 
 See [`docs/features.md`](docs/features.md) for the full list and what is still under discussion.
 
@@ -72,8 +78,10 @@ More detail is in [`docs/architecture.md`](docs/architecture.md).
 ## Repository layout
 
 ```
-data/gcode-words.json   Starter abbreviation dictionary (long and short styles, mill/lathe splits, Haas overrides)
+data/gcode-words.json   Starter abbreviation dictionary (long and short styles, mill/lathe splits, Haas and Okuma overrides)
+data/gcode-rules.json   Problems-panel rules and per-control tables (modal groups, canned cycle words, dialect traps)
 docs/architecture.md    Core, platform layer, UI and build plan
+docs/checks.md          Every check, the rules file format, and Haas/Okuma coverage
 docs/features.md        Feature list and open questions
 docs/images/            Mockup screenshots
 docs/mockup/index.html  Clickable mockup; open it in a browser

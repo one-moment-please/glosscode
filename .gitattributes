@@ -5,6 +5,8 @@
 *.ngc   -text
 *.tap   -text
 *.gcode -text
+*.MIN   -text
+*.min   -text
 
 *.png binary
 *.jpg binary
