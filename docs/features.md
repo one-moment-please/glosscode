@@ -21,8 +21,10 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Undo and redo
 - [ ] Find, matching both G-code and English
 - [ ] Sort the words on each line into a consistent order
-- [ ] Menu bar: File, Edit, View, Program, Simulate
-- [ ] Hole pattern tool (Program › Insert hole pattern…): grid (distance, angle and hole count along each axis) or bolt circle (diameter or radius, hole count, start angle, direction, complete circle or an arc by angle or by distance), in the active plane (G17 XY, G18 XZ, G19 YZ), with a preview; inserts one line per hole after the canned-cycle line, absolute or incremental to match G90/G91
+- [ ] Menu bar: File, Edit, View, Insert, Program, Simulate
+- [ ] Hole pattern tool (Insert › Hole pattern…): grid (distance, angle and hole count along each axis) or bolt circle (diameter or radius, hole count, start angle, direction, complete circle or an arc by angle or by distance), in the active plane (G17 XY, G18 XZ, G19 YZ), with a preview; inserts one line per hole after the canned-cycle line, absolute or incremental to match G90/G91
+- [ ] Insert › canned cycle by category (drilling, tapping, boring; roughing, finishing, turning and facing, grooving, threading, live tooling): sketch, a box per word with required ones marked, and the finished line with its English; categories the machine can't run are hidden
+- [ ] Lathe options in the machine profile (live tooling, Y axis) that decide which cycles and words are offered
 
 **Reading**
 - [ ] Inline expansion of subprogram calls, marked with purple N numbers; edits change the subprogram
