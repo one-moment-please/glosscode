@@ -1,3 +1,5 @@
+<img src="assets/logo/glosscode.svg" alt="GlossCode logo" width="96" align="left">
+
 # GlossCode
 
 GlossCode is a G-code editor that shows a plain-English line above every line of code, with each code lined up under its English word. It tracks active modes, colors rapid and feed moves, and expands subprogram calls inline.
