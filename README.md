@@ -38,12 +38,17 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Machine picker](docs/images/machine-menu.png) | ![Machine profiles](docs/images/machine-profiles.png) | ![Open dialog](docs/images/native-open-dialog.png) |
 
+| Hole pattern: grid | Hole pattern: bolt circle | Holes inserted |
+|---|---|---|
+| ![Hole pattern grid](docs/images/hole-pattern-grid.png) | ![Hole pattern bolt circle](docs/images/hole-pattern-circle.png) | ![Holes inserted](docs/images/hole-pattern-inserted.png) |
+
 ## Planned features
 
 **Editing**
 - Menu bar (File, Edit, View, Program, Simulate), undo and redo, and Find that matches both G-code and English.
 - Edit either line. A toggle switches between typing G-code and typing English, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
 - Automatic N numbers on new lines (step 10, or the midpoint when there's no room), plus a Renumber command that leaves subprogram labels alone.
+- A hole pattern tool (Program › Insert hole pattern…) that works out drilling positions and inserts them after the canned-cycle line. Grid mode takes a distance, angle and hole count along each axis; bolt circle mode takes a diameter or radius, hole count, start angle and direction, for a complete circle or an arc spaced by angle or by distance. It follows the active plane (G17 XY, G18 XZ, G19 YZ) and G90/G91, and writes every number with a decimal point.
 - Warnings when a word clashes with the active mode, such as an inches-per-rev feed while G94 is on.
 - A Problems panel that checks the program as you type: canned cycles missing words (G83 with no Q), feed moves with no F or with the spindle off, a word repeated in a line, two codes from one group, numbers with no decimal point, arcs that don't close, missing length offsets, and codes that mean something else on the selected control (G54 on an Okuma). See [`docs/checks.md`](docs/checks.md).
 - Opens and saves through the standard system file dialog, and keeps each file's original line endings.
