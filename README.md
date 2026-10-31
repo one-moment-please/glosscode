@@ -79,4 +79,4 @@ Open [`docs/mockup/index.html`](docs/mockup/index.html) in any browser. Click a 
 
 ## License
 
-Not chosen yet.
+[MIT](LICENSE)
