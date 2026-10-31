@@ -22,6 +22,7 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Find, matching both G-code and English
 - [ ] Sort the words on each line into a consistent order
 - [ ] Menu bar: File, Edit, View, Program, Simulate
+- [ ] Hole pattern tool (Program › Insert hole pattern…): grid (distance, angle and hole count along each axis) or bolt circle (diameter or radius, hole count, start angle, direction, complete circle or an arc by angle or by distance), in the active plane (G17 XY, G18 XZ, G19 YZ), with a preview; inserts one line per hole after the canned-cycle line, absolute or incremental to match G90/G91
 
 **Reading**
 - [ ] Inline expansion of subprogram calls, marked with purple N numbers; edits change the subprogram
