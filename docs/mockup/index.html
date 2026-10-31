@@ -225,6 +225,45 @@ select.wsel{font:13px var(--w-ui);border:1px solid #d1d1d1;border-radius:4px;pad
 .tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
 h2{font-size:25px;font-weight:600}
 section{display:flex;flex-direction:column;gap:14px}
+/* ---------- Checks: problems panel, gutter marks, units ---------- */
+.app{height:860px}
+small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spacing:-.04em}
+.r.en .cell.imp{color:#b35c00;text-decoration:underline wavy #f7a128;text-underline-offset:3px}
+.r.en .gut{text-align:center;padding-right:0}
+.pm{display:inline-block;width:15px;height:15px;line-height:15px;border-radius:50%;font:700 10px/15px var(--w-ui);color:#fff;text-align:center;cursor:help}
+.pm.error{background:#c42b1c}.pm.warning{background:#e08b00}.pm.info{background:#4f7fc3;font-style:italic;font-family:Georgia,serif}
+.ln.p-error .r.gc .gut{color:#c42b1c;font-weight:700}
+.ln.p-warning .r.gc .gut{color:#b35c00;font-weight:700}
+.probs{flex:none;border-top:1px solid #d6d6d6;background:#fbfbfb;display:flex;flex-direction:column;height:150px}
+.probs.closed{height:29px}
+.probs.empty{height:58px}
+.probs .ph{display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 10px;border-bottom:1px solid #e5e5e5;font-size:12px;font-weight:600;color:#333;flex:none}
+.probs .ph .tg{font:12px var(--w-ui);border:0;background:none;cursor:pointer;color:#555;padding:0 4px}
+.pf{font:11.5px var(--w-ui);border:1px solid #d1d1d1;background:#fff;border-radius:10px;padding:0 8px;height:19px;cursor:pointer;color:#333}
+.pf[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+.pf.error{color:#c42b1c}.pf.warning{color:#a35a00}.pf.info{color:#2f5fa3}
+.probs .phint{margin-left:auto;font-weight:400;color:#888;font-size:11px}
+.probs .pl{flex:1;overflow:auto;font-size:12px}
+.pr{display:grid;grid-template-columns:18px 52px 1fr auto;gap:8px;padding:3px 10px;cursor:pointer;align-items:baseline;border-bottom:1px solid #f1f1f1}
+.pr:hover{background:#eef4fb}
+.pr.on{background:#e3eefa}
+.pr .pi{font-weight:700;text-align:center}
+.pr.error .pi{color:#c42b1c}.pr.warning .pi{color:#d07b00}.pr.info .pi{color:#4f7fc3;font-style:italic;font-family:Georgia,serif}
+.pr .pn{font:12px var(--w-mono);color:#5d6b7c}
+.pr .pid{font:10.5px var(--w-mono);color:#9a9a9a}
+.pnone{padding:8px 10px;color:#3b7d23}
+.pnote{padding:5px 10px;background:#fff4e5;color:#6a3b00;border-bottom:1px solid #f7d9a8;font-size:11.5px}
+.info .warn.error{background:#fdecea;border-left-color:#c42b1c;color:#6e1a12}
+.info .warn.info{background:#eef4fb;border-left-color:#4f7fc3;color:#1f3d66}
+.status #st-warn{cursor:pointer}
+.status .se{color:#c42b1c}.status .sw2{color:#b35c00}.status .si{color:#2f5fa3}.status .ok{color:#3b7d23}
+.rules{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}
+.rules th,.rules td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.rules thead th{font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.rules td.id{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--muted)}
+.sev{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;white-space:nowrap}
+.sev.error{background:#fdecea;color:#a3271b}.sev.warning{background:#fff4e5;color:#8a4b00}.sev.info{background:var(--accent-soft);color:var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sev.error{background:#3a1d1a;color:#f2a49b}:root:not([data-theme="light"]) .sev.warning{background:#3a2a12;color:#f3c27a}}
 </style>
 </head>
 <body>
@@ -241,6 +280,8 @@ section{display:flex;flex-direction:column;gap:14px}
       <span><kbd>Ctrl</kbd>+<kbd>F</kbd> find</span>
       <span><b>View › Columns by word type</b> lines up X, Y, Z, F and M words</span>
       <span><b>▶</b> above the toolpath plays the program move by move</span>
+      <span><b>Problems</b> under the code lists every mistake; <kbd>F8</kbd> jumps to the next one</span>
+      <span>Open <b>CHECKS_DEMO.nc</b>, <b>LATHE_CHECKS.nc</b> or <b>OKUMA_PLATE.MIN</b> to see the checks</span>
     </div>
   </header>
 
@@ -260,7 +301,9 @@ section{display:flex;flex-direction:column;gap:14px}
         <select class="wsel" id="machine" aria-label="Machine definition">
           <option value="haas_vf2">Haas VF-2 (mill)</option>
           <option value="fanuc_0imf">Fanuc 0i-MF (mill)</option>
+          <option value="okuma_m560">Okuma M560-V, OSP (mill)</option>
           <option value="haas_st10">Haas ST-10 (lathe)</option>
+          <option value="okuma_lb3000">Okuma LB3000, OSP (lathe)</option>
         </select>
         <span class="vsep"></span>
         <span class="lab">Edit</span>
@@ -285,6 +328,10 @@ section{display:flex;flex-direction:column;gap:14px}
           </div>
           <div class="colhead" id="colhead"></div>
           <div class="ed mode-en" id="ed" tabindex="0" aria-label="Program editor. Up and down arrows move the selected line."></div>
+          <div class="probs" id="probs">
+            <div class="ph"><button class="tg" id="probs-tg" aria-label="Show or hide problems">▾</button><span>Problems</span><span id="probs-c" style="display:flex;gap:4px"></span><span class="phint">Click a problem to go to its line · Ctrl+Shift+M</span></div>
+            <div class="pl" id="probs-l" role="list"></div>
+          </div>
         </div>
         <div class="side">
           <div class="panel">
@@ -346,6 +393,8 @@ section{display:flex;flex-direction:column;gap:14px}
     <div class="note"><h3>Columns by word type</h3><p>This layout gives each word type its own column, so X values are always under X and M-codes always sit together. Only the columns a file actually uses appear. Rare words go in an Other column near the end, so there are no rows of empty columns. Click an empty cell to add a word of that type in the right place.</p></div>
     <div class="note"><h3>Simulation and preview</h3><p>▶ plays the program one move at a time. The editor follows along, and the tool marker shows where the cutter is. When you're not playing, moves after the selected line are greyed out, or hidden if you choose that in View. <b>View › Toolpath colors › By tool</b> gives each tool its own color, like the spot drill (T2) here.</p></div>
     <div class="note"><h3>Subprograms shown inline</h3><p>A call like <code>N100 M97 P1000</code> gets a <b>▸ show N1000</b> button. It inserts the subprogram's lines below the call, with a purple bar, a <b>↳</b> in the margin and purple N numbers. Editing those rows edits the subprogram itself.</p></div>
+    <div class="note"><h3>Problems panel</h3><p>Every rule lives in <code>gcode-rules.json</code>: its message, its severity and the per-control tables it reads, such as which words each canned cycle needs on Haas, Fanuc or Okuma. A machine file can raise, lower or turn off any rule. The checks walk the program in the order the machine runs it, so a subprogram is checked with the feed, spindle and offsets active at its call.</p></div>
+    <div class="note"><h3>Decimals and units</h3><p>The English line always shows the decimal point, so <code>X1.</code> reads <b>X1.0</b>. A distance word with no decimal point, like <code>X1</code>, reads <b>X0.0001</b> in orange, because that's how a Fanuc-style control takes it, and the Problems panel flags it. Feeds and speeds keep their letter and get a small unit: <b>F12.0</b><small class="u">ipm</small>, <b>S2500</b><small class="u">rpm</small>, <b>S400</b><small class="u">sfm</small>.</p></div>
     <div class="note"><h3>Standard file dialogs</h3><p>Open and Save call the real system dialog from C: <code>IFileOpenDialog</code> on Windows, and the GTK or desktop-portal dialog on Linux. The <a href="https://github.com/btzy/nativefiledialog-extended">nativefiledialog-extended</a> library wraps both behind one call.</p></div>
   </div>
 
@@ -357,15 +406,27 @@ section{display:flex;flex-direction:column;gap:14px}
       <tbody id="feat"></tbody>
     </table></div>
   </section>
+
+  <section>
+    <h2>Checks in the Problems panel</h2>
+    <p style="max-width:780px">These come straight from <code>data/gcode-rules.json</code>. Errors are things the control will alarm on or that will cut the wrong thing. Warnings are likely mistakes. Info items are worth a look but are often fine.</p>
+    <div class="tablebox"><table class="rules">
+      <thead><tr><th>Severity</th><th>Check</th><th>Example message</th><th>Rule id</th></tr></thead>
+      <tbody id="rules"></tbody>
+    </table></div>
+  </section>
 </div>
 
 <script>
-const DICT = {"about":"Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry.","version":1,"codes":{"G00":{"long":"RAPID","short":"RPD","desc":"Rapid move"},"G01":{"long":"LINEAR","short":"LIN","desc":"Straight move at feed rate"},"G02":{"long":"ARCCW","short":"ACW","desc":"Clockwise arc"},"G03":{"long":"ARCCCW","short":"ACCW","desc":"Counterclockwise arc"},"G04":{"long":"DWELL","short":"DWL","desc":"Pause for a set time"},"G17":{"long":"PLANEXY","short":"PXY","desc":"Arcs in the XY plane"},"G18":{"long":"PLANEXZ","short":"PXZ","desc":"Arcs in the XZ plane"},"G19":{"long":"PLANEYZ","short":"PYZ","desc":"Arcs in the YZ plane"},"G20":{"long":"INCH","short":"IN","desc":"Inch units"},"G21":{"long":"METRIC","short":"MM","desc":"Millimeter units"},"G28":{"long":"HOMEREF","short":"HOME","desc":"Return to machine home"},"G40":{"long":"COMPOFF","short":"CCOFF","desc":"Cutter compensation off"},"G41":{"long":"COMPLEFT","short":"CCL","desc":"Cutter compensation left"},"G42":{"long":"COMPRGHT","short":"CCR","desc":"Cutter compensation right"},"G43":{"long":"TLENON","short":"TLON","desc":"Tool length offset on"},"G49":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off"},"G50":{"mill":{"long":"SCALEOFF","short":"SCLOFF","desc":"Scaling off"},"lathe":{"long":"MAXRPM","short":"SMAX","desc":"Clamp spindle to a max RPM"}},"G53":{"long":"MACHCRD","short":"MCS","desc":"Move in machine coordinates"},"G54":{"long":"WORK1","short":"W1","desc":"Work offset 1"},"G55":{"long":"WORK2","short":"W2","desc":"Work offset 2"},"G56":{"long":"WORK3","short":"W3","desc":"Work offset 3"},"G57":{"long":"WORK4","short":"W4","desc":"Work offset 4"},"G58":{"long":"WORK5","short":"W5","desc":"Work offset 5"},"G59":{"long":"WORK6","short":"W6","desc":"Work offset 6"},"G70":{"lathe":{"long":"FINCYC","short":"FIN","desc":"Finishing cycle"}},"G71":{"lathe":{"long":"RUFCYC","short":"RUF","desc":"OD/ID roughing cycle"}},"G76":{"mill":{"long":"FINBORE","short":"FBOR","desc":"Fine boring cycle"},"lathe":{"long":"THREAD","short":"THD","desc":"Threading cycle"}},"G80":{"long":"CYCOFF","short":"CYOFF","desc":"Cancel canned cycle"},"G81":{"long":"DRILL","short":"DRL","desc":"Drilling cycle"},"G83":{"long":"PECKDRL","short":"PCK","desc":"Peck drilling cycle"},"G84":{"long":"TAP","short":"TAP","desc":"Tapping cycle"},"G90":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G94":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G96":{"long":"MODESFM","short":"CSS","desc":"Constant surface speed"},"G97":{"long":"MODERPM","short":"RPM","desc":"Constant RPM"},"G98":{"mill":{"long":"RETINIT","short":"RINI","desc":"Cycle returns to initial Z"},"lathe":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"}},"G99":{"mill":{"long":"RETRPLN","short":"RRPL","desc":"Cycle returns to R plane"},"lathe":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"}},"M00":{"long":"STOP","short":"STP","desc":"Program stop"},"M01":{"long":"OPTSTOP","short":"OSTP","desc":"Optional stop"},"M03":{"long":"SPINFWD","short":"SFWD","desc":"Spindle on, forward (CW)"},"M04":{"long":"SPINREV","short":"SREV","desc":"Spindle on, reverse (CCW)"},"M05":{"long":"SPINOFF","short":"SOFF","desc":"Spindle off"},"M06":{"long":"TOOLCHG","short":"TCHG","desc":"Tool change"},"M08":{"long":"COOLON","short":"CON","desc":"Flood coolant on"},"M09":{"long":"COOLOFF","short":"COFF","desc":"Coolant off"},"M30":{"long":"ENDRESET","short":"END","desc":"End program and rewind"},"M98":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram"},"M99":{"long":"SUBRET","short":"RET","desc":"Return from subprogram"}},"address":{"N":{"long":"SEQ","short":"N","desc":"Sequence number"},"O":{"long":"PROG","short":"O","desc":"Program number"},"T":{"long":"TOOL","short":"T","desc":"Tool number"},"H":{"long":"LOFS","short":"H","desc":"Tool length offset number"},"D":{"long":"DOFS","short":"D","desc":"Tool diameter offset number"},"X":{"abs":{"long":"X","short":"X"},"inc":{"long":"INCX","short":"iX"}},"Y":{"abs":{"long":"Y","short":"Y"},"inc":{"long":"INCY","short":"iY"}},"Z":{"abs":{"long":"Z","short":"Z"},"inc":{"long":"INCZ","short":"iZ"}},"U":{"lathe":{"long":"INCX","short":"iX","desc":"Incremental X (lathe)"}},"W":{"lathe":{"long":"INCZ","short":"iZ","desc":"Incremental Z (lathe)"}},"I":{"long":"ARCI","short":"I","desc":"Arc center offset in X"},"J":{"long":"ARCJ","short":"J","desc":"Arc center offset in Y"},"K":{"long":"ARCK","short":"K","desc":"Arc center offset in Z"},"R":{"arc":{"long":"RAD","short":"R"},"cycle":{"long":"RPLN","short":"R"}},"Q":{"long":"PECK","short":"Q","desc":"Peck depth"},"P":{"dwell":{"long":"SEC","short":"P"},"sub":{"long":"PROG","short":"P"}},"F":{"perMin":{"inch":"IPM","mm":"MMPM"},"perRev":{"inch":"IPR","mm":"MMPR"}},"S":{"rpm":{"long":"RPM","short":"RPM"},"css":{"inch":"SFM","mm":"SMM"}}},"machineOverrides":{"haas":{"M88":{"long":"TSCON","short":"TSC","desc":"Through-spindle coolant on"},"M89":{"long":"TSCOFF","short":"TSCO","desc":"Through-spindle coolant off"},"M97":{"long":"LOCSUB","short":"LSUB","desc":"Local subprogram call"}}}};
+const DICT = {"about":"Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry. machineOverrides keys are a brand ('haas') or a brand and machine type ('okuma.mill'); the more specific key wins.","version":1,"codes":{"G00":{"long":"RAPID","short":"RPD","desc":"Rapid move"},"G01":{"long":"LINEAR","short":"LIN","desc":"Straight move at feed rate"},"G02":{"long":"ARCCW","short":"ACW","desc":"Clockwise arc"},"G03":{"long":"ARCCCW","short":"ACCW","desc":"Counterclockwise arc"},"G04":{"long":"DWELL","short":"DWL","desc":"Pause for a set time"},"G17":{"long":"PLANEXY","short":"PXY","desc":"Arcs in the XY plane"},"G18":{"long":"PLANEXZ","short":"PXZ","desc":"Arcs in the XZ plane"},"G19":{"long":"PLANEYZ","short":"PYZ","desc":"Arcs in the YZ plane"},"G20":{"long":"INCH","short":"IN","desc":"Inch units"},"G21":{"long":"METRIC","short":"MM","desc":"Millimeter units"},"G28":{"long":"HOMEREF","short":"HOME","desc":"Return to machine home"},"G30":{"long":"HOME2","short":"HOM2","desc":"Return to a second reference point"},"G32":{"lathe":{"long":"THDCUT","short":"THC","desc":"Single thread cut"}},"G40":{"long":"COMPOFF","short":"CCOFF","desc":"Cutter compensation off"},"G41":{"long":"COMPLEFT","short":"CCL","desc":"Cutter compensation left"},"G42":{"long":"COMPRGHT","short":"CCR","desc":"Cutter compensation right"},"G43":{"long":"TLENON","short":"TLON","desc":"Tool length offset on"},"G49":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off"},"G50":{"mill":{"long":"SCALEOFF","short":"SCLOFF","desc":"Scaling off"},"lathe":{"long":"MAXRPM","short":"SMAX","desc":"Clamp spindle to a max RPM"}},"G53":{"long":"MACHCRD","short":"MCS","desc":"Move in machine coordinates"},"G54":{"long":"WORK1","short":"W1","desc":"Work offset 1"},"G55":{"long":"WORK2","short":"W2","desc":"Work offset 2"},"G56":{"long":"WORK3","short":"W3","desc":"Work offset 3"},"G57":{"long":"WORK4","short":"W4","desc":"Work offset 4"},"G58":{"long":"WORK5","short":"W5","desc":"Work offset 5"},"G59":{"long":"WORK6","short":"W6","desc":"Work offset 6"},"G70":{"lathe":{"long":"FINCYC","short":"FIN","desc":"Finishing cycle"}},"G71":{"lathe":{"long":"RUFCYC","short":"RUF","desc":"OD/ID roughing cycle"}},"G72":{"lathe":{"long":"FACERUF","short":"FRUF","desc":"Face roughing cycle"}},"G73":{"mill":{"long":"PECKHS","short":"PKHS","desc":"High-speed peck drilling cycle"},"lathe":{"long":"PATHRUF","short":"PRUF","desc":"Irregular-path roughing cycle"}},"G74":{"mill":{"long":"TAPLEFT","short":"LTAP","desc":"Left-hand (reverse) tapping cycle"},"lathe":{"long":"FACEGRV","short":"FGRV","desc":"Face grooving or peck drilling cycle"}},"G75":{"lathe":{"long":"GROOVE","short":"GRV","desc":"OD/ID grooving cycle"}},"G76":{"mill":{"long":"FINBORE","short":"FBOR","desc":"Fine boring cycle"},"lathe":{"long":"THREAD","short":"THD","desc":"Threading cycle"}},"G80":{"long":"CYCOFF","short":"CYOFF","desc":"Cancel canned cycle"},"G81":{"long":"DRILL","short":"DRL","desc":"Drilling cycle"},"G82":{"long":"SPOTDWL","short":"SPDW","desc":"Spot drill cycle with dwell"},"G83":{"long":"PECKDRL","short":"PCK","desc":"Peck drilling cycle"},"G84":{"long":"TAP","short":"TAP","desc":"Tapping cycle"},"G85":{"long":"BORE","short":"BOR","desc":"Boring cycle, feed out"},"G86":{"long":"BORESTOP","short":"BORS","desc":"Boring cycle, spindle stop and rapid out"},"G89":{"long":"BOREDWL","short":"BORD","desc":"Boring cycle with dwell"},"G90":{"mill":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"lathe":{"long":"TURNCYC","short":"TCY","desc":"OD/ID turning cycle"}},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G92":{"lathe":{"long":"THDCYC","short":"TCYC","desc":"Threading cycle"}},"G94":{"mill":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"lathe":{"long":"FACECYC","short":"FCY","desc":"End facing cycle"}},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G96":{"long":"MODESFM","short":"CSS","desc":"Constant surface speed"},"G97":{"long":"MODERPM","short":"RPM","desc":"Constant RPM"},"G98":{"mill":{"long":"RETINIT","short":"RINI","desc":"Cycle returns to initial Z"},"lathe":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"}},"G99":{"mill":{"long":"RETRPLN","short":"RRPL","desc":"Cycle returns to R plane"},"lathe":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"}},"M00":{"long":"STOP","short":"STP","desc":"Program stop"},"M01":{"long":"OPTSTOP","short":"OSTP","desc":"Optional stop"},"M02":{"long":"PRGEND","short":"PEND","desc":"End program"},"M03":{"long":"SPINFWD","short":"SFWD","desc":"Spindle on, forward (CW)"},"M04":{"long":"SPINREV","short":"SREV","desc":"Spindle on, reverse (CCW)"},"M05":{"long":"SPINOFF","short":"SOFF","desc":"Spindle off"},"M06":{"long":"TOOLCHG","short":"TCHG","desc":"Tool change"},"M08":{"long":"COOLON","short":"CON","desc":"Flood coolant on"},"M09":{"long":"COOLOFF","short":"COFF","desc":"Coolant off"},"M30":{"long":"ENDRESET","short":"END","desc":"End program and rewind"},"M98":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram"},"M99":{"long":"SUBRET","short":"RET","desc":"Return from subprogram"}},"address":{"N":{"long":"SEQ","short":"N","desc":"Sequence number"},"O":{"long":"PROG","short":"O","desc":"Program number"},"T":{"long":"TOOL","short":"T","desc":"Tool number"},"H":{"long":"LOFS","short":"H","desc":"Tool length offset number"},"D":{"long":"DOFS","short":"D","desc":"Tool diameter offset number"},"X":{"abs":{"long":"X","short":"X"},"inc":{"long":"INCX","short":"iX"}},"Y":{"abs":{"long":"Y","short":"Y"},"inc":{"long":"INCY","short":"iY"}},"Z":{"abs":{"long":"Z","short":"Z"},"inc":{"long":"INCZ","short":"iZ"}},"U":{"lathe":{"long":"INCX","short":"iX","desc":"Incremental X (lathe)"}},"W":{"lathe":{"long":"INCZ","short":"iZ","desc":"Incremental Z (lathe)"}},"I":{"long":"ARCI","short":"I","desc":"Arc center offset in X"},"J":{"long":"ARCJ","short":"J","desc":"Arc center offset in Y"},"K":{"long":"ARCK","short":"K","desc":"Arc center offset in Z"},"R":{"arc":{"long":"RAD","short":"R"},"cycle":{"long":"RPLN","short":"R"}},"Q":{"long":"PECK","short":"Q","desc":"Peck depth"},"P":{"dwell":{"long":"SEC","short":"P"},"sub":{"long":"PROG","short":"P"}},"F":{"perMin":{"inch":"IPM","mm":"MMPM"},"perRev":{"inch":"IPR","mm":"MMPR"}},"S":{"rpm":{"long":"RPM","short":"RPM"},"css":{"inch":"SFM","mm":"SMM"}}},"machineOverrides":{"haas":{"M88":{"long":"TSCON","short":"TSC","desc":"Through-spindle coolant on"},"M89":{"long":"TSCOFF","short":"TSCO","desc":"Through-spindle coolant off"},"M97":{"long":"LOCSUB","short":"LSUB","desc":"Local subprogram call"},"G77":{"long":"BACKBORE","short":"BKBR","desc":"Back boring cycle"}},"okuma":{"CALL":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram (Okuma)"},"RTS":{"long":"SUBRET","short":"RET","desc":"Return from subprogram (Okuma)"},"GOTO":{"long":"JUMP","short":"JMP","desc":"Jump to a sequence name (Okuma)"},"G30":{"long":"HOMEZP","short":"ZPT","desc":"Return to zero point P (Okuma)"}},"okuma.mill":{"G15":{"long":"WORKSEL","short":"WSEL","desc":"Select work offset by H number (Okuma)"},"G53":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off (Okuma)"},"G54":{"long":"TLENX","short":"TLX","desc":"Tool length offset on X (Okuma, not a work offset)"},"G55":{"long":"TLENY","short":"TLY","desc":"Tool length offset on Y (Okuma, not a work offset)"},"G56":{"long":"TLENON","short":"TLON","desc":"Tool length offset on Z (Okuma)"}},"okuma.lathe":{"G90":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G94":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G33":{"long":"THREAD","short":"THD","desc":"Single thread cut (Okuma)"},"G71":{"long":"THDLONG","short":"THL","desc":"Compound threading, longitudinal (Okuma)"},"G72":{"long":"THDFACE","short":"THF","desc":"Compound threading, face (Okuma)"},"G80":{"long":"CONTEND","short":"CEND","desc":"End of LAP contour definition (Okuma)"},"G81":{"long":"CONTZ","short":"CTZ","desc":"Start of longitudinal LAP contour (Okuma)"},"G82":{"long":"CONTX","short":"CTX","desc":"Start of face LAP contour (Okuma)"},"G85":{"long":"LAPRUF","short":"LRUF","desc":"LAP roughing, longitudinal (Okuma)"},"G86":{"long":"LAPCOPY","short":"LCPY","desc":"LAP copy roughing (Okuma)"},"G87":{"long":"LAPFIN","short":"LFIN","desc":"LAP finishing (Okuma)"}}}};
+const RULES = {"about":"Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, codes that mean something else on that control, and limits. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.","version":1,"rules":{"dup-address":{"severity":"error","title":"Word repeated in a line","message":"{letter} appears {count} on this line ({words}). The control uses one of them or alarms.","why":"Each address letter except G and M can appear once per block."},"empty-value":{"severity":"error","title":"Address with no value","message":"{letter} has no number after it."},"modal-group-clash":{"severity":"error","title":"Two codes from one group","message":"{codes} are both {group} codes. Only one can be active, so the control alarms or uses the last one.","why":"Codes in the same modal group cancel each other."},"m-conflict":{"severity":"error","title":"M-codes that contradict each other","message":"{codes} on the same line contradict each other."},"foreign-code":{"severity":"warning","title":"Code means something else here","message":"{text}"},"cycle-missing-word":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {word}: {meaning}."},"cycle-missing-choice":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {choices}."},"cycle-stray-word":{"severity":"info","title":"Word the cycle doesn't use","message":"{cycle} ({name}) doesn't use {word}, so it is ignored or alarms."},"missing-label":{"severity":"error","title":"Jump to a label that isn't there","message":"{word} points to {label}, which isn't in this file."},"no-feed-rate":{"severity":"error","title":"Feed move with no feed rate","message":"This {move} runs at feed rate, but no F has been set yet.","why":"Most controls alarm on the first feed move without F; some reuse a stale value."},"feed-mode-changed":{"severity":"warning","title":"Feed rate from the other feed mode","message":"F{f} was set under {old} but {new} is active now, so it reads as {reading}.","why":"F is not cleared when G94/G95 changes."},"feed-plausibility":{"severity":"info","title":"Feed rate looks like the wrong mode","message":"F{f} {unit} is unusually {size}. Check that {mode} is the mode you meant."},"spindle-off-feed":{"severity":"warning","title":"Cutting with the spindle stopped","message":"This {move} cuts while the spindle is stopped ({spin})."},"no-speed":{"severity":"warning","title":"Spindle started with no speed","message":"{code} starts the spindle but no S has been set."},"arc-no-center":{"severity":"error","title":"Arc with no center or radius","message":"{code} needs R or {centers} to define the arc."},"arc-r-and-ijk":{"severity":"warning","title":"Arc with both R and center","message":"This arc has both R and {centers}. Most controls use R and ignore the others."},"arc-full-circle-r":{"severity":"error","title":"Full circle written with R","message":"The arc starts and ends at the same point, which R can't describe. Use {centers}."},"arc-radius-mismatch":{"severity":"warning","title":"Arc end isn't on the circle","message":"Start is {r1} from the center but the end is {r2} from it (off by {diff})."},"comp-start-on-arc":{"severity":"error","title":"Cutter comp started on an arc","message":"{code} has to start on a G00 or G01 move, not an arc."},"comp-no-d":{"severity":"warning","title":"Cutter comp with no D offset","message":"{code} turns on cutter comp but no D offset has been given."},"tlo-missing":{"severity":"warning","title":"Z move with no tool length offset","message":"First Z move after the tool change on {line}, but {tlo} hasn't been called for this tool."},"tlo-h-mismatch":{"severity":"info","title":"Length offset doesn't match tool","message":"{h} is used with {t}. Usually the H number matches the tool number."},"cycle-left-on":{"severity":"warning","title":"Canned cycle still active","message":"{cycle} is still active at the {event}. Add G80 first."},"comp-left-on":{"severity":"warning","title":"Cutter comp still active","message":"{comp} is still active at the {event}. Add G40 first."},"g28-absolute":{"severity":"warning","title":"G28 in absolute mode","message":"G28 under G90 moves through work position {axes} on the way home. Use G28 G91 with {zeros} instead."},"css-no-clamp":{"severity":"warning","title":"Surface speed with no RPM limit","message":"G96 is on but no G50 S max RPM has been set. Small diameters can overspeed the spindle."},"dwell-no-time":{"severity":"error","title":"Dwell with no time","message":"G04 needs {words} for the dwell time."},"rapid-below-zero":{"severity":"info","title":"Rapid below Z0","message":"Rapid to Z{z}, below Z0. If Z0 is the top of the part, this rapids into it."},"no-program-end":{"severity":"warning","title":"No program end","message":"The file has no {ends}."},"missing-decimal":{"severity":"warning","title":"Number with no decimal point","message":"{word} has no decimal point, so the control reads it as {letter}{value} {unit}. Write {letter}{intended} if you mean {amount} {unit}.","why":"Fanuc-style controls read a whole number on a distance word as the smallest increment (0.0001 in or 0.001 mm)."},"unknown-word":{"severity":"info","title":"Word not in the dictionary","message":"{word} isn't in the dictionary or this machine's file."}},"dialects":{"fanuc":{"label":"Fanuc-style (0i, 30i and compatibles)","verified":true,"mill":{"modalGroups":{"motion":["G00","G01","G02","G03"],"plane":["G17","G18","G19"],"distance":["G90","G91"],"feed mode":["G93","G94","G95"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"tool length":["G43","G44","G49"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G88","G89"],"cycle return":["G98","G99"],"work offset":["G54","G55","G56","G57","G58","G59"],"speed mode":["G96","G97"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M07","M09"],["M08","M09"]],"programEnds":["M02","M30"],"toolLength":{"on":["G43","G44"],"word":"H","label":"G43 H"},"toolChange":"M06","dwellWords":["P","X"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G76":{"name":"Fine bore","requires":["Z","R","Q"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true,"speed":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true}},"wordMeaning":{"Z":"the hole bottom","R":"the retract plane","Q":"the peck depth or shift","P":"the dwell time","F":"the feed rate"},"foreign":{"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."},"M88":{"severity":"warning","text":"M88 is Haas through-spindle coolant. Check what your builder uses."},"M89":{"severity":"warning","text":"M89 is Haas through-spindle coolant off. Check what your builder uses."}}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G32","G90","G92","G94"],"plane":["G17","G18","G19"],"feed mode":["G98","G99"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"speed mode":["G96","G97"],"work offset":["G54","G55","G56","G57","G58","G59"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M08","M09"]],"programEnds":["M02","M30"],"speedClamp":{"code":"G50","word":"S"},"dwellWords":["P","X","U"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"diameterX":true,"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G70":{"name":"Finish contour","requires":["P","Q"],"optional":["F","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G71":{"name":"OD/ID roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Two-block format on most Fanuc controls; this table checks the second block."},"G72":{"name":"Face roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","P","Q","F"],"optional":["R","U","W"],"modal":false,"spindle":true,"leadF":true},"G90":{"name":"OD/ID turning cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true},"G92":{"name":"Thread cycle","requires":["X","Z","F"],"optional":["U","W","R"],"spindle":true,"leadF":true},"G94":{"name":"Facing cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true}},"wordMeaning":{"P":"the first line of the contour","Q":"the last line of the contour","U":"the X finish allowance","W":"the Z finish allowance","D":"the depth of each pass","K":"the thread height","F":"the feed rate or thread lead","X":"the end diameter","Z":"the end position"},"foreign":{"G91":{"severity":"warning","text":"Fanuc-style lathes use U and W for incremental moves; G91 needs the optional G-code system B or C."},"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."}}}},"haas":{"label":"Haas NGC","inherits":"fanuc","verified":true,"mill":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G76":{"name":"Fine bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","P","L"],"feed":true,"spindle":true},"G77":{"name":"Back bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","L"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G87":null,"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true}},"foreign":{"M97":null,"M88":null,"M89":null}},"lathe":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G71":{"name":"OD/ID roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T","R"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Haas uses a one-block G71."},"G72":{"name":"Face roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G73":{"name":"Irregular-path roughing","requires":["P","Q","D","I","K"],"optional":["U","W","F","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G74":{"name":"Face groove / peck drill","requires":["Z"],"optional":["X","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G75":{"name":"OD/ID groove","requires":["X"],"optional":["Z","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","K","D","F"],"optional":["A","I","P","Q","U","W"],"modal":false,"spindle":true,"leadF":true,"note":"Haas uses a one-block G76: K thread height, D first pass depth, F lead."}},"foreign":{"M97":null}}},"okuma":{"label":"Okuma OSP (P300 and later)","inherits":"fanuc","verified":false,"keywords":["CALL","RTS","GOTO","IF","NAT","MODIN","MODOUT"],"mill":{"modalGroups":{"work offset":["G15"],"tool length":["G53","G54","G55","G56","G57","G58","G59"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G89"]},"toolLength":{"on":["G56"],"word":"H","label":"G56 H"},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"cycles":{"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F"],"feed":true,"spindle":true}},"foreign":{"G43":{"severity":"warning","text":"Okuma calls the tool length offset with G56 H, not G43."},"G54":{"severity":"error","text":"On Okuma, G54 is the X-axis tool length offset, not work offset 1. Select work offsets with G15 H1."},"G55":{"severity":"error","text":"On Okuma, G55 is the Y-axis tool length offset, not work offset 2. Select work offsets with G15 H2."},"G57":{"severity":"error","text":"On Okuma, G57 is a 4th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G58":{"severity":"error","text":"On Okuma, G58 is a 5th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G59":{"severity":"error","text":"On Okuma, G59 is a 6th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G28":{"severity":"warning","text":"Okuma returns to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."},"M99":{"severity":"warning","text":"Okuma subprograms end with RTS. M99 is for repeating a main program."},"M88":null,"M89":null}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G33"],"feed mode":["G94","G95"],"distance":["G90","G91"]},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"dwellWords":["F"],"cycles":{"G70":null,"G71":null,"G72":null,"G76":null,"G90":null,"G92":null,"G94":null},"referenceOnly":{"G85":"LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)","G86":"LAP copy roughing","G87":"LAP finishing","G81":"Start of longitudinal contour definition","G82":"Start of transverse contour definition","G80":"End of contour definition","G71":"Compound threading, longitudinal","G72":"Compound threading, transverse","G33":"Single thread cut"},"foreign":{"G98":{"severity":"warning","text":"Okuma lathes set feed per minute with G94, not G98."},"G99":{"severity":"warning","text":"Okuma lathes set feed per revolution with G95, not G99."},"G91":null,"G28":{"severity":"warning","text":"Okuma lathes return to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."}}}}}};
 
 const MACHINES = {
-  haas_vf2:   { type:"mill",  brand:"haas" },
-  fanuc_0imf: { type:"mill",  brand:"fanuc" },
-  haas_st10:  { type:"lathe", brand:"haas" }
+  haas_vf2:     { type:"mill",  brand:"haas" },
+  fanuc_0imf:   { type:"mill",  brand:"fanuc" },
+  okuma_m560:   { type:"mill",  brand:"okuma" },
+  haas_st10:    { type:"lathe", brand:"haas" },
+  okuma_lb3000: { type:"lathe", brand:"okuma" }
 };
 const FILES = {
   "POCKET_2X1.nc": { machine:"haas_vf2", expand:"N100", src:[
@@ -432,7 +493,70 @@ const FILES = {
     "N110 Z0.1",
     "N120 M03 G97 S600",
     "N130 M05 M09",
-    "N140 M30"]}
+    "N140 M30"]},
+  "CHECKS_DEMO.nc": { machine:"haas_vf2", src:[
+    "O1003 (CHECKS DEMO - MISTAKES ON PURPOSE)",
+    "N10 G20 G90 G17 G40 G49 G80",
+    "N20 T3 M06 (1/2 END MILL)",
+    "N30 G54 G00 X0. Y0.",
+    "N40 Z0.1",
+    "N50 G43 H04 Z1.0",
+    "N60 G01 Z-0.1",
+    "N70 S2500 M03",
+    "N80 G01 X1. F12.",
+    "N90 G02 X2. Y0. I0.6 J0.",
+    "N100 G01 X1 Y1.",
+    "N110 Y2. Y3.",
+    "N120 G91 G90 X0.",
+    "N130 G41 G02 X0.5 Y2.5 R0.5",
+    "N140 G40 G01 X0. Y0.",
+    "N150 G00 Z0.1",
+    "N160 G98 G83 X1. Y1. Z-0.5 R0.1 F6.",
+    "N170 G80",
+    "N180 G81 X1.5 Y1. Z-0.25",
+    "N190 X2. Y1.",
+    "N200 T4 M06 (3/8-16 TAP)",
+    "N210 G43 H04 Z1.",
+    "N220 M08 M09",
+    "N230 G04",
+    "N240 G28 Z0.",
+    "N250 M30"]},
+  "LATHE_CHECKS.nc": { machine:"haas_st10", src:[
+    "O2002 (LATHE CHECKS - MISTAKES ON PURPOSE)",
+    "N10 G20 G18 G99",
+    "N20 T0202 (OD ROUGH)",
+    "N30 G96 S500 M03",
+    "N40 G00 X2.1 Z0.1 M08",
+    "N50 G71 P60 Q90 U0.02 W0.005 F0.012",
+    "N60 G00 X1.0",
+    "N70 G01 Z-1. F10.",
+    "N80 X1.5 Z-1.5",
+    "N90 X2.1",
+    "N100 G70 P60 Q95",
+    "N110 G00 X3. Z1. M09",
+    "N120 G76 X0.9 Z-0.8 K0.06 F0.0625",
+    "N130 G50 S2000",
+    "N140 M05",
+    "N150 M30"]},
+  "OKUMA_PLATE.MIN": { machine:"okuma_m560", expand:"N100", src:[
+    "O1100 (OKUMA PLATE)",
+    "N10 G15 H1",
+    "N20 G17 G21 G40 G80 G90",
+    "N30 T5 M06 (10MM DRILL)",
+    "N40 G00 X20. Y20.",
+    "N50 G56 H5 Z50. S1200 M03",
+    "N60 M08",
+    "N70 G81 X20. Y20. Z-15. R3. F120.",
+    "N80 X60.",
+    "N90 G80 G00 Z50. M09",
+    "N100 CALL O1200",
+    "N110 G54 X0. Y0. (G54 IS A FANUC HABIT)",
+    "N120 M05",
+    "N130 M02",
+    "O1200 (CLEAR PASS)",
+    "N1000 G00 X80. Y20.",
+    "N1010 X80. Y60.",
+    "N1020 RTS"]}
 };
 
 let fileName = "POCKET_2X1.nc", machineId = "haas_vf2";
@@ -454,10 +578,12 @@ const clean = v => v.endsWith(".") && v.length > 1 ? v.slice(0, -1) : v;
 const lastWord = s => s.split(/\s+/).pop() || "";
 const isCode = (t, c) => /^[GM]\d/.test(t) && pad2(t) === c;
 
-function tokenize(line){ const out = []; const re = /\([^)]*\)?|[A-Za-z][-+]?[\d.]*/g; let m; while ((m = re.exec(line))) out.push(m[0].startsWith("(") ? m[0] : m[0].toUpperCase()); return out; }
+const KEYWORDS = ["CALL","RTS","GOTO"];
+const isKw = t => /^[A-Z]{2,}/.test(t);
+function tokenize(line){ const out = []; const re = /\([^)]*\)?|\b(?:CALL|RTS|GOTO)\b|[A-Za-z][-+]?[\d.]*/gi; let m; while ((m = re.exec(line))) out.push(m[0].startsWith("(") ? m[0] : m[0].toUpperCase()); return out; }
 function load(name){
   stopSim(true);
-  fileName = name; machineId = FILES[name].machine;
+  fileName = name; machineId = FILES[name].machine; setDialect();
   document.getElementById("machine").value = machineId;
   doc = FILES[name].src.map(tokenize);
   expanded = new Set();
@@ -465,13 +591,13 @@ function load(name){
   undoStack = []; redoStack = [];
   document.getElementById("wtitle").textContent = name + " - GlossCode";
   document.getElementById("tabname").textContent = name;
-  curLine = 0; render(); setMsg("Opened " + name);
+  curLine = 0; render(); showInfo(0, null); document.getElementById("ed").scrollTop = 0; setMsg("Opened " + name);
 }
 
 /* ---------- Dictionary and modes ---------- */
 function entry(key){
   const brand = MACHINES[machineId].brand;
-  const ov = DICT.machineOverrides[brand]?.[key];
+  const ov = DICT.machineOverrides[brand+"."+mtype()]?.[key] || DICT.machineOverrides[brand]?.[key];
   if (ov) return ov;
   const e = DICT.codes[key]; if (!e) return null;
   return e.long ? e : (e[mtype()] ?? null);
@@ -479,29 +605,34 @@ function entry(key){
 function newState(){
   const lathe = mtype()==="lathe";
   return { units:"inch", dist:"abs", feed: lathe ? "perRev" : "perMin", spin:"rpm", cycle:false, dwell:false, sub:false, local:false,
-    motion:null, cycleCode:null, plane: lathe ? "G18" : "G17", unitCode:"G20", distCode:"G90", feedCode: lathe ? "G99" : "G94", spinCode:"G97",
-    comp:"G40", tlen:"G49", wcs:"G54", spinDir:"M05", cool:"M09", F:null, S:null, T:null, H:null, chg:[] };
+    motion:null, cycleCode:null, oneShot:false, plane: lathe ? "G18" : "G17", unitCode:"G20", distCode:"G90", feedCode: feedCodes()[lathe ? "perRev" : "perMin"], spinCode:"G97",
+    comp:"G40", tlen: DIALECT.toolLength?.off || "G49", tlenOn:false, wcs: MACHINES[machineId].brand==="okuma" ? "G15 H1" : "G54", spinDir:"M05", cool:"M09", F:null, S:null, T:null, H:null, chg:[] };
 }
+// G-codes for feed per minute and per rev on this control (G94/G95, or G98/G99 on Fanuc-style lathes)
+function feedCodes(){ const g = DIALECT.modalGroups?.["feed mode"] || []; return { perMin: g.includes("G94") ? "G94" : "G98", perRev: g.includes("G95") ? "G95" : "G99" }; }
 function applyModes(toks, st){
   st.dwell = false; st.sub = false; st.local = false; st.chg = [];
+  if (st.oneShot){ st.cycle = false; st.cycleCode = null; st.oneShot = false; }
   const set = (f, v) => { st[f] = v; st.chg.push(f); };
-  const lathe = mtype()==="lathe";
+  const D = DIALECT, groups = D.modalGroups || {}, fc = feedCodes();
+  const wcsLine = toks.some(t => isCode(t,"G15"));
   for (const t of toks){
-    if (/^[FSTH][-+]?[\d.]+$/.test(t)) { set(t[0], t); continue; }
+    if (/^[FSTH][-+]?[\d.]+$/.test(t)){ if (t[0]==="H" && wcsLine) set("wcs", "G15 " + t); else if (!(t[0]==="S" && toks.some(w => isCode(w, D.speedClamp?.code || "G50")) && mtype()==="lathe")) set(t[0], t); continue; }
+    if (t==="CALL") st.sub = true;
     if (!/^[GM]\d/.test(t)) continue;
-    const k = pad2(t);
+    const k = pad2(t), cyc = D.cycles?.[k];
     if (["G00","G01","G02","G03"].includes(k)){ set("motion", k); st.cycleCode = null; st.cycle = false; }
     if (["G17","G18","G19"].includes(k)) set("plane", k);
     if (k==="G20"){ st.units="inch"; set("unitCode", k); } if (k==="G21"){ st.units="mm"; set("unitCode", k); }
-    if (k==="G90"){ st.dist="abs"; set("distCode", k); } if (k==="G91"){ st.dist="inc"; set("distCode", k); }
-    if (k==="G94"||(lathe && k==="G98")){ st.feed="perMin"; set("feedCode", k); }
-    if (k==="G95"||(lathe && k==="G99")){ st.feed="perRev"; set("feedCode", k); }
+    if ((groups.distance || []).includes(k)){ st.dist = k==="G91" ? "inc" : "abs"; set("distCode", k); }
+    if (k===fc.perMin && !cyc){ st.feed="perMin"; set("feedCode", k); }
+    if (k===fc.perRev && !cyc){ st.feed="perRev"; set("feedCode", k); }
     if (k==="G96"){ st.spin="css"; set("spinCode", k); } if (k==="G97"){ st.spin="rpm"; set("spinCode", k); }
     if (["G40","G41","G42"].includes(k)) set("comp", k);
-    if (k==="G43"||k==="G49") set("tlen", k);
-    if (/^G5[4-9]$/.test(k)) set("wcs", k);
-    if (["G81","G83","G84"].includes(k) || (k==="G76" && !lathe)){ st.cycle = true; set("cycleCode", k); }
-    if (k==="G80"){ st.cycle = false; set("cycleCode", null); }
+    if ((groups["tool length"] || []).includes(k)){ set("tlen", k); st.tlenOn = (D.toolLength?.on || []).includes(k); }
+    if ((groups["work offset"] || []).includes(k) && k!=="G15") set("wcs", k);
+    if (cyc){ st.cycle = true; set("cycleCode", k); st.oneShot = cyc.modal===false; }
+    if (k==="G80" && !(mtype()==="lathe" && MACHINES[machineId].brand==="okuma")){ st.cycle = false; set("cycleCode", null); }
     if (["M03","M04","M05"].includes(k)) set("spinDir", k);
     if (["M08","M09","M88","M89"].includes(k)) set("cool", k);
     if (k==="G04") st.dwell = true;
@@ -509,9 +640,36 @@ function applyModes(toks, st){
     if (k==="M97") st.local = true;
   }
 }
-function word(t, st){
+// Numbers in the English line always show their decimal point, so X1. reads X1.0.
+// A distance word written with no decimal point (X1) is read the way the control reads it:
+// as the smallest increment, 0.0001 in or 0.001 mm on Fanuc-style controls.
+function fmtNum(L, raw, st){
+  if (raw==="" || raw==null) return { v:"" };
+  const sign = raw[0]==="-" ? "-" : "", body = raw.replace(/^[-+]/, "");
+  if (body.includes(".")){
+    let x = body; if (x.startsWith(".")) x = "0" + x; if (x.endsWith(".")) x += "0";
+    return { v: sign + x };
+  }
+  const nums = DIALECT.numbers;
+  if (nums?.noDecimal==="leastIncrement" && nums.words.includes(L) && /^\d+$/.test(body)){
+    const n = parseInt(body, 10); if (n===0) return { v:"0.0" };
+    const inc = nums.increment[st.units], d = st.units==="inch" ? 4 : 3;
+    return { v: sign + (n*inc).toFixed(d), implied:true, intended: sign + body + "." };
+  }
+  if (L==="F") return { v: sign + body + ".0" };
+  return { v: sign + body };
+}
+// Units come from DICT.address (F: IPM/IPR/MMPM/MMPR, S: RPM/SFM/SMM) and show in small lower case after the number.
+const FEED_UNIT = { perMin:{ inch:"ipm", mm:"mmpm" }, perRev:{ inch:"ipr", mm:"mmpr" } };
+const SPEED_UNIT = { rpm:{ inch:"rpm", mm:"rpm" }, css:{ inch:"sfm", mm:"smm" } };
+const UNIT_WORDS = { ipm:"inches per minute", ipr:"inches per rev", mmpm:"mm per minute", mmpr:"mm per rev", rpm:"RPM", sfm:"surface feet per minute", smm:"surface meters per minute" };
+function word(t, st, ctx){
   if (t.startsWith("(")) return { g:t, e:"", cm:true, d:"Comment, kept as written" };
-  const L = t[0], v = clean(t.slice(1));
+  if (isKw(t)){
+    const e = entry(t);
+    return e ? { g:t, e:e[style], d:e.desc, code:t, long:e.long } : { g:t, e:"?"+t, unk:true, d:`${t} isn't a keyword on this machine.` };
+  }
+  const L = t[0], raw = t.slice(1), f = fmtNum(L, raw, st), v = f.v;
   if (L==="G" || L==="M"){
     const k = pad2(t), e = entry(k);
     if (!e) return { g:t, e:"?"+k, unk:true, d:`${k} isn't in the dictionary or this machine's file.` };
@@ -519,14 +677,20 @@ function word(t, st){
   }
   const a = DICT.address[L];
   if (!a) return { g:t, e:"?"+L, unk:true, d:`Address letter ${L} isn't in the dictionary.` };
-  if (L==="F"){ const u = a[st.feed][st.units]; return { g:t, e:u+v, d:`Feed rate ${v} ${u}` }; }
-  if (L==="S") return st.spin==="css" ? { g:t, e:a.css[st.units]+v, d:`Surface speed ${v} ${a.css[st.units]}` } : { g:t, e:"RPM"+v, d:`Spindle speed ${v} RPM` };
-  if ("XYZ".includes(L)){ const x = a[st.dist]; return { g:t, e:x[style]+v, d: st.dist==="inc" ? `Move ${v} in ${L} from where the tool is` : `${L} position ${v}` }; }
-  if (L==="U"||L==="W"){ if (mtype()!=="lathe") return { g:t, e:"?"+L, unk:true, d:`${L} is only used on lathes.` }; return { g:t, e:a.lathe[style]+v, d:a.lathe.desc+" "+v }; }
-  if (L==="R"){ const x = st.cycle ? a.cycle : a.arc; return { g:t, e:x[style]+v, d: st.cycle ? "Retract plane for the drilling cycle" : "Arc radius" }; }
+  const imp = f.implied ? { imp:true, d2:`No decimal point, so this reads as ${v} ${st.units==="inch"?"in":"mm"}. Write ${L}${f.intended} for ${f.intended.replace(/\.$/,"")} ${st.units==="inch"?"in":"mm"}.` } : {};
+  if (L==="F"){ const u = FEED_UNIT[st.feed]?.[st.units] || ""; return { g:t, e:"F"+v, u, d:`Feed rate ${v} ${UNIT_WORDS[u] || ""}` }; }
+  if (L==="S"){ const u = SPEED_UNIT[st.spin][st.units]; return { g:t, e:"S"+v, u, d: st.spin==="css" ? `Surface speed ${v} ${UNIT_WORDS[u]}` : `Spindle speed ${v} RPM` }; }
+  if ("XYZ".includes(L)){ const x = a[st.dist]; return { g:t, e:x[style]+v, ...imp, d: imp.d2 || (st.dist==="inc" ? `Move ${v} in ${L} from where the tool is` : `${L} position ${v}`) }; }
+  if (L==="U"||L==="W"){ if (mtype()!=="lathe") return { g:t, e:"?"+L, unk:true, d:`${L} is only used on lathes.` }; return { g:t, e:a.lathe[style]+v, ...imp, d: imp.d2 || a.lathe.desc+" "+v }; }
+  if (L==="R"){ const x = st.cycle ? a.cycle : a.arc; return { g:t, e:x[style]+v, ...imp, d: imp.d2 || (st.cycle ? "Retract plane for the drilling cycle" : "Arc radius") }; }
+  const cy = st.cycleCode && DIALECT.cycles?.[st.cycleCode];
+  if (cy?.labels?.includes(L)) return { g:t, e:(L==="P" ? "FROM" : "TO")+raw, d:`${L==="P" ? "First" : "Last"} line of the contour, N${raw}` };
+  if (cy && mtype()==="lathe" && L==="D") return { g:t, e:"DEPTH"+v, d:`Depth of each pass, ${v}` };
+  if (cy && mtype()==="lathe" && L==="K" && cy.leadF) return { g:t, e:"THDHT"+v, d:`Thread height, ${v}` };
+  if (L==="H" && (ctx==="wcs" || (st.chg?.includes("wcs") && String(st.wcs).startsWith("G15")))) return { g:t, e:"WOFS"+raw, d:`Work offset number ${raw}` };
   if (L==="P" && st.local) return { g:t, e:"LBL"+v, d:`Jump to the line labeled N${v} and run it until M99` };
   if (L==="P"){ const x = st.sub ? a.sub : a.dwell; return { g:t, e:x[style]+v, d: st.sub ? `Program number ${v}` : `Dwell for ${v} seconds` }; }
-  return { g:t, e:a[style]+v, d:`${a.desc} ${v}` };
+  return { g:t, e:a[style]+v, ...imp, d: imp.d2 || `${a.desc} ${v}` };
 }
 // Modes are tracked in the order the machine runs the lines, so a subprogram
 // is read with the modes active at its call. Lines never run fall back to file order.
@@ -537,8 +701,8 @@ function translateAll(){
   const st = newState(), L = labels(), stack = []; let i = 0, guard = 0;
   while (i < doc.length && guard++ < 5000){
     const toks = doc[i]; visit(i, st);
-    if (toks.some(t => isCode(t,"M30"))) break;
-    if (toks.some(t => isCode(t,"M99")) && stack.length){ i = stack.pop(); continue; }
+    if (isEnd(toks)) break;
+    if (isReturn(toks) && stack.length){ i = stack.pop(); continue; }
     const tgt = callTarget(toks);
     if (tgt!=null && L[tgt]!==undefined && stack.length < 8){ stack.push(i+1); i = L[tgt]; continue; }
     i++;
@@ -562,6 +726,7 @@ const PREFIXES = [
   ["IPM","F","Feed, inches per minute", st => st.feed==="perMin" ? null : "Feed per rev is active here, so this F reads as IPR. Add FEEDMIN (G94) first."],
   ["IPR","F","Feed, inches per rev", st => st.feed==="perRev" ? null : "Feed per minute (G94) is active here, so this F reads as IPM. Add FEEDREV (G95) first."],
   ["MMPM","F","Feed, mm per minute", null], ["MMPR","F","Feed, mm per rev", null],
+  ["F","F","Feed rate (unit comes from G94/G95 and G20/G21)", null], ["S","S","Spindle speed (RPM under G97, surface speed under G96)", null],
   ["INCX","X","Incremental X move", st => st.dist==="inc" || mtype()==="lathe" ? null : "Absolute mode (G90) is active, so this reads as an X position. Add INCR (G91) first."],
   ["INCY","Y","Incremental Y move", st => st.dist==="inc" ? null : "Absolute mode (G90) is active. Add INCR (G91) first."],
   ["INCZ","Z","Incremental Z move", st => st.dist==="inc" || mtype()==="lathe" ? null : "Absolute mode (G90) is active. Add INCR (G91) first."],
@@ -576,7 +741,7 @@ function codeWords(){
   const out = [], seen = new Set();
   const add = (k, e) => { if (!e || seen.has(k)) return; seen.add(k); out.push({ k, long:e.long, short:e.short, d:e.desc }); };
   const brand = MACHINES[machineId].brand;
-  for (const k of Object.keys(DICT.machineOverrides[brand] || {})) add(k, entry(k));
+  for (const k of Object.keys({...DICT.machineOverrides[brand+"."+mtype()], ...DICT.machineOverrides[brand]})) if (!isKw(k)) add(k, entry(k));
   for (const k of Object.keys(DICT.codes)) add(k, entry(k));
   return out;
 }
@@ -643,13 +808,13 @@ const colOf = t => COLS.findIndex(c => c.test(t));
 function slotsFor(li){
   const toks = doc[li], cells = view[li];
   if (layout==="order"){
-    const s = toks.map((t, i) => ({ ref:String(i), idx:[i], g:t, e:cells[i].e, cm:!!cells[i].cm, unk:!!cells[i].unk, n: i===0 && /^N\d/.test(t), w:COLW() }));
+    const s = toks.map((t, i) => ({ ref:String(i), idx:[i], g:t, e:cells[i].e, u:cells[i].u || "", imp:!!cells[i].imp, cm:!!cells[i].cm, unk:!!cells[i].unk, n: i===0 && /^N\d/.test(t), w:COLW() }));
     s.push({ ref:String(toks.length), idx:[], g:"", e:"", add:true, w:COLW() });
     return s;
   }
   return USED.map(ci => {
     const idx = toks.map((_, i) => i).filter(i => colOf(toks[i])===ci);
-    return { ref:"c"+ci, col:ci, idx, g: idx.map(i => toks[i]).join(" "), e: idx.map(i => cells[i].e).filter(Boolean).join(" "),
+    return { ref:"c"+ci, col:ci, idx, g: idx.map(i => toks[i]).join(" "), e: idx.map(i => cells[i].e).filter(Boolean).join(" "), u: idx.length===1 ? (cells[idx[0]].u || "") : "", imp: idx.some(i => cells[i].imp),
       cm: COLS[ci].id==="NOTE", unk: idx.some(i => cells[i].unk), n: COLS[ci].id==="N", w: WIDTHS[ci] };
   });
 }
@@ -664,7 +829,8 @@ function computeColumns(){
       const idx = toks.map((_, i) => i).filter(i => colOf(toks[i])===ci);
       if (!idx.length) return;
       const g = idx.map(i => toks[i]).join(" "), e = idx.map(i => view[li][i].e).filter(Boolean).join(" ");
-      w = Math.max(w, g.length + 1, e.length + 1);
+      const u = idx.length===1 ? (view[li][idx[0]].u || "").length * 0.6 : 0;
+      w = Math.max(w, g.length + 1, Math.ceil(e.length + u + 1));
     });
     WIDTHS[ci] = COLS[ci].id==="NOTE" ? w : Math.min(w, 26);
   }
@@ -701,11 +867,259 @@ function redo(){
   undoStack.push(snap()); restore(redoStack.pop()); render(); setMsg("Redone");
 }
 
+/* ---------- Checks (Problems panel) ----------
+   Rule text, severities and per-control tables come from RULES (data/gcode-rules.json).
+   The logic below is what checks.c will do in the core: one pass in execution order,
+   carrying the machine state, and each rule id emits its message from the table. */
+let DIALECT = {}, PROBLEMS = [], PBYLINE = {}, probsOpen = true, probFilter = { error:true, warning:true, info:true };
+function dialectFor(brand, type){
+  const D = RULES.dialects || {}, chain = []; let b = brand;
+  while (b && D[b] && !chain.includes(b)){ chain.unshift(b); b = D[b].inherits; }
+  const out = {};
+  for (const name of chain){
+    for (const [k, v] of Object.entries(D[name][type] || {})){
+      const obj = x => x && typeof x==="object" && !Array.isArray(x);
+      if (obj(v) && obj(out[k])){ const m = {...out[k]}; for (const [k2, v2] of Object.entries(v)){ if (v2===null) delete m[k2]; else m[k2] = v2; } out[k] = m; }
+      else out[k] = v;
+    }
+    if (D[name].keywords) out.keywords = D[name].keywords;
+  }
+  if (out.toolLength){ const on = out.toolLength.on; out.toolLength = {...out.toolLength, off:(out.modalGroups?.["tool length"] || []).find(c => !on.includes(c)) || "G49"}; }
+  out.verified = chain.length > 0 && chain.every(n => D[n].verified!==false);
+  out.label = D[brand]?.label || brand;
+  return out;
+}
+function setDialect(){ const m = MACHINES[machineId]; DIALECT = dialectFor(m.brand, m.type); }
+const SEV_RANK = { error:3, warning:2, info:1 };
+const SEV_ICON = { error:"✕", warning:"⚠", info:"i" };
+const fmt4 = n => (Math.round(n*10000)/10000).toString();
+
+function checkProgram(){
+  const D = DIALECT, lathe = mtype()==="lathe", out = [], L = labels();
+  const emitTo = { list:out };
+  const emit = (li, id, vars, sev) => {
+    if (!emitTo.list) return;
+    const r = RULES.rules[id]; if (!r) return;
+    const msg = r.message.replace(/\{(\w+)\}/g, (_, k) => vars?.[k] ?? "");
+    emitTo.list.push({ li, id, sev: sev || r.severity, title:r.title, msg, why:r.why || "" });
+  };
+  const fc = feedCodes();
+  const st = { F:null, Fmode:null, Fwarned:false, noFwarned:false, S:null, spin:null, spinWarned:false, motion:null, cycle:null, cycleWords:{}, oneShot:false,
+    dist:"abs", feed: lathe ? "perRev" : "perMin", units:"inch", plane: lathe ? "G18" : "G17", comp:"G40", D:null, T:null, pendingT:null,
+    needTlo:false, tcLine:"", tloOn:false, clamp:false, pos:{ X:null, Y:null, Z:null } };
+  const seen = new Set();
+  const visit = li => { emitTo.list = seen.has(li) ? null : out; seen.add(li); checkLine(li); };
+  // Walk in execution order, following local subprogram calls, then check lines never reached.
+  { const stack = []; let i = 0, guard = 0;
+    while (i < doc.length && guard++ < 5000){
+      const toks = doc[i]; visit(i);
+      if (isEnd(toks)) break;
+      if (isReturn(toks) && stack.length){ i = stack.pop(); continue; }
+      const tgt = callTarget(toks);
+      if (tgt!=null && L[tgt]!==undefined && stack.length < 8){ stack.push(i+1); i = L[tgt]; continue; }
+      i++;
+    }
+    doc.forEach((_, li) => { if (!seen.has(li)) visit(li); });
+  }
+  emitTo.list = out;
+  if (!doc.some(isEnd)) emit(0, "no-program-end", { ends:(D.programEnds || ["M30"]).join(" or ") });
+  view.forEach((cells, li) => cells.forEach(c => { if (c.unk && !(/^[GM]\d/.test(c.g) && D.foreign?.[pad2(c.g)])) emit(li, "unknown-word", { word:c.g }); }));
+  return out.sort((a, b) => a.li - b.li || SEV_RANK[b.sev] - SEV_RANK[a.sev]);
+
+  function checkLine(li){
+    const all = doc[li].filter(t => !t.startsWith("("));
+    const words = all.filter(t => !isKw(t)).map(t => ({ t, L:t[0], v:t.slice(1), n:parseFloat(t.slice(1)) }));
+    const codes = words.filter(w => w.L==="G" || w.L==="M").map(w => pad2(w.t));
+    const has = c => codes.includes(c);
+    const byL = {}; words.forEach(w => (byL[w.L] ||= []).push(w));
+    const get = l => byL[l]?.[0];
+    const groups = D.modalGroups || {};
+    const nLabel = /^N\d/.test(all[0] || "") ? all[0] : "line " + (li+1);
+    if (st.oneShot){ st.cycle = null; st.cycleWords = {}; st.oneShot = false; }
+
+    // Line grammar
+    words.forEach(w => { if (w.v==="") emit(li, "empty-value", { letter:w.L }); });
+    for (const [l, ws] of Object.entries(byL)) if (l!=="G" && l!=="M" && ws.length > 1) emit(li, "dup-address", { letter:l, count:ws.length===2 ? "twice" : ws.length+" times", words:ws.map(w => w.t).join(", ") });
+    for (const [g, list] of Object.entries(groups)){ const hit = [...new Set(codes.filter(c => list.includes(c)))]; if (hit.length > 1) emit(li, "modal-group-clash", { codes:hit.join(" and "), group:g }); }
+    for (const grp of D.mConflicts || []){ const hit = [...new Set(codes.filter(c => grp.includes(c)))]; if (hit.length > 1) emit(li, "m-conflict", { codes:hit.join(" and ") }); }
+    new Set(codes).forEach(c => { const f = D.foreign?.[c]; if (f) emit(li, "foreign-code", { text:f.text }, f.severity); });
+
+    // Modes set on this line
+    if (has("G20")) st.units = "inch"; if (has("G21")) st.units = "mm";
+    const lblWords = D.cycles?.[codes.find(c => D.cycles?.[c])]?.labels || [];
+    if (D.numbers?.noDecimal==="leastIncrement") words.forEach(w => {
+      if (D.numbers.words.includes(w.L) && !lblWords.includes(w.L) && /^[-+]?\d+$/.test(w.v) && parseInt(w.v, 10)!==0){
+        const unit = st.units==="inch" ? "in" : "mm", body = w.v.replace(/^\+/, "");
+        emit(li, "missing-decimal", { word:w.t, letter:w.L, value:(parseInt(body,10)*D.numbers.increment[st.units]).toFixed(st.units==="inch" ? 4 : 3), unit, intended:body + ".", amount:body });
+      }
+    });
+    for (const c of codes){
+      if ((groups.distance || []).includes(c)) st.dist = c==="G91" ? "inc" : "abs";
+      if (!D.cycles?.[c]){ if (c===fc.perMin) st.feed = "perMin"; if (c===fc.perRev) st.feed = "perRev"; if (c==="G93") st.feed = "inverse"; }
+      if (["G17","G18","G19"].includes(c)) st.plane = c;
+    }
+    const clampLine = lathe && D.speedClamp && has(D.speedClamp.code) && get(D.speedClamp.word);
+    if (clampLine) st.clamp = true;
+    if (has("G96") && lathe && D.speedClamp && !st.clamp) emit(li, "css-no-clamp");
+    const fW = get("F"), sW = get("S");
+    const cycCode = codes.find(c => D.cycles?.[c]);
+    const def = cycCode ? D.cycles[cycCode] : null;
+    if (fW && !(def?.leadF)){
+      st.F = fW.n; st.Fmode = st.feed; st.Fwarned = false; st.noFwarned = false;
+      const lim = D.feedPlausible?.[st.feed]?.[st.units];
+      if (lim!=null && fW.n > 0){
+        const u = FEED_UNIT[st.feed]?.[st.units] || "";
+        if (st.feed==="perRev" && fW.n > lim) emit(li, "feed-plausibility", { f:fmtNum("F", fW.v, st).v, unit:u, size:"large for a per-rev feed", mode:fc.perRev + " (feed per rev)" });
+        if (st.feed==="perMin" && fW.n < lim) emit(li, "feed-plausibility", { f:fmtNum("F", fW.v, st).v, unit:u, size:"small for a per-minute feed", mode:fc.perMin + " (feed per minute)" });
+      }
+    }
+    if (sW && !clampLine) st.S = sW.n;
+    if (get("D")) st.D = get("D").n;
+    const tW = get("T");
+    if (tW){ const n = lathe ? parseInt(tW.v.slice(0, 2), 10) : parseInt(tW.v, 10); st.pendingT = n; if (lathe) st.T = n; }
+
+    // Tool change and program end with things left on
+    if (!lathe && D.toolChange && has(D.toolChange)){
+      if (st.cycle && !has("G80")) emit(li, "cycle-left-on", { cycle:st.cycle, event:"tool change" });
+      if (st.comp!=="G40" && !has("G40")) emit(li, "comp-left-on", { comp:st.comp, event:"tool change" });
+      st.T = st.pendingT; st.needTlo = true; st.tloOn = false; st.tcLine = nLabel;
+    }
+    if (isEnd(all)){
+      if (st.cycle && !has("G80")) emit(li, "cycle-left-on", { cycle:st.cycle, event:"program end" });
+      if (st.comp!=="G40" && !has("G40")) emit(li, "comp-left-on", { comp:st.comp, event:"program end" });
+    }
+
+    // Spindle
+    for (const c of codes){
+      if (c==="M03" || c==="M04"){ if (st.S==null) emit(li, "no-speed", { code:c }); st.spin = c; st.spinWarned = false; }
+      if (c==="M05"){ st.spin = "M05"; st.spinWarned = false; }
+    }
+
+    // Tool length offset
+    const tl = D.toolLength;
+    if (tl) for (const c of codes) if ((groups["tool length"] || []).includes(c)){
+      st.tloOn = tl.on.includes(c);
+      if (st.tloOn){ st.needTlo = false; const h = get(tl.word); if (h && st.T!=null && parseInt(h.v, 10)!==st.T) emit(li, "tlo-h-mismatch", { h:h.t, t:"T"+st.T }); }
+    }
+
+    // Cutter comp
+    const compNew = codes.find(c => c==="G41" || c==="G42");
+    if (has("G40")) st.comp = "G40";
+    if (compNew){ st.comp = compNew; if (!lathe && !get("D") && st.D==null) emit(li, "comp-no-d", { code:compNew }); }
+
+    // Motion and canned cycles
+    const motionCodes = ["G00","G01","G02","G03", ...(lathe ? ["G32","G33"] : [])];
+    const mc = codes.filter(c => motionCodes.includes(c)).pop();
+    if (has("G80") && !(lathe && MACHINES[machineId].brand==="okuma")){ st.cycle = null; st.cycleWords = {}; }
+    if (mc){ st.motion = mc; if (st.cycle && !cycCode){ st.cycle = null; st.cycleWords = {}; } }
+    if (cycCode){
+      if (!st.cycle || def.modal===false) st.cycleWords = {};
+      st.cycle = cycCode; st.oneShot = def.modal===false;
+    }
+    if (st.cycle) words.forEach(w => { if (!"GMN".includes(w.L)) st.cycleWords[w.L] = true; });
+    if (cycCode){
+      const name = def.name, mean = D.wordMeaning || {};
+      for (const r of def.requires || []){
+        if (st.cycleWords[r]) continue;
+        if (r==="F" && !def.leadF && st.F!=null) continue;
+        emit(li, "cycle-missing-word", { cycle:cycCode, name, word:r, meaning:mean[r] || "required" });
+      }
+      if (def.choices && !def.choices.some(set => set.some(l => st.cycleWords[l])))
+        emit(li, "cycle-missing-choice", { cycle:cycCode, name, choices:def.choices.map(s => s.join(", ")).join(" or ") });
+      const ok = new Set([...(def.requires || []), ...(def.optional || []), ...(def.choices || []).flat(), "N","G","M","S","T","H","D","O", ...(def.feed ? ["F"] : [])]);
+      words.forEach(w => { if (!ok.has(w.L)) emit(li, "cycle-stray-word", { cycle:cycCode, name, word:w.t }); });
+      for (const l of def.labels || []){ const w = get(l); if (w && L["N"+parseInt(w.v, 10)]===undefined) emit(li, "missing-label", { word:w.t, label:"N"+parseInt(w.v, 10) }); }
+      if (def.speed && st.S==null) emit(li, "no-speed", { code:`${cycCode} (${name.toLowerCase()})` });
+    }
+    for (const [code, sc] of Object.entries(D.subCalls || {})){
+      if (sc.target!=="label" || !has(code)) continue;
+      const w = get(sc.word); if (w && L["N"+parseInt(w.v, 10)]===undefined) emit(li, "missing-label", { word:`${code} ${w.t}`, label:"N"+parseInt(w.v, 10) });
+    }
+    if (has("G04") && !(D.dwellWords || ["P"]).some(l => get(l))) emit(li, "dwell-no-time", { words:(D.dwellWords || ["P"]).join(" or ") });
+    if (has("G28") && !D.foreign?.G28 && (groups.distance || []).includes("G90") && st.dist==="abs"){
+      const ax = words.filter(w => "XYZ".includes(w.L));
+      if (ax.length) emit(li, "g28-absolute", { axes:ax.map(w => w.t).join(" "), zeros:ax.map(w => w.L + "0.").join(" ") });
+    }
+
+    const NONMOVE = ["G04","G10","G28","G30","G50","G52","G53","G92"].filter(c => !D.cycles?.[c] && !(groups["tool length"] || []).includes(c));
+    const nonMove = codes.some(c => NONMOVE.includes(c));
+    const axisWords = words.filter(w => (lathe ? "XZUW" : "XYZ").includes(w.L));
+    const centerL = { G17:"IJ", G18:"IK", G19:"JK" }[st.plane];
+    const centers = words.filter(w => centerL.includes(w.L));
+    let kind = null;
+    if (nonMove) kind = null;
+    else if (st.cycle && (cycCode || axisWords.length)) kind = "cycle";
+    else if (axisWords.length || (["G02","G03"].includes(st.motion) && centers.length)) kind = st.motion==="G00" ? "rapid" : st.motion ? "feed" : null;
+    const cdef = st.cycle ? D.cycles[st.cycle] : null;
+    const moveName = kind==="cycle" ? `${st.cycle} cycle` : st.motion==="G01" ? "G01 move" : st.motion==="G02" || st.motion==="G03" ? `${st.motion} arc` : `${st.motion} move`;
+    const needsFeed = kind==="feed" || (kind==="cycle" && cdef?.feed);
+    if (needsFeed){
+      if (st.F==null){ if (!st.noFwarned) emit(li, "no-feed-rate", { move:moveName }); st.noFwarned = true; }
+      else if (st.Fmode && st.Fmode!==st.feed && !st.Fwarned){
+        st.Fwarned = true;
+        emit(li, "feed-mode-changed", { f:fmtNum("F", String(st.F), st).v, old:fc[st.Fmode] || st.Fmode, new:fc[st.feed] || st.feed, reading:FEED_UNIT[st.feed]?.[st.units] || st.feed });
+      }
+    }
+    const cuts = kind==="feed" || (kind==="cycle" && (cdef?.spindle || cdef?.feed) && !cdef?.startsSpindle);
+    if (cuts && st.spin!=="M03" && st.spin!=="M04" && !st.spinWarned){ st.spinWarned = true; emit(li, "spindle-off-feed", { move:moveName, spin: st.spin ? st.spin + " is active" : "it was never started" }); }
+    if (!lathe && st.needTlo && kind && kind!=="cycle" && get("Z")){ st.needTlo = false; emit(li, "tlo-missing", { line:st.tcLine, tlo:tl?.label || "G43 H" }); }
+    else if (!lathe && st.needTlo && kind==="cycle"){ st.needTlo = false; emit(li, "tlo-missing", { line:st.tcLine, tlo:tl?.label || "G43 H" }); }
+
+    // Where the tool ends up (radius values for lathe X, which is a diameter)
+    const p0 = {...st.pos}, p1 = {...st.pos};
+    const val = (w) => w.n * ((lathe && (w.L==="X" || w.L==="U")) ? 0.5 : 1);
+    for (const w of axisWords){
+      if (isNaN(w.n)) continue;
+      if (w.L==="U" || w.L==="W"){ const a = w.L==="U" ? "X" : "Z"; p1[a] = p1[a]==null ? null : p1[a] + val(w); }
+      else if (st.dist==="inc") p1[w.L] = p1[w.L]==null ? null : p1[w.L] + val(w);
+      else p1[w.L] = val(w);
+    }
+    if (kind==="feed" && ["G02","G03"].includes(st.motion)){
+      const [a1, a2] = { G17:["X","Y"], G18:["X","Z"], G19:["Y","Z"] }[st.plane];
+      const R = get("R");
+      if (!R && !centers.length) emit(li, "arc-no-center", { code:st.motion, centers:centerL.split("").join(" and ") });
+      if (R && centers.length) emit(li, "arc-r-and-ijk", { centers:centers.map(w => w.L).join(" and ") });
+      const known = [p0[a1], p0[a2], p1[a1], p1[a2]].every(v => v!=null);
+      const tol = D.arcTolerance?.[st.units] ?? 0.001;
+      if (known){
+        const same = Math.hypot(p1[a1]-p0[a1], p1[a2]-p0[a2]) < tol;
+        if (R && same) emit(li, "arc-full-circle-r", { centers:centerL.split("").join(" and ") });
+        if (!R && centers.length){
+          const off = l => get(l)?.n || 0;
+          const ca = p0[a1] + off(centerL[0]), cb = p0[a2] + off(centerL[1]);
+          const r1 = Math.hypot(p0[a1]-ca, p0[a2]-cb), r2 = Math.hypot(p1[a1]-ca, p1[a2]-cb);
+          if (Math.abs(r1 - r2) > tol) emit(li, "arc-radius-mismatch", { r1:fmt4(r1), r2:fmt4(r2), diff:fmt4(Math.abs(r1-r2)) });
+        }
+      }
+    }
+    if (compNew && ["G02","G03"].includes(st.motion) && kind==="feed") emit(li, "comp-start-on-arc", { code:compNew });
+    if (!lathe && kind==="rapid" && get("Z") && st.dist==="abs" && p1.Z!=null && p1.Z < 0 && st.tloOn) emit(li, "rapid-below-zero", { z:fmtNum("Z", get("Z").v, st).v });
+    if (nonMove){ if (has("G28") || has("G30") || has("G53") || has("G92") || has("G50")) axisWords.forEach(w => { st.pos[w.L==="U" ? "X" : w.L==="W" ? "Z" : w.L] = null; }); }
+    else if (kind==="cycle"){ if (!lathe){ st.pos.X = p1.X; st.pos.Y = p1.Y; } }
+    else st.pos = p1;
+  }
+}
+
+function drawProblems(){
+  const box = document.getElementById("probs"); box.classList.toggle("closed", !probsOpen); box.classList.toggle("empty", !PROBLEMS.length && DIALECT.verified);
+  const cnt = sev => PROBLEMS.filter(p => p.sev===sev).length;
+  document.getElementById("probs-c").innerHTML = ["error","warning","info"].map(sev =>
+    `<button class="pf ${sev}" data-f="${sev}" aria-pressed="${probFilter[sev]}" title="Show or hide ${sev}s">${SEV_ICON[sev]} ${cnt(sev)}</button>`).join("");
+  document.getElementById("probs-tg").textContent = probsOpen ? "▾" : "▸";
+  const lab = li => /^N\d/.test(doc[li]?.[0] || "") ? doc[li][0] : (/^O\d/.test(doc[li]?.[0] || "") ? doc[li][0] : "Ln " + (li+1));
+  const rows = PROBLEMS.filter(p => probFilter[p.sev]);
+  const note = DIALECT.verified ? "" : `<div class="pnote">${esc(DIALECT.label)} rules are a first draft and haven't been checked against the programming manual yet.</div>`;
+  document.getElementById("probs-l").innerHTML = note + (rows.length ? rows.map(p =>
+    `<div class="pr ${p.sev}${p.li===curLine?" on":""}" data-li="${p.li}" title="${esc(p.why)}"><span class="pi">${SEV_ICON[p.sev]}</span><span class="pn">${lab(p.li)}</span><span class="pt">${esc(p.msg)}</span><span class="pid">${p.id}</span></div>`).join("")
+    : `<div class="pnone">${PROBLEMS.length ? "Nothing to show with these filters." : "No problems found for " + esc(DIALECT.label) + "."}</div>`);
+}
 /* ---------- Rendering ---------- */
 const ed = document.getElementById("ed");
 ed.addEventListener("scroll", () => { document.getElementById("colhead").scrollLeft = ed.scrollLeft; });
 function render(){
   translateAll();
+  PROBLEMS = checkProgram(); PBYLINE = {};
+  PROBLEMS.forEach(p => (PBYLINE[p.li] ||= []).push(p));
   EXEC = interpret();
   computeColumns();
   const W = COLW();
@@ -726,17 +1140,20 @@ function render(){
   ed.innerHTML = rows.map(({li, key, ins, from}) => {
     const slots = slotsFor(li);
     const hit = s => findQ && (s.g.toUpperCase().includes(findQ) || s.e.toUpperCase().includes(findQ));
-    const cls = s => `cell${s.unk?" unk":""}${s.cm?" cm":""}${s.n?" n":""}${s.add?" add":""}${hit(s)?" fhit":""}`;
+    const cls = s => `cell${s.unk?" unk":""}${s.imp?" imp":""}${s.cm?" cm":""}${s.n?" n":""}${s.add?" add":""}${hit(s)?" fhit":""}`;
+    const unit = s => s.u ? `<small class="u">${esc(s.u)}</small>` : "";
     const wd = s => s.cm && layout==="order" ? "" : `width:${s.w}ch`;
-    const en = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc(s.e || s.g)}">${s.add ? "+" : s.cm ? `<span class="cmx">${esc(s.g)}</span>` : esc(s.e)}</span>`).join("");
+    const en = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc((s.e || s.g) + (s.u ? " " + s.u : ""))}">${s.add ? "+" : s.cm ? `<span class="cmx">${esc(s.g)}</span>` : esc(s.e) + unit(s)}</span>`).join("");
     const gc = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc(s.g)}">${s.add ? "" : esc(s.g)}</span>`).join("");
     const tgt = ins ? null : callTarget(doc[li]);
-    const xp = tgt!=null ? (subRange(tgt) ? `<button class="xp" data-x="${li}">${expanded.has(li) ? "▾ hide" : "▸ show"} N${tgt}</button>` : `<span class="xp bad">N${tgt} not found</span>`) : "";
+    const xp = tgt!=null ? (subRange(tgt) ? `<button class="xp" data-x="${li}">${expanded.has(li) ? "▾ hide" : "▸ show"} ${tgt}</button>` : `<span class="xp bad">${tgt} not found</span>`) : "";
     const kind = lineKind(li);
-    const c = `ln${li===curLine && !ins?" cur":""}${ins?" ins":""}${kind?" k-"+kind:""}${fhits.includes(li) && li===curLine?" fcur":""}${simIdx!=null && li===curLine && !ins?" simcur":""}`;
-    return `<div class="${c}" data-key="${key}" data-li="${li}"${ins?` title="Inserted from the subprogram called on ${from}. Edits here change the subprogram itself."`:""}><div class="r en"><span class="gut"></span>${en}</div><div class="r gc"><span class="gut">${ins?"↳":li+1}</span>${gc}${xp}</div></div>`;
+    const lp = ins ? null : PBYLINE[li], worst = lp ? lp.reduce((a, p) => SEV_RANK[p.sev] > SEV_RANK[a] ? p.sev : a, "info") : null;
+    const pmark = lp ? `<span class="pm ${worst}" title="${esc(lp.map(p => p.msg).join("\n"))}">${SEV_ICON[worst]}</span>` : "";
+    const c = `ln${worst?" p-"+worst:""}${li===curLine && !ins?" cur":""}${ins?" ins":""}${kind?" k-"+kind:""}${fhits.includes(li) && li===curLine?" fcur":""}${simIdx!=null && li===curLine && !ins?" simcur":""}`;
+    return `<div class="${c}" data-key="${key}" data-li="${li}"${ins?` title="Inserted from the subprogram called on ${from}. Edits here change the subprogram itself."`:""}><div class="r en"><span class="gut">${pmark}</span>${en}</div><div class="r gc"><span class="gut">${ins?"↳":li+1}</span>${gc}${xp}</div></div>`;
   }).join("");
-  drawViews(); drawModes(); status(); updateFindCount(fhits);
+  drawViews(); drawModes(); status(); updateFindCount(fhits); drawProblems();
   document.getElementById("b-undo").disabled = !undoStack.length;
   document.getElementById("b-redo").disabled = !redoStack.length;
 }
@@ -745,14 +1162,15 @@ function status(){
   document.getElementById("st-pos").textContent = `Ln ${curLine+1}`;
   document.getElementById("st-mode").textContent = simIdx!=null ? "Simulating" : editMode==="en" ? "Editing English" : "Editing G-code";
   document.getElementById("st-modal").textContent = [st.units==="inch"?"INCH":"METRIC", st.dist==="abs"?"ABS":"INCR", st.feed==="perMin"?"FEEDMIN":"FEEDREV", st.spin==="rpm"?"MODERPM":"MODESFM"].join("  ");
-  const n = view.flat().filter(c => c.unk).length;
-  document.getElementById("st-warn").textContent = n ? `⚠ ${n} unknown word${n>1?"s":""}` : "";
+  const cnt = sev => PROBLEMS.filter(p => p.sev===sev).length;
+  const e = cnt("error"), w = cnt("warning"), i = cnt("info");
+  document.getElementById("st-warn").innerHTML = (e || w || i) ? `<span class="se">✕ ${e}</span> <span class="sw2">⚠ ${w}</span> <span class="si">i ${i}</span>` : `<span class="ok">✓ No problems</span>`;
 }
 function setMsg(t, bad){ const m = document.getElementById("st-msg"); m.textContent = t || ""; m.className = "msg" + (bad ? " bad" : ""); }
 function showInfo(li, idx, warn){
   const c = idx!=null ? view[li]?.[idx] : null; const box = document.getElementById("info");
-  if (!c){ box.innerHTML = "<span>Hover a word to see what it means.</span>"; return; }
-  box.innerHTML = `<span><span class="k">${esc(c.g)}</span> &nbsp;→&nbsp; <span class="k">${esc(c.e || "—")}</span></span><span>${esc(c.d)}</span>` + (warn ? `<span class="warn">${esc(warn)}</span>` : "") + (c.unk ? `<span class="warn">Unknown words are flagged instead of guessed.</span>` : "");
+  if (!c){ const lp = PBYLINE[curLine]; box.innerHTML = lp ? lp.map(p => `<span class="warn ${p.sev}"><b>${esc(p.title)}.</b> ${esc(p.msg)}</span>`).join("") : "<span>Hover a word to see what it means.</span>"; return; }
+  box.innerHTML = `<span><span class="k">${esc(c.g)}</span> &nbsp;→&nbsp; <span class="k">${esc(c.e || "—")}${c.u ? `<small class="u">${esc(c.u)}</small>` : ""}</span></span><span>${esc(c.d)}</span>` + (warn ? `<span class="warn">${esc(warn)}</span>` : "") + (c.unk ? `<span class="warn">Unknown words are flagged instead of guessed.</span>` : "");
 }
 const MODE_ROWS = [
   ["Motion", st => st.cycleCode || st.motion, ["motion","cycleCode"]],
@@ -766,7 +1184,7 @@ const MODE_ROWS = [
   ["Speed", st => st.S, ["S"]],
   ["Coolant", st => st.cool, ["cool"]],
   ["Tool", st => st.T, ["T"]],
-  ["Length offset", st => st.tlen + (st.tlen==="G43" && st.H ? " " + st.H : ""), ["tlen","H"]],
+  ["Length offset", st => st.tlen + (st.tlenOn && st.H ? " " + st.H : ""), ["tlen","H"]],
   ["Cutter comp", st => st.comp, ["comp"]],
   ["Work offset", st => st.wcs, ["wcs"]]
 ];
@@ -774,10 +1192,10 @@ function drawModes(){
   const st = lineState[curLine] || newState();
   const n = /^N\d+$/.test(doc[curLine]?.[0] || "") ? doc[curLine][0] : "line " + (curLine+1);
   document.getElementById("mh").innerHTML = `Active modes at ${n} <span><span class="new">●</span> set on this line</span>`;
-  document.getElementById("modes").innerHTML = MODE_ROWS.map(([lb, f, keys]) => {
+  document.getElementById("modes").innerHTML = MODE_ROWS.filter(([lb]) => lb!=="Positions" || DIALECT.modalGroups?.distance).map(([lb, f, keys]) => {
     const code = f(st); const isNew = keys.some(k => st.chg.includes(k));
-    const en = !code ? "—" : code.split(" ").map(w => word(w, st).e).join(" ");
-    return `<span class="lb">${isNew ? '<span class="new">●</span> ' : ""}${lb}</span><span class="cd">${esc(code || "not set")}</span><span class="ew"${isNew?' style="color:#d13438"':""}>${esc(en)}</span>`;
+    const en = !code ? "—" : code.split(" ").map(w => { const c = word(w, st, lb==="Work offset" ? "wcs" : null); return esc(c.e) + (c.u ? `<small class="u">${esc(c.u)}</small>` : ""); }).join(" ");
+    return `<span class="lb">${isNew ? '<span class="new">●</span> ' : ""}${lb}</span><span class="cd">${esc(code || "not set")}</span><span class="ew"${isNew?' style="color:#d13438"':""}>${en}</span>`;
   }).join("");
 }
 
@@ -789,6 +1207,7 @@ ed.addEventListener("mouseover", e => {
   const s = slotsFor(+c.dataset.l).find(s => s.ref===c.dataset.r);
   showInfo(+c.dataset.l, s?.idx[0]);
 });
+ed.addEventListener("mouseleave", () => { if (!editing) showInfo(curLine, null); });
 ed.addEventListener("mousedown", e => {
   const x = e.target.closest(".xp[data-x]");
   if (x){ e.preventDefault(); if (editing) commit(); const li = +x.dataset.x; expanded.has(li) ? expanded.delete(li) : expanded.add(li); render(); return; }
@@ -802,14 +1221,21 @@ ed.addEventListener("mousedown", e => {
 
 /* ---------- N numbers and subprograms ---------- */
 const nOf = toks => toks && /^N\d+$/.test(toks[0]||"") ? parseInt(toks[0].slice(1)) : null;
-function labels(){ const m = {}; doc.forEach((t, i) => { const n = nOf(t); if (n!=null) m[n] = i; }); return m; }
-function callTarget(toks){ if (!toks.some(t => isCode(t,"M97"))) return null; const p = toks.find(t => t[0]==="P"); return p ? parseInt(p.slice(1)) : null; }
+// Labels are "N1000" (Haas M97 P1000) or "O1200" (Okuma CALL O1200, a program block in the same file).
+function labels(){ const m = {}; doc.forEach((t, i) => { const n = nOf(t); if (n!=null && m["N"+n]===undefined) m["N"+n] = i; if (/^O\d+$/.test(t[0]||"")) m["O"+parseInt(t[0].slice(1))] = i; }); return m; }
+function callTarget(toks){
+  const c = toks.indexOf("CALL");
+  if (c >= 0){ const o = toks.slice(c+1).find(t => /^O\d+$/.test(t)); return o ? "O" + parseInt(o.slice(1)) : null; }
+  if (!toks.some(t => isCode(t,"M97"))) return null; const p = toks.find(t => /^P\d/.test(t)); return p ? "N" + parseInt(p.slice(1)) : null;
+}
+const isReturn = toks => toks.some(t => isCode(t,"M99") || t==="RTS");
+const isEnd = toks => toks.some(t => isCode(t,"M30") || isCode(t,"M02"));
 function subRange(n){
   const s = labels()[n]; if (s===undefined) return null;
-  let e = s; while (e < doc.length-1 && !doc[e].some(t => isCode(t,"M99"))) e++;
+  let e = s; while (e < doc.length-1 && !isReturn(doc[e])) e++;
   return [s, e];
 }
-function mainEnd(){ const i = doc.findIndex(t => t.some(w => isCode(w,"M30"))); return i < 0 ? doc.length-1 : i; }
+function mainEnd(){ const i = doc.findIndex(isEnd); return i < 0 ? doc.length-1 : i; }
 function newLine(after){
   pushUndo();
   let words = [], msg = "New line";
@@ -843,7 +1269,7 @@ function renumber(){
   const end = mainEnd(); let n = N_STEP, count = 0;
   for (let i = 0; i <= end; i++){
     const t = doc[i]; if (!t.length || t[0].startsWith("O") || t.every(w => w.startsWith("("))) continue;
-    const old = nOf(t); if (old!=null && called.has(old)) continue;
+    const old = nOf(t); if (old!=null && called.has("N"+old)) continue;
     const w = "N"+n; if (old!=null) t[0] = w; else t.unshift(w);
     n += N_STEP; count++;
   }
@@ -979,7 +1405,7 @@ function scrollToLn(el){
 function selectLine(li, keepSim){
   if (editing && !commit()) return;
   if (simIdx!=null && !keepSim) stopSim(true);
-  curLine = Math.max(0, Math.min(li, doc.length-1)); render();
+  curLine = Math.max(0, Math.min(li, doc.length-1)); render(); showInfo(curLine, null);
   scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`));
   ed.focus({preventScroll:true});
 }
@@ -1021,8 +1447,8 @@ function interpret(){
     const li = i, toks = doc[i];
     const s0 = segs.length; step(toks, li);
     steps.push({ li, v: lathe ? p.x/2 : p.z, s0, s1: segs.length, kind: segs.length > s0 ? (lineKind(li) || "feed") : null });
-    if (toks.some(t => isCode(t,"M30"))) break;
-    if (toks.some(t => isCode(t,"M99")) && stack.length){ i = stack.pop(); continue; }
+    if (isEnd(toks)) break;
+    if (isReturn(toks) && stack.length){ i = stack.pop(); continue; }
     const tgt = callTarget(toks);
     if (tgt!=null && L[tgt]!==undefined && stack.length < 8){ stack.push(i+1); i = L[tgt]; continue; }
     i++;
@@ -1196,6 +1622,18 @@ document.getElementById("s-fwd").onclick = () => simStep(1);
 document.getElementById("s-back").onclick = () => simStep(-1);
 document.getElementById("s-reset").onclick = simReset;
 
+document.getElementById("probs-l").addEventListener("mousedown", e => { const r = e.target.closest(".pr"); if (!r) return; e.preventDefault(); selectLine(+r.dataset.li); });
+document.getElementById("probs-c").addEventListener("mousedown", e => { const b = e.target.closest(".pf"); if (!b) return; e.preventDefault(); probFilter[b.dataset.f] = !probFilter[b.dataset.f]; probsOpen = true; drawProblems(); });
+function toggleProblems(open){ probsOpen = open ?? !probsOpen; drawProblems(); }
+document.getElementById("probs-tg").onclick = () => toggleProblems();
+document.getElementById("st-warn").onclick = () => toggleProblems(true);
+function nextProblem(dir){
+  const lines = [...new Set(PROBLEMS.filter(p => probFilter[p.sev]).map(p => p.li))];
+  if (!lines.length){ setMsg("No problems in this file"); return; }
+  const li = dir > 0 ? (lines.find(l => l > curLine) ?? lines[0]) : ([...lines].reverse().find(l => l < curLine) ?? lines[lines.length-1]);
+  selectLine(li); const p = PBYLINE[li][0]; setMsg(`${p.title}: ${p.msg}`, p.sev!=="info");
+}
+
 /* ---------- Menus ---------- */
 function setShow(m){
   if (editing) commit();
@@ -1248,11 +1686,16 @@ const MENUS = {
     "-", { grp:"Moves after the selected line" },
     R("Grey them out", () => future==="grey", () => { future = "grey"; drawViews(); }),
     R("Hide them", () => future==="hide", () => { future = "hide"; drawViews(); }),
-    R("Show normally", () => future==="show", () => { future = "show"; drawViews(); })
+    R("Show normally", () => future==="show", () => { future = "show"; drawViews(); }),
+    "-",
+    R("Problems panel", () => probsOpen, () => toggleProblems())
   ],
   Program: [
     { label:"Sort words on this line", fn:() => sortWords("line") },
     { label:"Sort words in whole file", fn:() => sortWords("all") },
+    "-",
+    { label:"Next problem", sc:"F8", fn:() => nextProblem(1) },
+    { label:"Previous problem", sc:"Shift+F8", fn:() => nextProblem(-1) },
     "-",
     { label:"Renumber", fn:renumber },
     R("Auto N on new lines", () => autoN, () => { autoN = !autoN; setMsg(autoN ? `New lines get the next free N number, counting by ${N_STEP}.` : "New lines get no N number."); }),
@@ -1268,7 +1711,7 @@ const MENUS = {
     { label:"Stop simulating", sc:"Esc", fn:() => stopSim(), dis:() => simIdx==null }
   ],
   Help: [
-    { label:"Keyboard shortcuts", fn:() => setMsg("Ctrl+Z undo · Ctrl+Y redo · Ctrl+F find · F3 next · Ctrl+Enter new line · ↑↓ select line · Space play · → step") },
+    { label:"Keyboard shortcuts", fn:() => setMsg("Ctrl+Z undo · Ctrl+Y redo · Ctrl+F find · F3 next · F8 next problem · Ctrl+Shift+M problems · Ctrl+Enter new line · ↑↓ select line · Space play · → step") },
     { label:"About the dictionary", fn:() => setMsg("Words come from gcode-words.json plus the selected machine's file.") }
   ]
 };
@@ -1298,6 +1741,8 @@ document.getElementById("app").addEventListener("keydown", e => {
   const k = e.key.toLowerCase(), ctrl = e.ctrlKey || e.metaKey;
   if (ctrl && k==="f"){ e.preventDefault(); openFind(); return; }
   if (e.key==="F3"){ e.preventDefault(); findNext(e.shiftKey ? -1 : 1); return; }
+  if (e.key==="F8"){ e.preventDefault(); if (editing && !commit()) return; nextProblem(e.shiftKey ? -1 : 1); return; }
+  if (ctrl && e.shiftKey && k==="m"){ e.preventDefault(); toggleProblems(); return; }
   if (ctrl && k==="o"){ e.preventDefault(); openDlg(); return; }
   if (ctrl && k==="s"){ e.preventDefault(); save(); return; }
   if (editing || e.target===findq) return;
@@ -1326,7 +1771,7 @@ document.getElementById("l-cols").onclick = () => setLayout("cols");
 document.getElementById("b-undo").onclick = undo;
 document.getElementById("b-redo").onclick = redo;
 document.getElementById("b-find").onclick = openFind;
-document.getElementById("machine").onchange = e => { machineId = e.target.value; render(); setMsg("Machine file: " + e.target.selectedOptions[0].text); };
+document.getElementById("machine").onchange = e => { machineId = e.target.value; setDialect(); render(); setMsg("Machine file: " + e.target.selectedOptions[0].text); };
 function save(){ if (editing) commit(); setMsg(`Saved ${fileName}. Only the G-code is written, with its original CRLF line endings.`); }
 document.getElementById("b-save").onclick = save;
 
@@ -1334,7 +1779,10 @@ const dlg = document.getElementById("dlg"), dlgName = document.getElementById("d
 const LIST = [
   ["Archive", "10/12/2026 4:10 PM", "File folder", "", true],
   ["Fixtures", "9/30/2026 8:02 AM", "File folder", "", true],
+  ["CHECKS_DEMO.nc", "10/31/2026 7:40 AM", "NC File", "1 KB"],
   ["FLANGE_OP1.nc", "10/29/2026 2:44 PM", "NC File", "1 KB"],
+  ["LATHE_CHECKS.nc", "10/31/2026 7:44 AM", "NC File", "1 KB"],
+  ["OKUMA_PLATE.MIN", "10/31/2026 7:48 AM", "MIN File", "1 KB"],
   ["POCKET_2X1.nc", "10/31/2026 6:20 AM", "NC File", "1 KB"],
   ["SHAFT_OD.nc", "10/30/2026 11:15 AM", "NC File", "1 KB"]
 ];
@@ -1368,14 +1816,19 @@ const FEATURES = [
   ["Reading", "Tool list: every tool, its offsets, and the lines that use it", 0],
   ["Reading", "Program stats: travel extents, cut distance and a rough run time", 0],
   ["Reading", "Macro variables (#100, IF, WHILE) shown with their values", 0],
-  ["Checks", "Problems panel listing every warning, with a click to jump to its line", 0],
-  ["Checks", "Feed move with the spindle off, or no F set yet", 0],
-  ["Checks", "Rapid move below the part top, or into a clamp zone from the machine file", 0],
-  ["Checks", "Tool change without G43 and an H offset that matches the tool", 0],
+  ["Checks", "Problems panel listing every warning, with a click to jump to its line", 1],
+  ["Checks", "Canned cycles missing a required word (Z, R, Q, P, D, K…), per control", 1],
+  ["Checks", "Feed move with the spindle off, no F set yet, or F left over from the other feed mode", 1],
+  ["Checks", "A word repeated in one line, or two codes from the same group (like G90 and G91)", 1],
+  ["Checks", "Distance words with no decimal point (X1 means 0.0001 in)", 1],
+  ["Checks", "Tool change without a length offset, and an H that doesn't match the tool", 1],
+  ["Checks", "Arc with no center, end point off the circle, or cutter comp started on an arc", 1],
+  ["Checks", "Codes that mean something else on this control (G54 on Okuma, M97 on Fanuc)", 1],
+  ["Checks", "Rapid below Z0", 1],
+  ["Checks", "Rapid into the part or a clamp zone from a stock and fixture model", 0],
   ["Checks", "Moves outside the machine's travel limits", 0],
   ["Checks", "Spindle speed or feed over the machine's limits", 0],
-  ["Checks", "Two codes from the same group in one line (like G90 and G91)", 0],
-  ["Checks", "Arc end point that doesn't match its radius", 0],
+  ["Checks", "Macro programs (#vars, IF, WHILE; Okuma V-variables) checked by running them", 0],
   ["Preview", "Toolpath XY (mill) or XZ (lathe) and the Z-by-line timeline", 1],
   ["Preview", "Simulation that plays move by move, with step forward and back", 1],
   ["Preview", "Grey out or hide moves after the selected line", 1],
@@ -1388,6 +1841,8 @@ const FEATURES = [
   ["Files", "Autosave and a backup copy before each save", 0],
   ["Files", "Print or export a listing with the English lines", 0],
   ["Machines", "Machine definition files for dialect, limits and brand codes", 1],
+  ["Machines", "Okuma OSP dialect: G15 H work offsets, G56 length offset, CALL / RTS", 1],
+  ["Machines", "Okuma lathe LAP cycles (G85, G87) and contour definitions checked", 0],
   ["Machines", "An editor for machine files and the word dictionary", 0],
   ["Comfort", "Menus with shortcuts shown, plus a slim toolbar", 1],
   ["Comfort", "Font size zoom, dark theme and adjustable column width", 0],
@@ -1395,6 +1850,9 @@ const FEATURES = [
 ];
 document.getElementById("feat").innerHTML = FEATURES.map(([a, f, s], i) =>
   `<tr><td class="area">${i===0 || FEATURES[i-1][0]!==a ? a : ""}</td><td>${f}</td><td>${s ? '<span class="chip in">In mockup</span>' : '<span class="chip pl">Planned</span>'}</td></tr>`).join("");
+
+document.getElementById("rules").innerHTML = Object.entries(RULES.rules).sort((a, b) => SEV_RANK[b[1].severity] - SEV_RANK[a[1].severity]).map(([id, r]) =>
+  `<tr><td><span class="sev ${r.severity}">${r.severity}</span></td><td>${esc(r.title)}</td><td class="why">${esc(r.message.replace(/\{(\w+)\}/g, "…"))}</td><td class="id">${id}</td></tr>`).join("");
 
 load("POCKET_2X1.nc");
 setMsg("Click a word to edit it");

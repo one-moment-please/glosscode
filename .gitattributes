@@ -8,3 +8,5 @@
 
 *.png binary
 *.jpg binary
+*.MIN  text eol=crlf
+*.min  text eol=crlf

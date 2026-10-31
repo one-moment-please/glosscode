@@ -25,7 +25,7 @@ GlossCode targets Windows first. Everything is arranged so that a native Linux b
 - **Parser**: splits each line into words (`N40`, `M03`, `G97`, `S6000`) and keeps comments whole. Remembers each file's line endings, since G-code is often CRLF.
 - **Mode tracker**: walks the program in execution order, following subprogram calls, and records the modal state after every line: motion, units, G90/G91, plane, feed mode and rate, spindle, coolant, tool, offsets and compensation.
 - **Translator**: turns each word into its English word using the dictionary and the active modes. Values take a unit prefix (`RPM600` under G97, `SFM600` under G96, `IPM25` under G94 and G20).
-- **Checks**: warnings such as a feed word that clashes with the feed mode, a call to a missing subprogram label, or a feed move with the spindle off.
+- **Checks**: one pass in execution order that carries the machine state and reports problems such as a canned cycle missing a word, a feed move with no F or with the spindle off, a word repeated in a line, or a code that means something else on this control. Rule text and per-control tables come from `gcode-rules.json`; see [checks.md](checks.md).
 - **Dictionary loader**: reads `gcode-words.json` and merges machine definition overrides on top.
 
 Rules for the core: C standard library only (`stdio`, `stdlib`, `string`), no `windows.h`, UTF-8 everywhere, `/` in paths, and no compiler-specific extensions.
@@ -57,4 +57,6 @@ The UI is plain HTML, CSS and JavaScript loaded into the webview. It talks to th
 ## Data files
 
 - `data/gcode-words.json`: the base dictionary. Each code has `long` and `short` words and a description. Codes that differ between machine types have `mill` and `lathe` entries.
+- `data/gcode-rules.json`: the checks' messages and severities, and per-control tables (Fanuc, Haas, Okuma; mill and lathe) that inherit from each other.
+- The mockup embeds both files. After changing either, run `node scripts/sync-mockup-data.mjs`.
 - Machine definitions (to come): per-machine JSON that names the machine type and brand and overrides dictionary entries, for example Haas `M97` (local subprogram call) and `M88`/`M89` (through-spindle coolant).
