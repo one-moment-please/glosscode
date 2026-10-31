@@ -1,5 +1,5 @@
 {
-  "about": "Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, codes that mean something else on that control, and limits. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.",
+  "about": "Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, the words other codes need (wordHints, shown as hint text after the code), codes that mean something else on that control, and limits. 'cycleHelp' holds the text, sketch and word descriptions for the canned-cycle help dialog. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.",
   "version": 1,
   "rules": {
     "dup-address":          { "severity": "error",   "title": "Word repeated in a line",            "message": "{letter} appears {count} on this line ({words}). The control uses one of them or alarms.", "why": "Each address letter except G and M can appear once per block." },
@@ -77,6 +77,7 @@
           "G89": { "name": "Bore with dwell", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "K"], "feed": true, "spindle": true }
         },
         "wordMeaning": { "Z": "the hole bottom", "R": "the retract plane", "Q": "the peck depth or shift", "P": "the dwell time", "F": "the feed rate" },
+        "wordHints": { "G02": { "arc": true }, "G03": { "arc": true }, "G41": { "requires": ["D"] }, "G42": { "requires": ["D"] }, "G43": { "requires": ["H"] }, "G44": { "requires": ["H"] } },
         "foreign": {
           "M97": { "severity": "error",   "text": "M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P." },
           "M88": { "severity": "warning", "text": "M88 is Haas through-spindle coolant. Check what your builder uses." },
@@ -113,6 +114,7 @@
           "G94": { "name": "Facing cycle",         "requires": ["X", "Z"], "optional": ["U", "W", "R", "F"], "feed": true, "spindle": true }
         },
         "wordMeaning": { "P": "the first line of the contour", "Q": "the last line of the contour", "U": "the X finish allowance", "W": "the Z finish allowance", "D": "the depth of each pass", "K": "the thread height", "F": "the feed rate or thread lead", "X": "the end diameter", "Z": "the end position" },
+        "wordHints": { "G02": { "arc": true }, "G03": { "arc": true }, "G32": { "requires": ["Z", "F"] } },
         "foreign": {
           "G91": { "severity": "warning", "text": "Fanuc-style lathes use U and W for incremental moves; G91 needs the optional G-code system B or C." },
           "M97": { "severity": "error",   "text": "M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P." }
@@ -173,6 +175,7 @@
         "cycles": {
           "G87": { "name": "Back bore", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true }
         },
+        "wordHints": { "G43": null, "G44": null, "G56": { "requires": ["H"] }, "G15": { "requires": ["H"] } },
         "foreign": {
           "G43": { "severity": "warning", "text": "Okuma calls the tool length offset with G56 H, not G43." },
           "G54": { "severity": "error",   "text": "On Okuma, G54 is the X-axis tool length offset, not work offset 1. Select work offsets with G15 H1." },
@@ -199,6 +202,7 @@
         "cycles": {
           "G70": null, "G71": null, "G72": null, "G76": null, "G90": null, "G92": null, "G94": null
         },
+        "wordHints": { "G32": null, "G33": { "requires": ["Z", "F"] } },
         "referenceOnly": {
           "G85": "LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)",
           "G86": "LAP copy roughing",
@@ -219,6 +223,102 @@
           "M98": { "severity": "warning", "text": "Okuma calls subprograms with CALL O_ and returns with RTS." }
         }
       }
+    }
+  },
+  "cycleHelp": {
+    "about": "Text for the canned-cycle help dialog. Each word entry is [example value, what it does] or [example value, what it does, English word]; the English word replaces the usual one while that cycle is active (Haas G76 A60 reads ANGLE60, not ?A60). 'common' words apply to every cycle of that machine type. Keys like 'haas.lathe' override the Fanuc-style base for that control. 'sketch' picks the drawing; 'labels' renames the letters on it.",
+    "mill": {
+      "common": { "words": {
+        "X": ["1.", "Hole position in X. After this line, every line with just X or Y drills another hole, until G80."],
+        "Y": ["0.5", "Hole position in Y."],
+        "Z": ["-0.5", "Bottom of the hole."],
+        "R": ["0.1", "Retract plane. The tool rapids down to R, then feeds from there. G99 comes back up to R between holes, G98 to where it started."],
+        "F": ["6.", "Feed rate for the cut."],
+        "K": ["1", "How many times to run the hole. Under G91, each repeat steps over by X and Y.", "REPT"],
+        "L": ["1", "How many times to run the hole. L0 sets up the cycle without drilling here.", "REPT"],
+        "P": ["0.5", "Dwell at the bottom, in seconds on Haas (P0.5). Fanuc takes milliseconds with no decimal point (P500)."]
+      } },
+      "G73": { "sketch": "peck-hs", "about": "Drills to Z in pecks of Q. After each peck the tool backs off a little to break the chip, without leaving the hole. Faster than G83, but it doesn't clear chips out of deep holes.",
+        "words": { "Q": ["0.1", "Depth of each peck."] } },
+      "G74": { "sketch": "tap-lh", "about": "Left-hand tapping. The spindle runs in reverse down to Z, then reverses at the bottom and feeds back out to R.",
+        "words": { "F": ["31.25", "Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."] } },
+      "G76": { "sketch": "finebore", "about": "Bores to Z, stops the spindle in a set orientation, moves the tool away from the wall by Q, then rapids out so the tip doesn't drag a line up the bore.",
+        "words": { "Q": ["0.01", "How far the tool moves off the wall before it pulls out.", "SHIFT"] } },
+      "G81": { "sketch": "drill", "about": "The plain drilling cycle: rapid to R, feed to Z, rapid back out." },
+      "G82": { "sketch": "dwell", "about": "Like G81, but it pauses at the bottom for P so a spot drill or counterbore leaves a clean, flat bottom." },
+      "G83": { "sketch": "peck", "about": "Drills in pecks of Q and rapids all the way back up to R after each peck to clear the chips. Use it for deep holes.",
+        "words": { "Q": ["0.15", "Depth of each peck."] } },
+      "G84": { "sketch": "tap", "about": "Right-hand tapping. Feeds to Z, reverses the spindle at the bottom and feeds back out to R.",
+        "words": { "F": ["31.25", "Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."] } },
+      "G85": { "sketch": "bore-feed", "about": "Feeds to Z and feeds back out to R. For reaming and boring, where a rapid out would mark the wall." },
+      "G86": { "sketch": "bore-stop", "about": "Feeds to Z, stops the spindle and rapids out. The tip drags up the wall, so it's for rough boring." },
+      "G87": { "sketch": "backbore", "about": "Back boring. The tool goes down through the hole shifted off center, moves back to center by Q, starts the spindle and cuts upward to Z.",
+        "labels": { "shift": "Q" },
+        "words": { "Z": ["-0.75", "Top of the back bore (where the upward cut stops)."], "R": ["-1.1", "Start of the cut, below the part."], "Q": ["0.05", "How far the tool is shifted to pass through the hole.", "SHIFT"] } },
+      "G89": { "sketch": "bore-dwell", "about": "Like G85 with a dwell: feeds to Z, pauses for P, feeds back out." }
+    },
+    "haas.mill": {
+      "common": { "words": {
+        "I": ["0.2", "First peck depth (use I, J and K instead of Q).", "PECK1"],
+        "J": ["0.02", "How much shorter each peck gets.", "PECKLESS"],
+        "K": ["0.05", "Shortest peck allowed.", "PECKMIN"]
+      } },
+      "G74": { "words": { "J": ["2", "Retract speed: J2 comes out twice as fast as it went in.", "RETSPD"] } },
+      "G84": { "words": { "J": ["2", "Retract speed: J2 comes out twice as fast as it went in.", "RETSPD"] } },
+      "G76": { "words": { "I": ["0.01", "Shift along X before pulling out (instead of Q).", "SHIFTX"], "J": ["0", "Shift along Y before pulling out (instead of Q).", "SHIFTY"], "Q": ["0.01", "How far the tool moves off the wall before it pulls out.", "SHIFT"] } },
+      "G77": { "sketch": "backbore", "about": "Back boring. The tool goes down through the hole shifted off center, moves back to center, starts the spindle and cuts upward to Z.",
+        "labels": { "shift": "Q" },
+        "words": { "Z": ["-0.75", "Top of the back bore (where the upward cut stops)."], "R": ["-1.1", "Start of the cut, below the part."], "Q": ["0.05", "How far the tool is shifted to pass through the hole.", "SHIFT"],
+          "I": ["0.05", "Shift along X (instead of Q).", "SHIFTX"], "J": ["0", "Shift along Y (instead of Q).", "SHIFTY"] } }
+    },
+    "lathe": {
+      "common": { "words": {
+        "S": ["600", "Spindle speed for this cycle."],
+        "U": ["-0.1", "Incremental X distance (on the diameter), used instead of X."],
+        "W": ["-1.", "Incremental Z distance, used instead of Z."]
+      } },
+      "G70": { "sketch": "finish", "about": "Runs the finished contour once, from the line numbered P to the line numbered Q, taking off the stock the roughing cycle left.",
+        "words": { "P": ["100", "N number of the first line of the contour."], "Q": ["200", "N number of the last line of the contour."], "F": ["0.004", "Finish feed, if the contour lines don't give one."] } },
+      "G71": { "sketch": "rough", "about": "Roughs away the stock down to the contour between lines P and Q, in passes along Z, and leaves U and W for G70 to finish. On Fanuc it takes two lines: the first (G71 U R) sets the depth of cut and retract, the second names the contour.",
+        "labels": { "depth": "U" },
+        "words": { "U": ["0.02", "Finish stock left on X for G70, as a diameter.", "ALLOWX"], "W": ["0.005", "Finish stock left on Z for G70.", "ALLOWZ"], "P": ["100", "N number of the first line of the contour."], "Q": ["200", "N number of the last line of the contour."], "F": ["0.012", "Roughing feed."], "R": ["0.05", "Retract after each pass (first line).", "RETRACT"] } },
+      "G72": { "sketch": "face-rough", "about": "Like G71, but the passes run along X, facing down from the end of the part. Good for parts wider than they are long.",
+        "labels": { "depth": "W" },
+        "words": { "U": ["0.02", "Finish stock left on X for G70, as a diameter.", "ALLOWX"], "W": ["0.005", "Finish stock left on Z for G70.", "ALLOWZ"], "P": ["100", "N number of the first line of the contour."], "Q": ["200", "N number of the last line of the contour."], "F": ["0.012", "Roughing feed."], "R": ["0.05", "Retract after each pass (first line).", "RETRACT"] } },
+      "G76": { "sketch": "thread", "about": "Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. On Fanuc it takes two lines: the first (G76 P Q R) sets finishing passes, chamfer, tool angle and the smallest cut; the second, shown here, gives the size.",
+        "labels": { "height": "P", "first": "Q" },
+        "words": { "X": ["0.6734", "Minor diameter at the end of the thread (the last pass)."], "Z": ["-1.", "Where the thread ends."],
+          "P": ["383", "Thread height (radius) in 0.0001 in with no decimal point. P383 is 0.0383.", "THDHT"],
+          "Q": ["120", "Depth of the first pass, same units. Q120 is 0.012.", "CUT1"],
+          "F": ["0.0625", "Lead: the distance between threads. 16 per inch is 0.0625."],
+          "R": ["0.", "Taper: X difference from the end to the start, as a radius. 0 for a straight thread.", "TAPER"] } },
+      "G90": { "sketch": "turn", "about": "One turning pass as a box: rapid to X, feed to Z, feed back out, rapid back to the start. Repeat the line with smaller X values for more passes.",
+        "words": { "X": ["1.2", "Diameter for this pass."], "Z": ["-1.5", "Where the pass ends in Z."], "R": ["0.", "Taper: X difference from start to end, as a radius.", "TAPER"], "F": ["0.01", "Feed."] } },
+      "G92": { "sketch": "thread-cycle", "about": "One threading pass as a box: rapid to X, thread to Z at the lead F, rapid out and back. Write one line per pass, each a little deeper.",
+        "words": { "X": ["0.72", "Diameter for this pass."], "Z": ["-1.", "Where the thread ends."], "F": ["0.0625", "Lead: the distance between threads."], "R": ["0.", "Taper: X difference from start to end, as a radius.", "TAPER"] } },
+      "G94": { "sketch": "face", "about": "One facing pass as a box: rapid to Z, feed down to X, feed back out, rapid back. Repeat with smaller Z values for more passes.",
+        "words": { "X": ["0.", "Diameter where the face pass stops."], "Z": ["-0.05", "Face position for this pass."], "R": ["0.", "Cone: Z difference across the face.", "TAPER"], "F": ["0.008", "Feed."] } }
+    },
+    "haas.lathe": {
+      "G71": { "about": "Roughs away the stock down to the contour between lines P and Q, in passes along Z of depth D, and leaves U and W for G70 to finish. Haas does it in one line.",
+        "labels": { "depth": "D" },
+        "words": { "D": ["0.1", "Depth of each roughing pass, as a radius.", "DEPTH"], "I": ["0.01", "Rough stock left on X, as a radius.", "RUFX"], "K": ["0.005", "Rough stock left on Z.", "RUFZ"], "T": ["0101", "Tool and offset for the cycle."], "R": ["1", "R1 turns on Type II roughing for pockets in the profile.", "TYPE"] } },
+      "G72": { "about": "Like G71, but the passes run along X, facing down from the end of the part. Haas does it in one line.",
+        "labels": { "depth": "D" },
+        "words": { "D": ["0.05", "Depth of each roughing pass.", "DEPTH"], "I": ["0.01", "Rough stock left on X, as a radius.", "RUFX"], "K": ["0.005", "Rough stock left on Z.", "RUFZ"], "T": ["0101", "Tool and offset for the cycle."] } },
+      "G73": { "sketch": "path-rough", "about": "Roughs by repeating the contour itself, shifted outward and stepping in each pass. Good for castings and forgings that already have roughly the right shape.",
+        "words": { "U": ["0.02", "Finish stock left on X for G70, as a diameter.", "ALLOWX"], "W": ["0.005", "Finish stock left on Z for G70.", "ALLOWZ"], "P": ["100", "N number of the first line of the contour."], "Q": ["200", "N number of the last line of the contour."], "I": ["0.2", "Stock to remove on X, as a radius.", "STOCKX"], "K": ["0.1", "Stock to remove on Z.", "STOCKZ"], "D": ["3", "Number of passes.", "PASSES"], "F": ["0.01", "Roughing feed."], "T": ["0101", "Tool and offset for the cycle."] } },
+      "G74": { "sketch": "face-groove", "about": "Pecks along Z into the face, for face grooves or drilling on center. With X and I it steps outward and pecks again.",
+        "words": { "Z": ["-0.25", "Depth of the groove or hole."], "X": ["1.5", "Outer diameter to step out to."], "K": ["0.05", "Peck depth in Z.", "PECK"], "I": ["0.1", "Step in X between pecking passes, as a radius.", "STEPX"], "D": ["0.", "Clearance when stepping back out.", "CLEAR"], "F": ["0.004", "Feed."] } },
+      "G75": { "sketch": "groove", "about": "Pecks in along X for an OD or ID groove. With Z and K it steps along and pecks again to make a wide groove.",
+        "words": { "X": ["0.9", "Diameter at the bottom of the groove."], "Z": ["-0.75", "Z where the last groove pass is."], "I": ["0.05", "Peck depth in X, as a radius.", "PECK"], "K": ["0.1", "Step in Z between grooves.", "STEPZ"], "D": ["0.", "Clearance when stepping back out.", "CLEAR"], "F": ["0.003", "Feed."] } },
+      "G76": { "about": "Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. Haas does it in one line.",
+        "labels": { "height": "K", "first": "D" },
+        "words": { "K": ["0.0383", "Thread height, as a radius.", "THDHT"], "D": ["0.012", "Depth of the first pass. Later passes get shallower to keep the chip load even.", "DEPTH"],
+          "A": ["60", "Tool tip angle, 0 to 120 degrees, no decimal point. The tool feeds in along the flank at half this angle.", "ANGLE"],
+          "I": ["0.", "Taper, as a radius. 0 for a straight thread.", "TAPER"],
+          "P": ["1", "How each pass cuts: P1 one edge, even amount (default); P2 both edges, even amount; P3 one edge, even depth; P4 both edges, even depth.", "METHOD"],
+          "Q": ["0", "Start angle for multi-start threads, in 0.001 degree with no decimal point (Q180000 is 180 degrees).", "START"] } }
     }
   }
 }

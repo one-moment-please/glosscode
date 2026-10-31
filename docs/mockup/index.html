@@ -307,6 +307,50 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
 .pfile{font-size:11.5px;color:#777}
 .pfile span{font-family:var(--w-mono);color:#444}
 .pfoot{display:flex;justify-content:flex-end}
+/* ---------- Round 6: word hints, keyboard selection, end of block, cycle help ---------- */
+.cell.hint{color:#9aa3ad;font-style:italic;cursor:pointer;border-left:1px dashed #c9d3de}
+.r.en .cell.hint{color:#8fb0d8}
+.cell.hint:hover,.cell.hint.sel{color:#0f6cbd}
+.cell.hint .or{font-size:10px;color:#b0b0b0;margin-right:3px;font-style:normal}
+.cell.eob{width:4ch;color:#8a8a8a;font-weight:700;border-left-color:transparent;cursor:default}
+.r.en .cell.eob{font-size:10.5px;font-weight:600;color:#a0a8b3}
+.mode-gc .r.gc .cell.sel,.mode-en .r.en .cell.sel{background:#dbeafb;box-shadow:inset 0 0 0 1.5px #0f6cbd}
+.mode-gc .r.en .cell.sel,.mode-en .r.gc .cell.sel{background:#eef4fb}
+.cell.sel.add{color:#0f6cbd}
+.info .cyc{align-self:flex-start;font:12px var(--w-ui);border:1px solid #cdb8f5;background:#f7f3fe;color:#6a2fd6;border-radius:10px;padding:1px 9px;cursor:pointer}
+.info .cyc:hover{background:#ece2fd}
+.info .hintmsg{background:#f2f7fd;border-left:3px solid #8fb0d8;padding:4px 7px;border-radius:3px;color:#24476e}
+.cdlg{width:900px;height:650px}
+.cbody{flex:1;display:grid;grid-template-columns:200px minmax(0,1fr);min-height:0;background:#fff}
+.clist{overflow:auto;background:#f6f6f6;border-right:1px solid #e5e5e5;padding:6px;display:flex;flex-direction:column;gap:1px}
+.clist .ci{display:grid;grid-template-columns:40px 1fr;gap:6px;padding:5px 8px;border-radius:5px;cursor:default;align-items:baseline}
+.clist .ci b{font:700 12px var(--w-mono);color:#c03d9a}
+.clist .ci span{font-size:12px;color:#333}
+.clist .ci:hover{background:#ececec}
+.clist .ci.sel{background:#cce4f7}
+.clist .cgrp{font-size:11px;color:#888;padding:6px 8px 2px}
+.cmain{overflow:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.cmain>*{flex:none}
+.cmain h4{margin:0;font:600 16px var(--w-ui)}
+.cmain h4 code{font:700 15px var(--w-mono);color:#c03d9a;background:none;padding:0;margin-right:6px}
+.cmain h4 small{font-weight:400;color:#777;font-size:12px;margin-left:6px}
+.cmain .about{font-size:12.5px;color:#333;max-width:640px}
+.csk{display:flex;gap:14px;align-items:flex-start}
+.csk svg{flex:none;background:#fbfcfd;border:1px solid #e5e5e5;border-radius:6px}
+.csk .key{font-size:11.5px;color:#555;display:flex;flex-direction:column;gap:4px;padding-top:4px}
+.csk .key i{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
+.cex{border:1px solid #e5e5e5;border-radius:6px;padding:6px 0 4px;font:13px var(--w-mono);overflow-x:auto}
+.cex .r{height:19px}
+.cex .lbl{font:11px var(--w-ui);color:#888;padding:0 10px 4px}
+.cwords{border-collapse:collapse;width:100%;font-size:12px}
+.cwords th{text-align:left;font-weight:400;color:#666;padding:4px 8px;border-bottom:1px solid #eee;background:#fafafa}
+.cwords td{padding:4px 8px;border-bottom:1px solid #f3f3f3;vertical-align:top;white-space:normal}
+.cwords td.w{font:700 12.5px var(--w-mono);color:#6a2fd6;white-space:nowrap}
+.cwords td.e{font:700 12px var(--w-mono);color:#0f6cbd;white-space:nowrap}
+.need{display:inline-block;font-size:10.5px;padding:0 7px;border-radius:99px;white-space:nowrap}
+.need.req{background:#fdecea;color:#a3271b}.need.one{background:#fff4e5;color:#8a4b00}.need.opt{background:#f0f0f0;color:#666}
+.cfoot{display:flex;justify-content:space-between;align-items:center}
+.cfoot .note2{font-size:11.5px;color:#777}
 </style>
 </head>
 <body>
@@ -317,14 +361,18 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
     <p class="lede">This is a working mockup of the Windows app. Every word sits in a fixed-width column with its English word directly above it. You can edit either line, and changes to one update the other.</p>
     <div class="try">
       <span><b>Menus</b> along the top hold every command</span>
-      <span><b>Click any word</b> to edit it</span>
+      <span><b>Click any word</b> to edit it, or move with <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> and press <kbd>Enter</kbd></span>
+      <span><kbd>Space</kbd> while editing starts a new word; <kbd>Shift</kbd>+<kbd>Enter</kbd> breaks the line</span>
+      <span><kbd>Caps Lock</kbd> switches between editing G-code and English</span>
+      <span>Grey <b>R## I## J##</b> after a code shows the words it still needs; click one to fill it in</span>
+      <span><kbd>F1</kbd> on a cycle shows how it works</span>
       <span>Type <kbd>SP</kbd>, <kbd>COOL</kbd> or <kbd>RPM</kbd> for suggestions</span>
       <span><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> undo and redo</span>
       <span><kbd>Ctrl</kbd>+<kbd>F</kbd> find</span>
       <span><b>View › Columns by word type</b> lines up X, Y, Z, F and M words</span>
-      <span><b>▶</b> above the toolpath plays the program move by move</span>
+      <span><b>▶</b> above the toolpath (or <kbd>F5</kbd>) plays the program move by move</span>
       <span><b>Problems</b> under the code lists every mistake; <kbd>F8</kbd> jumps to the next one</span>
-      <span>Open <b>CHECKS_DEMO.nc</b>, <b>LATHE_CHECKS.nc</b> or <b>OKUMA_PLATE.MIN</b> to see the checks</span>
+      <span>Open <b>CHECKS_DEMO.nc</b>, <b>LATHE_CHECKS.nc</b> or <b>OKUMA_PLATE.MIN</b> to see the checks, and <b>BRACKET_0MC.nc</b> for a control that needs <b>;</b> at the end of each line</span>
     </div>
   </header>
 
@@ -362,7 +410,7 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
           <div class="panel">
             <div class="h" id="v1h">Toolpath XY <span>top view</span></div>
             <div class="simbar">
-              <button id="s-reset" title="Restart">⏮</button><button id="s-back" title="Step back one line">◀</button><button id="s-play" title="Play or pause (Space)">▶</button><button id="s-fwd" title="Step forward one line (→)">▶|</button>
+              <button id="s-reset" title="Restart">⏮</button><button id="s-back" title="Step back one line (Ctrl+←)">◀</button><button id="s-play" title="Play or pause (F5)">▶</button><button id="s-fwd" title="Step forward one line (Ctrl+→)">▶|</button>
               <select id="s-speed" aria-label="Simulation speed"><option value="1">1×</option><option value="3" selected>3×</option><option value="8">8×</option></select>
               <span class="pos" id="s-pos">Selected line</span>
             </div>
@@ -402,6 +450,7 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
                 <label for="pf-rpm">Max spindle</label><span class="unit"><input id="pf-rpm" inputmode="numeric"><small>rpm</small></span>
                 <label for="pf-feed">Max feed</label><span class="unit"><input id="pf-feed" inputmode="decimal"><small>in/min</small></span>
                 <label for="pf-tools">Tool pockets</label><input id="pf-tools" inputmode="numeric">
+                <label for="pf-eob">End of block</label><label class="chk"><input type="checkbox" id="pf-eob"> Every line ends with <b>;</b> (most older controls need this)</label>
               </div>
               <div class="ph">Brand-specific codes <span>(override the shared dictionary)</span></div>
               <div class="pcodes"><table><thead><tr><th>Code</th><th>Long</th><th>Short</th><th>Meaning</th></tr></thead><tbody id="pf-codes"></tbody></table></div>
@@ -409,6 +458,17 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
             </div>
           </div>
           <div class="foot pfoot"><span class="btns"><button class="btn pri" id="p-save">Save and use</button><button class="btn" id="p-cancel">Cancel</button></span></div>
+        </div>
+      </div>
+
+      <div class="dim" id="cdlg" hidden>
+        <div class="dlg cdlg" role="dialog" aria-label="Canned cycle guide">
+          <div class="tbar"><span class="ttl" style="padding-left:2px" id="c-title">Canned cycle guide</span><span class="cap"><span id="c-x">&#x2715;</span></span></div>
+          <div class="cbody">
+            <div class="clist" id="clist"></div>
+            <div class="cmain" id="cmain"></div>
+          </div>
+          <div class="foot cfoot"><span class="note2" id="c-note"></span><span class="btns"><button class="btn pri" id="c-ins">Start a new line with this cycle</button><button class="btn" id="c-close">Close</button></span></div>
         </div>
       </div>
 
@@ -449,6 +509,10 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
     <div class="note"><h3>Subprograms shown inline</h3><p>A call like <code>N100 M97 P1000</code> gets a <b>▸ show N1000</b> button. It inserts the subprogram's lines below the call, with a purple bar, a <b>↳</b> in the margin and purple N numbers. Editing those rows edits the subprogram itself.</p></div>
     <div class="note"><h3>Problems panel</h3><p>Every rule lives in <code>gcode-rules.json</code>: its message, its severity and the per-control tables it reads, such as which words each canned cycle needs on Haas, Fanuc or Okuma. A machine file can raise, lower or turn off any rule. The checks walk the program in the order the machine runs it, so a subprogram is checked with the feed, spindle and offsets active at its call.</p></div>
     <div class="note"><h3>Decimals and units</h3><p>The English line always shows the decimal point, so <code>X1.</code> reads <b>X1.0</b>. A distance word with no decimal point, like <code>X1</code>, reads <b>X0.0001</b> in orange, because that's how a Fanuc-style control takes it, and the Problems panel flags it. Feeds and speeds keep their letter and get a small unit: <b>F12.0</b><small class="u">ipm</small>, <b>S2500</b><small class="u">rpm</small>, <b>S400</b><small class="u">sfm</small>.</p></div>
+    <div class="note"><h3>Keyboard editing</h3><p><kbd>←</kbd> <kbd>→</kbd> move between words and <kbd>↑</kbd> <kbd>↓</kbd> between lines. <kbd>Enter</kbd> edits the selected word and <kbd>Enter</kbd> again finishes it, leaving it selected. While editing, <kbd>Space</kbd> starts a new word to the right; in G-code, typing the next letter does too (<code>G01X</code> becomes <code>G01</code> and <code>X</code>). <kbd>Shift</kbd>+<kbd>Enter</kbd> breaks the line after the selected word. <kbd>Caps Lock</kbd> switches between the G-code and English lines, since everything is in capitals anyway.</p></div>
+    <div class="note"><h3>Words a code still needs</h3><p>After a code that needs more words, grey hint text shows them: <code>G02</code> gets <b>R## or I## J##</b>, <code>G83</code> gets <b>Z## R## Q##</b>. Click <b>R##</b> (or select it and press Enter) and the R is typed for you; the I and J hints go away. Pick <b>I##</b> instead and R goes away but J stays. The lists come from the same tables as the checks, per control.</p></div>
+    <div class="note"><h3>Canned cycle guide</h3><p><kbd>F1</kbd> on a cycle, or <b>How G76 works…</b> in the side panel, opens a page for that cycle: a rough sketch of how it moves, an example line using every word it takes with the English above it, and a table of what each word does and whether it's needed. <b>Start a new line with this cycle</b> adds the code and lets the hints walk you through the rest.</p></div>
+    <div class="note"><h3>End of block</h3><p>Many older controls need <code>;</code> at the end of every line. Each machine profile has an <b>End of block</b> setting. When it's on, every line shows a <b>;</b> after an empty word space, and Save writes it. Files that already use <code>;</code> are read correctly on any machine. Try <b>BRACKET_0MC.nc</b>, set up for a Fanuc 0-MC.</p></div>
     <div class="note"><h3>Standard file dialogs</h3><p>Open and Save call the real system dialog from C: <code>IFileOpenDialog</code> on Windows, and the GTK or desktop-portal dialog on Linux. The <a href="https://github.com/btzy/nativefiledialog-extended">nativefiledialog-extended</a> library wraps both behind one call.</p></div>
   </div>
 
@@ -473,14 +537,15 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
 
 <script>
 const DICT = {"about":"Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry. machineOverrides keys are a brand ('haas') or a brand and machine type ('okuma.mill'); the more specific key wins.","version":1,"codes":{"G00":{"long":"RAPID","short":"RPD","desc":"Rapid move"},"G01":{"long":"LINEAR","short":"LIN","desc":"Straight move at feed rate"},"G02":{"long":"ARCCW","short":"ACW","desc":"Clockwise arc"},"G03":{"long":"ARCCCW","short":"ACCW","desc":"Counterclockwise arc"},"G04":{"long":"DWELL","short":"DWL","desc":"Pause for a set time"},"G17":{"long":"PLANEXY","short":"PXY","desc":"Arcs in the XY plane"},"G18":{"long":"PLANEXZ","short":"PXZ","desc":"Arcs in the XZ plane"},"G19":{"long":"PLANEYZ","short":"PYZ","desc":"Arcs in the YZ plane"},"G20":{"long":"INCH","short":"IN","desc":"Inch units"},"G21":{"long":"METRIC","short":"MM","desc":"Millimeter units"},"G28":{"long":"HOMEREF","short":"HOME","desc":"Return to machine home"},"G30":{"long":"HOME2","short":"HOM2","desc":"Return to a second reference point"},"G32":{"lathe":{"long":"THDCUT","short":"THC","desc":"Single thread cut"}},"G40":{"long":"COMPOFF","short":"CCOFF","desc":"Cutter compensation off"},"G41":{"long":"COMPLEFT","short":"CCL","desc":"Cutter compensation left"},"G42":{"long":"COMPRGHT","short":"CCR","desc":"Cutter compensation right"},"G43":{"long":"TLENON","short":"TLON","desc":"Tool length offset on"},"G49":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off"},"G50":{"mill":{"long":"SCALEOFF","short":"SCLOFF","desc":"Scaling off"},"lathe":{"long":"MAXRPM","short":"SMAX","desc":"Clamp spindle to a max RPM"}},"G53":{"long":"MACHCRD","short":"MCS","desc":"Move in machine coordinates"},"G54":{"long":"WORK1","short":"W1","desc":"Work offset 1"},"G55":{"long":"WORK2","short":"W2","desc":"Work offset 2"},"G56":{"long":"WORK3","short":"W3","desc":"Work offset 3"},"G57":{"long":"WORK4","short":"W4","desc":"Work offset 4"},"G58":{"long":"WORK5","short":"W5","desc":"Work offset 5"},"G59":{"long":"WORK6","short":"W6","desc":"Work offset 6"},"G70":{"lathe":{"long":"FINCYC","short":"FIN","desc":"Finishing cycle"}},"G71":{"lathe":{"long":"RUFCYC","short":"RUF","desc":"OD/ID roughing cycle"}},"G72":{"lathe":{"long":"FACERUF","short":"FRUF","desc":"Face roughing cycle"}},"G73":{"mill":{"long":"PECKHS","short":"PKHS","desc":"High-speed peck drilling cycle"},"lathe":{"long":"PATHRUF","short":"PRUF","desc":"Irregular-path roughing cycle"}},"G74":{"mill":{"long":"TAPLEFT","short":"LTAP","desc":"Left-hand (reverse) tapping cycle"},"lathe":{"long":"FACEGRV","short":"FGRV","desc":"Face grooving or peck drilling cycle"}},"G75":{"lathe":{"long":"GROOVE","short":"GRV","desc":"OD/ID grooving cycle"}},"G76":{"mill":{"long":"FINBORE","short":"FBOR","desc":"Fine boring cycle"},"lathe":{"long":"THREAD","short":"THD","desc":"Threading cycle"}},"G80":{"long":"CYCOFF","short":"CYOFF","desc":"Cancel canned cycle"},"G81":{"long":"DRILL","short":"DRL","desc":"Drilling cycle"},"G82":{"long":"SPOTDWL","short":"SPDW","desc":"Spot drill cycle with dwell"},"G83":{"long":"PECKDRL","short":"PCK","desc":"Peck drilling cycle"},"G84":{"long":"TAP","short":"TAP","desc":"Tapping cycle"},"G85":{"long":"BORE","short":"BOR","desc":"Boring cycle, feed out"},"G86":{"long":"BORESTOP","short":"BORS","desc":"Boring cycle, spindle stop and rapid out"},"G89":{"long":"BOREDWL","short":"BORD","desc":"Boring cycle with dwell"},"G90":{"mill":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"lathe":{"long":"TURNCYC","short":"TCY","desc":"OD/ID turning cycle"}},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G92":{"lathe":{"long":"THDCYC","short":"TCYC","desc":"Threading cycle"}},"G94":{"mill":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"lathe":{"long":"FACECYC","short":"FCY","desc":"End facing cycle"}},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G96":{"long":"MODESFM","short":"CSS","desc":"Constant surface speed"},"G97":{"long":"MODERPM","short":"RPM","desc":"Constant RPM"},"G98":{"mill":{"long":"RETINIT","short":"RINI","desc":"Cycle returns to initial Z"},"lathe":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"}},"G99":{"mill":{"long":"RETRPLN","short":"RRPL","desc":"Cycle returns to R plane"},"lathe":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"}},"M00":{"long":"STOP","short":"STP","desc":"Program stop"},"M01":{"long":"OPTSTOP","short":"OSTP","desc":"Optional stop"},"M02":{"long":"PRGEND","short":"PEND","desc":"End program"},"M03":{"long":"SPINFWD","short":"SFWD","desc":"Spindle on, forward (CW)"},"M04":{"long":"SPINREV","short":"SREV","desc":"Spindle on, reverse (CCW)"},"M05":{"long":"SPINOFF","short":"SOFF","desc":"Spindle off"},"M06":{"long":"TOOLCHG","short":"TCHG","desc":"Tool change"},"M08":{"long":"COOLON","short":"CON","desc":"Flood coolant on"},"M09":{"long":"COOLOFF","short":"COFF","desc":"Coolant off"},"M30":{"long":"ENDRESET","short":"END","desc":"End program and rewind"},"M98":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram"},"M99":{"long":"SUBRET","short":"RET","desc":"Return from subprogram"}},"address":{"N":{"long":"SEQ","short":"N","desc":"Sequence number"},"O":{"long":"PROG","short":"O","desc":"Program number"},"T":{"long":"TOOL","short":"T","desc":"Tool number"},"H":{"long":"LOFS","short":"H","desc":"Tool length offset number"},"D":{"long":"DOFS","short":"D","desc":"Tool diameter offset number"},"X":{"abs":{"long":"X","short":"X"},"inc":{"long":"INCX","short":"iX"}},"Y":{"abs":{"long":"Y","short":"Y"},"inc":{"long":"INCY","short":"iY"}},"Z":{"abs":{"long":"Z","short":"Z"},"inc":{"long":"INCZ","short":"iZ"}},"U":{"lathe":{"long":"INCX","short":"iX","desc":"Incremental X (lathe)"}},"W":{"lathe":{"long":"INCZ","short":"iZ","desc":"Incremental Z (lathe)"}},"I":{"long":"ARCI","short":"I","desc":"Arc center offset in X"},"J":{"long":"ARCJ","short":"J","desc":"Arc center offset in Y"},"K":{"long":"ARCK","short":"K","desc":"Arc center offset in Z"},"R":{"arc":{"long":"RAD","short":"R"},"cycle":{"long":"RPLN","short":"R"}},"Q":{"long":"PECK","short":"Q","desc":"Peck depth"},"P":{"dwell":{"long":"SEC","short":"P"},"sub":{"long":"PROG","short":"P"}},"F":{"perMin":{"inch":"IPM","mm":"MMPM"},"perRev":{"inch":"IPR","mm":"MMPR"}},"S":{"rpm":{"long":"RPM","short":"RPM"},"css":{"inch":"SFM","mm":"SMM"}}},"machineOverrides":{"haas":{"M88":{"long":"TSCON","short":"TSC","desc":"Through-spindle coolant on"},"M89":{"long":"TSCOFF","short":"TSCO","desc":"Through-spindle coolant off"},"M97":{"long":"LOCSUB","short":"LSUB","desc":"Local subprogram call"},"G77":{"long":"BACKBORE","short":"BKBR","desc":"Back boring cycle"}},"okuma":{"CALL":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram (Okuma)"},"RTS":{"long":"SUBRET","short":"RET","desc":"Return from subprogram (Okuma)"},"GOTO":{"long":"JUMP","short":"JMP","desc":"Jump to a sequence name (Okuma)"},"G30":{"long":"HOMEZP","short":"ZPT","desc":"Return to zero point P (Okuma)"}},"okuma.mill":{"G15":{"long":"WORKSEL","short":"WSEL","desc":"Select work offset by H number (Okuma)"},"G53":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off (Okuma)"},"G54":{"long":"TLENX","short":"TLX","desc":"Tool length offset on X (Okuma, not a work offset)"},"G55":{"long":"TLENY","short":"TLY","desc":"Tool length offset on Y (Okuma, not a work offset)"},"G56":{"long":"TLENON","short":"TLON","desc":"Tool length offset on Z (Okuma)"}},"okuma.lathe":{"G90":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G94":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G33":{"long":"THREAD","short":"THD","desc":"Single thread cut (Okuma)"},"G71":{"long":"THDLONG","short":"THL","desc":"Compound threading, longitudinal (Okuma)"},"G72":{"long":"THDFACE","short":"THF","desc":"Compound threading, face (Okuma)"},"G80":{"long":"CONTEND","short":"CEND","desc":"End of LAP contour definition (Okuma)"},"G81":{"long":"CONTZ","short":"CTZ","desc":"Start of longitudinal LAP contour (Okuma)"},"G82":{"long":"CONTX","short":"CTX","desc":"Start of face LAP contour (Okuma)"},"G85":{"long":"LAPRUF","short":"LRUF","desc":"LAP roughing, longitudinal (Okuma)"},"G86":{"long":"LAPCOPY","short":"LCPY","desc":"LAP copy roughing (Okuma)"},"G87":{"long":"LAPFIN","short":"LFIN","desc":"LAP finishing (Okuma)"}}}};
-const RULES = {"about":"Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, codes that mean something else on that control, and limits. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.","version":1,"rules":{"dup-address":{"severity":"error","title":"Word repeated in a line","message":"{letter} appears {count} on this line ({words}). The control uses one of them or alarms.","why":"Each address letter except G and M can appear once per block."},"empty-value":{"severity":"error","title":"Address with no value","message":"{letter} has no number after it."},"modal-group-clash":{"severity":"error","title":"Two codes from one group","message":"{codes} are both {group} codes. Only one can be active, so the control alarms or uses the last one.","why":"Codes in the same modal group cancel each other."},"m-conflict":{"severity":"error","title":"M-codes that contradict each other","message":"{codes} on the same line contradict each other."},"foreign-code":{"severity":"warning","title":"Code means something else here","message":"{text}"},"cycle-missing-word":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {word}: {meaning}."},"cycle-missing-choice":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {choices}."},"cycle-stray-word":{"severity":"info","title":"Word the cycle doesn't use","message":"{cycle} ({name}) doesn't use {word}, so it is ignored or alarms."},"missing-label":{"severity":"error","title":"Jump to a label that isn't there","message":"{word} points to {label}, which isn't in this file."},"no-feed-rate":{"severity":"error","title":"Feed move with no feed rate","message":"This {move} runs at feed rate, but no F has been set yet.","why":"Most controls alarm on the first feed move without F; some reuse a stale value."},"feed-mode-changed":{"severity":"warning","title":"Feed rate from the other feed mode","message":"F{f} was set under {old} but {new} is active now, so it reads as {reading}.","why":"F is not cleared when G94/G95 changes."},"feed-plausibility":{"severity":"info","title":"Feed rate looks like the wrong mode","message":"F{f} {unit} is unusually {size}. Check that {mode} is the mode you meant."},"spindle-off-feed":{"severity":"warning","title":"Cutting with the spindle stopped","message":"This {move} cuts while the spindle is stopped ({spin})."},"no-speed":{"severity":"warning","title":"Spindle started with no speed","message":"{code} starts the spindle but no S has been set."},"arc-no-center":{"severity":"error","title":"Arc with no center or radius","message":"{code} needs R or {centers} to define the arc."},"arc-r-and-ijk":{"severity":"warning","title":"Arc with both R and center","message":"This arc has both R and {centers}. Most controls use R and ignore the others."},"arc-full-circle-r":{"severity":"error","title":"Full circle written with R","message":"The arc starts and ends at the same point, which R can't describe. Use {centers}."},"arc-radius-mismatch":{"severity":"warning","title":"Arc end isn't on the circle","message":"Start is {r1} from the center but the end is {r2} from it (off by {diff})."},"comp-start-on-arc":{"severity":"error","title":"Cutter comp started on an arc","message":"{code} has to start on a G00 or G01 move, not an arc."},"comp-no-d":{"severity":"warning","title":"Cutter comp with no D offset","message":"{code} turns on cutter comp but no D offset has been given."},"tlo-missing":{"severity":"warning","title":"Z move with no tool length offset","message":"First Z move after the tool change on {line}, but {tlo} hasn't been called for this tool."},"tlo-h-mismatch":{"severity":"info","title":"Length offset doesn't match tool","message":"{h} is used with {t}. Usually the H number matches the tool number."},"cycle-left-on":{"severity":"warning","title":"Canned cycle still active","message":"{cycle} is still active at the {event}. Add G80 first."},"comp-left-on":{"severity":"warning","title":"Cutter comp still active","message":"{comp} is still active at the {event}. Add G40 first."},"g28-absolute":{"severity":"warning","title":"G28 in absolute mode","message":"G28 under G90 moves through work position {axes} on the way home. Use G28 G91 with {zeros} instead."},"css-no-clamp":{"severity":"warning","title":"Surface speed with no RPM limit","message":"G96 is on but no G50 S max RPM has been set. Small diameters can overspeed the spindle."},"dwell-no-time":{"severity":"error","title":"Dwell with no time","message":"G04 needs {words} for the dwell time."},"rapid-below-zero":{"severity":"info","title":"Rapid below Z0","message":"Rapid to Z{z}, below Z0. If Z0 is the top of the part, this rapids into it."},"no-program-end":{"severity":"warning","title":"No program end","message":"The file has no {ends}."},"missing-decimal":{"severity":"warning","title":"Number with no decimal point","message":"{word} has no decimal point, so the control reads it as {letter}{value} {unit}. Write {letter}{intended} if you mean {amount} {unit}.","why":"Fanuc-style controls read a whole number on a distance word as the smallest increment (0.0001 in or 0.001 mm)."},"unknown-word":{"severity":"info","title":"Word not in the dictionary","message":"{word} isn't in the dictionary or this machine's file."}},"dialects":{"fanuc":{"label":"Fanuc-style (0i, 30i and compatibles)","verified":true,"mill":{"modalGroups":{"motion":["G00","G01","G02","G03"],"plane":["G17","G18","G19"],"distance":["G90","G91"],"feed mode":["G93","G94","G95"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"tool length":["G43","G44","G49"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G88","G89"],"cycle return":["G98","G99"],"work offset":["G54","G55","G56","G57","G58","G59"],"speed mode":["G96","G97"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M07","M09"],["M08","M09"]],"programEnds":["M02","M30"],"toolLength":{"on":["G43","G44"],"word":"H","label":"G43 H"},"toolChange":"M06","dwellWords":["P","X"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G76":{"name":"Fine bore","requires":["Z","R","Q"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true,"speed":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true}},"wordMeaning":{"Z":"the hole bottom","R":"the retract plane","Q":"the peck depth or shift","P":"the dwell time","F":"the feed rate"},"foreign":{"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."},"M88":{"severity":"warning","text":"M88 is Haas through-spindle coolant. Check what your builder uses."},"M89":{"severity":"warning","text":"M89 is Haas through-spindle coolant off. Check what your builder uses."}}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G32","G90","G92","G94"],"plane":["G17","G18","G19"],"feed mode":["G98","G99"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"speed mode":["G96","G97"],"work offset":["G54","G55","G56","G57","G58","G59"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M08","M09"]],"programEnds":["M02","M30"],"speedClamp":{"code":"G50","word":"S"},"dwellWords":["P","X","U"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"diameterX":true,"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G70":{"name":"Finish contour","requires":["P","Q"],"optional":["F","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G71":{"name":"OD/ID roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Two-block format on most Fanuc controls; this table checks the second block."},"G72":{"name":"Face roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","P","Q","F"],"optional":["R","U","W"],"modal":false,"spindle":true,"leadF":true},"G90":{"name":"OD/ID turning cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true},"G92":{"name":"Thread cycle","requires":["X","Z","F"],"optional":["U","W","R"],"spindle":true,"leadF":true},"G94":{"name":"Facing cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true}},"wordMeaning":{"P":"the first line of the contour","Q":"the last line of the contour","U":"the X finish allowance","W":"the Z finish allowance","D":"the depth of each pass","K":"the thread height","F":"the feed rate or thread lead","X":"the end diameter","Z":"the end position"},"foreign":{"G91":{"severity":"warning","text":"Fanuc-style lathes use U and W for incremental moves; G91 needs the optional G-code system B or C."},"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."}}}},"haas":{"label":"Haas NGC","inherits":"fanuc","verified":true,"mill":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G76":{"name":"Fine bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","P","L"],"feed":true,"spindle":true},"G77":{"name":"Back bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","L"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G87":null,"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true}},"foreign":{"M97":null,"M88":null,"M89":null}},"lathe":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G71":{"name":"OD/ID roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T","R"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Haas uses a one-block G71."},"G72":{"name":"Face roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G73":{"name":"Irregular-path roughing","requires":["P","Q","D","I","K"],"optional":["U","W","F","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G74":{"name":"Face groove / peck drill","requires":["Z"],"optional":["X","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G75":{"name":"OD/ID groove","requires":["X"],"optional":["Z","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","K","D","F"],"optional":["A","I","P","Q","U","W"],"modal":false,"spindle":true,"leadF":true,"note":"Haas uses a one-block G76: K thread height, D first pass depth, F lead."}},"foreign":{"M97":null}}},"okuma":{"label":"Okuma OSP (P300 and later)","inherits":"fanuc","verified":false,"keywords":["CALL","RTS","GOTO","IF","NAT","MODIN","MODOUT"],"mill":{"modalGroups":{"work offset":["G15"],"tool length":["G53","G54","G55","G56","G57","G58","G59"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G89"]},"toolLength":{"on":["G56"],"word":"H","label":"G56 H"},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"cycles":{"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F"],"feed":true,"spindle":true}},"foreign":{"G43":{"severity":"warning","text":"Okuma calls the tool length offset with G56 H, not G43."},"G54":{"severity":"error","text":"On Okuma, G54 is the X-axis tool length offset, not work offset 1. Select work offsets with G15 H1."},"G55":{"severity":"error","text":"On Okuma, G55 is the Y-axis tool length offset, not work offset 2. Select work offsets with G15 H2."},"G57":{"severity":"error","text":"On Okuma, G57 is a 4th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G58":{"severity":"error","text":"On Okuma, G58 is a 5th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G59":{"severity":"error","text":"On Okuma, G59 is a 6th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G28":{"severity":"warning","text":"Okuma returns to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."},"M99":{"severity":"warning","text":"Okuma subprograms end with RTS. M99 is for repeating a main program."},"M88":null,"M89":null}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G33"],"feed mode":["G94","G95"],"distance":["G90","G91"]},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"dwellWords":["F"],"cycles":{"G70":null,"G71":null,"G72":null,"G76":null,"G90":null,"G92":null,"G94":null},"referenceOnly":{"G85":"LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)","G86":"LAP copy roughing","G87":"LAP finishing","G81":"Start of longitudinal contour definition","G82":"Start of transverse contour definition","G80":"End of contour definition","G71":"Compound threading, longitudinal","G72":"Compound threading, transverse","G33":"Single thread cut"},"foreign":{"G98":{"severity":"warning","text":"Okuma lathes set feed per minute with G94, not G98."},"G99":{"severity":"warning","text":"Okuma lathes set feed per revolution with G95, not G99."},"G91":null,"G28":{"severity":"warning","text":"Okuma lathes return to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."}}}}}};
+const RULES = {"about":"Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, the words other codes need (wordHints, shown as hint text after the code), codes that mean something else on that control, and limits. 'cycleHelp' holds the text, sketch and word descriptions for the canned-cycle help dialog. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.","version":1,"rules":{"dup-address":{"severity":"error","title":"Word repeated in a line","message":"{letter} appears {count} on this line ({words}). The control uses one of them or alarms.","why":"Each address letter except G and M can appear once per block."},"empty-value":{"severity":"error","title":"Address with no value","message":"{letter} has no number after it."},"modal-group-clash":{"severity":"error","title":"Two codes from one group","message":"{codes} are both {group} codes. Only one can be active, so the control alarms or uses the last one.","why":"Codes in the same modal group cancel each other."},"m-conflict":{"severity":"error","title":"M-codes that contradict each other","message":"{codes} on the same line contradict each other."},"foreign-code":{"severity":"warning","title":"Code means something else here","message":"{text}"},"cycle-missing-word":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {word}: {meaning}."},"cycle-missing-choice":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {choices}."},"cycle-stray-word":{"severity":"info","title":"Word the cycle doesn't use","message":"{cycle} ({name}) doesn't use {word}, so it is ignored or alarms."},"missing-label":{"severity":"error","title":"Jump to a label that isn't there","message":"{word} points to {label}, which isn't in this file."},"no-feed-rate":{"severity":"error","title":"Feed move with no feed rate","message":"This {move} runs at feed rate, but no F has been set yet.","why":"Most controls alarm on the first feed move without F; some reuse a stale value."},"feed-mode-changed":{"severity":"warning","title":"Feed rate from the other feed mode","message":"F{f} was set under {old} but {new} is active now, so it reads as {reading}.","why":"F is not cleared when G94/G95 changes."},"feed-plausibility":{"severity":"info","title":"Feed rate looks like the wrong mode","message":"F{f} {unit} is unusually {size}. Check that {mode} is the mode you meant."},"spindle-off-feed":{"severity":"warning","title":"Cutting with the spindle stopped","message":"This {move} cuts while the spindle is stopped ({spin})."},"no-speed":{"severity":"warning","title":"Spindle started with no speed","message":"{code} starts the spindle but no S has been set."},"arc-no-center":{"severity":"error","title":"Arc with no center or radius","message":"{code} needs R or {centers} to define the arc."},"arc-r-and-ijk":{"severity":"warning","title":"Arc with both R and center","message":"This arc has both R and {centers}. Most controls use R and ignore the others."},"arc-full-circle-r":{"severity":"error","title":"Full circle written with R","message":"The arc starts and ends at the same point, which R can't describe. Use {centers}."},"arc-radius-mismatch":{"severity":"warning","title":"Arc end isn't on the circle","message":"Start is {r1} from the center but the end is {r2} from it (off by {diff})."},"comp-start-on-arc":{"severity":"error","title":"Cutter comp started on an arc","message":"{code} has to start on a G00 or G01 move, not an arc."},"comp-no-d":{"severity":"warning","title":"Cutter comp with no D offset","message":"{code} turns on cutter comp but no D offset has been given."},"tlo-missing":{"severity":"warning","title":"Z move with no tool length offset","message":"First Z move after the tool change on {line}, but {tlo} hasn't been called for this tool."},"tlo-h-mismatch":{"severity":"info","title":"Length offset doesn't match tool","message":"{h} is used with {t}. Usually the H number matches the tool number."},"cycle-left-on":{"severity":"warning","title":"Canned cycle still active","message":"{cycle} is still active at the {event}. Add G80 first."},"comp-left-on":{"severity":"warning","title":"Cutter comp still active","message":"{comp} is still active at the {event}. Add G40 first."},"g28-absolute":{"severity":"warning","title":"G28 in absolute mode","message":"G28 under G90 moves through work position {axes} on the way home. Use G28 G91 with {zeros} instead."},"css-no-clamp":{"severity":"warning","title":"Surface speed with no RPM limit","message":"G96 is on but no G50 S max RPM has been set. Small diameters can overspeed the spindle."},"dwell-no-time":{"severity":"error","title":"Dwell with no time","message":"G04 needs {words} for the dwell time."},"rapid-below-zero":{"severity":"info","title":"Rapid below Z0","message":"Rapid to Z{z}, below Z0. If Z0 is the top of the part, this rapids into it."},"no-program-end":{"severity":"warning","title":"No program end","message":"The file has no {ends}."},"missing-decimal":{"severity":"warning","title":"Number with no decimal point","message":"{word} has no decimal point, so the control reads it as {letter}{value} {unit}. Write {letter}{intended} if you mean {amount} {unit}.","why":"Fanuc-style controls read a whole number on a distance word as the smallest increment (0.0001 in or 0.001 mm)."},"unknown-word":{"severity":"info","title":"Word not in the dictionary","message":"{word} isn't in the dictionary or this machine's file."}},"dialects":{"fanuc":{"label":"Fanuc-style (0i, 30i and compatibles)","verified":true,"mill":{"modalGroups":{"motion":["G00","G01","G02","G03"],"plane":["G17","G18","G19"],"distance":["G90","G91"],"feed mode":["G93","G94","G95"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"tool length":["G43","G44","G49"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G88","G89"],"cycle return":["G98","G99"],"work offset":["G54","G55","G56","G57","G58","G59"],"speed mode":["G96","G97"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M07","M09"],["M08","M09"]],"programEnds":["M02","M30"],"toolLength":{"on":["G43","G44"],"word":"H","label":"G43 H"},"toolChange":"M06","dwellWords":["P","X"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G76":{"name":"Fine bore","requires":["Z","R","Q"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true,"speed":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true}},"wordMeaning":{"Z":"the hole bottom","R":"the retract plane","Q":"the peck depth or shift","P":"the dwell time","F":"the feed rate"},"wordHints":{"G02":{"arc":true},"G03":{"arc":true},"G41":{"requires":["D"]},"G42":{"requires":["D"]},"G43":{"requires":["H"]},"G44":{"requires":["H"]}},"foreign":{"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."},"M88":{"severity":"warning","text":"M88 is Haas through-spindle coolant. Check what your builder uses."},"M89":{"severity":"warning","text":"M89 is Haas through-spindle coolant off. Check what your builder uses."}}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G32","G90","G92","G94"],"plane":["G17","G18","G19"],"feed mode":["G98","G99"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"speed mode":["G96","G97"],"work offset":["G54","G55","G56","G57","G58","G59"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M08","M09"]],"programEnds":["M02","M30"],"speedClamp":{"code":"G50","word":"S"},"dwellWords":["P","X","U"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"diameterX":true,"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G70":{"name":"Finish contour","requires":["P","Q"],"optional":["F","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G71":{"name":"OD/ID roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Two-block format on most Fanuc controls; this table checks the second block."},"G72":{"name":"Face roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","P","Q","F"],"optional":["R","U","W"],"modal":false,"spindle":true,"leadF":true},"G90":{"name":"OD/ID turning cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true},"G92":{"name":"Thread cycle","requires":["X","Z","F"],"optional":["U","W","R"],"spindle":true,"leadF":true},"G94":{"name":"Facing cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true}},"wordMeaning":{"P":"the first line of the contour","Q":"the last line of the contour","U":"the X finish allowance","W":"the Z finish allowance","D":"the depth of each pass","K":"the thread height","F":"the feed rate or thread lead","X":"the end diameter","Z":"the end position"},"wordHints":{"G02":{"arc":true},"G03":{"arc":true},"G32":{"requires":["Z","F"]}},"foreign":{"G91":{"severity":"warning","text":"Fanuc-style lathes use U and W for incremental moves; G91 needs the optional G-code system B or C."},"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."}}}},"haas":{"label":"Haas NGC","inherits":"fanuc","verified":true,"mill":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G76":{"name":"Fine bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","P","L"],"feed":true,"spindle":true},"G77":{"name":"Back bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","L"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G87":null,"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true}},"foreign":{"M97":null,"M88":null,"M89":null}},"lathe":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G71":{"name":"OD/ID roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T","R"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Haas uses a one-block G71."},"G72":{"name":"Face roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G73":{"name":"Irregular-path roughing","requires":["P","Q","D","I","K"],"optional":["U","W","F","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G74":{"name":"Face groove / peck drill","requires":["Z"],"optional":["X","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G75":{"name":"OD/ID groove","requires":["X"],"optional":["Z","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","K","D","F"],"optional":["A","I","P","Q","U","W"],"modal":false,"spindle":true,"leadF":true,"note":"Haas uses a one-block G76: K thread height, D first pass depth, F lead."}},"foreign":{"M97":null}}},"okuma":{"label":"Okuma OSP (P300 and later)","inherits":"fanuc","verified":false,"keywords":["CALL","RTS","GOTO","IF","NAT","MODIN","MODOUT"],"mill":{"modalGroups":{"work offset":["G15"],"tool length":["G53","G54","G55","G56","G57","G58","G59"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G89"]},"toolLength":{"on":["G56"],"word":"H","label":"G56 H"},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"cycles":{"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F"],"feed":true,"spindle":true}},"wordHints":{"G43":null,"G44":null,"G56":{"requires":["H"]},"G15":{"requires":["H"]}},"foreign":{"G43":{"severity":"warning","text":"Okuma calls the tool length offset with G56 H, not G43."},"G54":{"severity":"error","text":"On Okuma, G54 is the X-axis tool length offset, not work offset 1. Select work offsets with G15 H1."},"G55":{"severity":"error","text":"On Okuma, G55 is the Y-axis tool length offset, not work offset 2. Select work offsets with G15 H2."},"G57":{"severity":"error","text":"On Okuma, G57 is a 4th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G58":{"severity":"error","text":"On Okuma, G58 is a 5th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G59":{"severity":"error","text":"On Okuma, G59 is a 6th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G28":{"severity":"warning","text":"Okuma returns to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."},"M99":{"severity":"warning","text":"Okuma subprograms end with RTS. M99 is for repeating a main program."},"M88":null,"M89":null}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G33"],"feed mode":["G94","G95"],"distance":["G90","G91"]},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"dwellWords":["F"],"cycles":{"G70":null,"G71":null,"G72":null,"G76":null,"G90":null,"G92":null,"G94":null},"wordHints":{"G32":null,"G33":{"requires":["Z","F"]}},"referenceOnly":{"G85":"LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)","G86":"LAP copy roughing","G87":"LAP finishing","G81":"Start of longitudinal contour definition","G82":"Start of transverse contour definition","G80":"End of contour definition","G71":"Compound threading, longitudinal","G72":"Compound threading, transverse","G33":"Single thread cut"},"foreign":{"G98":{"severity":"warning","text":"Okuma lathes set feed per minute with G94, not G98."},"G99":{"severity":"warning","text":"Okuma lathes set feed per revolution with G95, not G99."},"G91":null,"G28":{"severity":"warning","text":"Okuma lathes return to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."}}}}},"cycleHelp":{"about":"Text for the canned-cycle help dialog. Each word entry is [example value, what it does] or [example value, what it does, English word]; the English word replaces the usual one while that cycle is active (Haas G76 A60 reads ANGLE60, not ?A60). 'common' words apply to every cycle of that machine type. Keys like 'haas.lathe' override the Fanuc-style base for that control. 'sketch' picks the drawing; 'labels' renames the letters on it.","mill":{"common":{"words":{"X":["1.","Hole position in X. After this line, every line with just X or Y drills another hole, until G80."],"Y":["0.5","Hole position in Y."],"Z":["-0.5","Bottom of the hole."],"R":["0.1","Retract plane. The tool rapids down to R, then feeds from there. G99 comes back up to R between holes, G98 to where it started."],"F":["6.","Feed rate for the cut."],"K":["1","How many times to run the hole. Under G91, each repeat steps over by X and Y.","REPT"],"L":["1","How many times to run the hole. L0 sets up the cycle without drilling here.","REPT"],"P":["0.5","Dwell at the bottom, in seconds on Haas (P0.5). Fanuc takes milliseconds with no decimal point (P500)."]}},"G73":{"sketch":"peck-hs","about":"Drills to Z in pecks of Q. After each peck the tool backs off a little to break the chip, without leaving the hole. Faster than G83, but it doesn't clear chips out of deep holes.","words":{"Q":["0.1","Depth of each peck."]}},"G74":{"sketch":"tap-lh","about":"Left-hand tapping. The spindle runs in reverse down to Z, then reverses at the bottom and feeds back out to R.","words":{"F":["31.25","Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."]}},"G76":{"sketch":"finebore","about":"Bores to Z, stops the spindle in a set orientation, moves the tool away from the wall by Q, then rapids out so the tip doesn't drag a line up the bore.","words":{"Q":["0.01","How far the tool moves off the wall before it pulls out.","SHIFT"]}},"G81":{"sketch":"drill","about":"The plain drilling cycle: rapid to R, feed to Z, rapid back out."},"G82":{"sketch":"dwell","about":"Like G81, but it pauses at the bottom for P so a spot drill or counterbore leaves a clean, flat bottom."},"G83":{"sketch":"peck","about":"Drills in pecks of Q and rapids all the way back up to R after each peck to clear the chips. Use it for deep holes.","words":{"Q":["0.15","Depth of each peck."]}},"G84":{"sketch":"tap","about":"Right-hand tapping. Feeds to Z, reverses the spindle at the bottom and feeds back out to R.","words":{"F":["31.25","Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."]}},"G85":{"sketch":"bore-feed","about":"Feeds to Z and feeds back out to R. For reaming and boring, where a rapid out would mark the wall."},"G86":{"sketch":"bore-stop","about":"Feeds to Z, stops the spindle and rapids out. The tip drags up the wall, so it's for rough boring."},"G87":{"sketch":"backbore","about":"Back boring. The tool goes down through the hole shifted off center, moves back to center by Q, starts the spindle and cuts upward to Z.","labels":{"shift":"Q"},"words":{"Z":["-0.75","Top of the back bore (where the upward cut stops)."],"R":["-1.1","Start of the cut, below the part."],"Q":["0.05","How far the tool is shifted to pass through the hole.","SHIFT"]}},"G89":{"sketch":"bore-dwell","about":"Like G85 with a dwell: feeds to Z, pauses for P, feeds back out."}},"haas.mill":{"common":{"words":{"I":["0.2","First peck depth (use I, J and K instead of Q).","PECK1"],"J":["0.02","How much shorter each peck gets.","PECKLESS"],"K":["0.05","Shortest peck allowed.","PECKMIN"]}},"G74":{"words":{"J":["2","Retract speed: J2 comes out twice as fast as it went in.","RETSPD"]}},"G84":{"words":{"J":["2","Retract speed: J2 comes out twice as fast as it went in.","RETSPD"]}},"G76":{"words":{"I":["0.01","Shift along X before pulling out (instead of Q).","SHIFTX"],"J":["0","Shift along Y before pulling out (instead of Q).","SHIFTY"],"Q":["0.01","How far the tool moves off the wall before it pulls out.","SHIFT"]}},"G77":{"sketch":"backbore","about":"Back boring. The tool goes down through the hole shifted off center, moves back to center, starts the spindle and cuts upward to Z.","labels":{"shift":"Q"},"words":{"Z":["-0.75","Top of the back bore (where the upward cut stops)."],"R":["-1.1","Start of the cut, below the part."],"Q":["0.05","How far the tool is shifted to pass through the hole.","SHIFT"],"I":["0.05","Shift along X (instead of Q).","SHIFTX"],"J":["0","Shift along Y (instead of Q).","SHIFTY"]}}},"lathe":{"common":{"words":{"S":["600","Spindle speed for this cycle."],"U":["-0.1","Incremental X distance (on the diameter), used instead of X."],"W":["-1.","Incremental Z distance, used instead of Z."]}},"G70":{"sketch":"finish","about":"Runs the finished contour once, from the line numbered P to the line numbered Q, taking off the stock the roughing cycle left.","words":{"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.004","Finish feed, if the contour lines don't give one."]}},"G71":{"sketch":"rough","about":"Roughs away the stock down to the contour between lines P and Q, in passes along Z, and leaves U and W for G70 to finish. On Fanuc it takes two lines: the first (G71 U R) sets the depth of cut and retract, the second names the contour.","labels":{"depth":"U"},"words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.012","Roughing feed."],"R":["0.05","Retract after each pass (first line).","RETRACT"]}},"G72":{"sketch":"face-rough","about":"Like G71, but the passes run along X, facing down from the end of the part. Good for parts wider than they are long.","labels":{"depth":"W"},"words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.012","Roughing feed."],"R":["0.05","Retract after each pass (first line).","RETRACT"]}},"G76":{"sketch":"thread","about":"Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. On Fanuc it takes two lines: the first (G76 P Q R) sets finishing passes, chamfer, tool angle and the smallest cut; the second, shown here, gives the size.","labels":{"height":"P","first":"Q"},"words":{"X":["0.6734","Minor diameter at the end of the thread (the last pass)."],"Z":["-1.","Where the thread ends."],"P":["383","Thread height (radius) in 0.0001 in with no decimal point. P383 is 0.0383.","THDHT"],"Q":["120","Depth of the first pass, same units. Q120 is 0.012.","CUT1"],"F":["0.0625","Lead: the distance between threads. 16 per inch is 0.0625."],"R":["0.","Taper: X difference from the end to the start, as a radius. 0 for a straight thread.","TAPER"]}},"G90":{"sketch":"turn","about":"One turning pass as a box: rapid to X, feed to Z, feed back out, rapid back to the start. Repeat the line with smaller X values for more passes.","words":{"X":["1.2","Diameter for this pass."],"Z":["-1.5","Where the pass ends in Z."],"R":["0.","Taper: X difference from start to end, as a radius.","TAPER"],"F":["0.01","Feed."]}},"G92":{"sketch":"thread-cycle","about":"One threading pass as a box: rapid to X, thread to Z at the lead F, rapid out and back. Write one line per pass, each a little deeper.","words":{"X":["0.72","Diameter for this pass."],"Z":["-1.","Where the thread ends."],"F":["0.0625","Lead: the distance between threads."],"R":["0.","Taper: X difference from start to end, as a radius.","TAPER"]}},"G94":{"sketch":"face","about":"One facing pass as a box: rapid to Z, feed down to X, feed back out, rapid back. Repeat with smaller Z values for more passes.","words":{"X":["0.","Diameter where the face pass stops."],"Z":["-0.05","Face position for this pass."],"R":["0.","Cone: Z difference across the face.","TAPER"],"F":["0.008","Feed."]}}},"haas.lathe":{"G71":{"about":"Roughs away the stock down to the contour between lines P and Q, in passes along Z of depth D, and leaves U and W for G70 to finish. Haas does it in one line.","labels":{"depth":"D"},"words":{"D":["0.1","Depth of each roughing pass, as a radius.","DEPTH"],"I":["0.01","Rough stock left on X, as a radius.","RUFX"],"K":["0.005","Rough stock left on Z.","RUFZ"],"T":["0101","Tool and offset for the cycle."],"R":["1","R1 turns on Type II roughing for pockets in the profile.","TYPE"]}},"G72":{"about":"Like G71, but the passes run along X, facing down from the end of the part. Haas does it in one line.","labels":{"depth":"D"},"words":{"D":["0.05","Depth of each roughing pass.","DEPTH"],"I":["0.01","Rough stock left on X, as a radius.","RUFX"],"K":["0.005","Rough stock left on Z.","RUFZ"],"T":["0101","Tool and offset for the cycle."]}},"G73":{"sketch":"path-rough","about":"Roughs by repeating the contour itself, shifted outward and stepping in each pass. Good for castings and forgings that already have roughly the right shape.","words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"I":["0.2","Stock to remove on X, as a radius.","STOCKX"],"K":["0.1","Stock to remove on Z.","STOCKZ"],"D":["3","Number of passes.","PASSES"],"F":["0.01","Roughing feed."],"T":["0101","Tool and offset for the cycle."]}},"G74":{"sketch":"face-groove","about":"Pecks along Z into the face, for face grooves or drilling on center. With X and I it steps outward and pecks again.","words":{"Z":["-0.25","Depth of the groove or hole."],"X":["1.5","Outer diameter to step out to."],"K":["0.05","Peck depth in Z.","PECK"],"I":["0.1","Step in X between pecking passes, as a radius.","STEPX"],"D":["0.","Clearance when stepping back out.","CLEAR"],"F":["0.004","Feed."]}},"G75":{"sketch":"groove","about":"Pecks in along X for an OD or ID groove. With Z and K it steps along and pecks again to make a wide groove.","words":{"X":["0.9","Diameter at the bottom of the groove."],"Z":["-0.75","Z where the last groove pass is."],"I":["0.05","Peck depth in X, as a radius.","PECK"],"K":["0.1","Step in Z between grooves.","STEPZ"],"D":["0.","Clearance when stepping back out.","CLEAR"],"F":["0.003","Feed."]}},"G76":{"about":"Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. Haas does it in one line.","labels":{"height":"K","first":"D"},"words":{"K":["0.0383","Thread height, as a radius.","THDHT"],"D":["0.012","Depth of the first pass. Later passes get shallower to keep the chip load even.","DEPTH"],"A":["60","Tool tip angle, 0 to 120 degrees, no decimal point. The tool feeds in along the flank at half this angle.","ANGLE"],"I":["0.","Taper, as a radius. 0 for a straight thread.","TAPER"],"P":["1","How each pass cuts: P1 one edge, even amount (default); P2 both edges, even amount; P3 one edge, even depth; P4 both edges, even depth.","METHOD"],"Q":["0","Start angle for multi-start threads, in 0.001 degree with no decimal point (Q180000 is 180 degrees).","START"]}}}}};
 
 const MACHINES = {
-  haas_vf2:     { name:"Haas VF-2",          control:"Haas NGC",      type:"mill",  brand:"haas",  travel:[30, 16, 20], rpm:8100, feed:650, tools:20 },
-  fanuc_0imf:   { name:"Fanuc 0i-MF mill",    control:"Fanuc 0i-MF",   type:"mill",  brand:"fanuc", travel:[24, 16, 18], rpm:10000, feed:800, tools:24 },
-  okuma_m560:   { name:"Okuma M560-V",        control:"Okuma OSP",     type:"mill",  brand:"okuma", travel:[41.3, 22, 18.1], rpm:15000, feed:1260, tools:32 },
-  haas_st10:    { name:"Haas ST-10",          control:"Haas NGC",      type:"lathe", brand:"haas",  travel:[7.5, 0, 14], rpm:6000, feed:400, tools:12 },
-  okuma_lb3000: { name:"Okuma LB3000",        control:"Okuma OSP",     type:"lathe", brand:"okuma", travel:[10.2, 0, 25.6], rpm:5000, feed:780, tools:12 }
+  haas_vf2:     { name:"Haas VF-2",          control:"Haas NGC",      type:"mill",  brand:"haas",  travel:[30, 16, 20], rpm:8100, feed:650, tools:20, eob:false },
+  fanuc_0imf:   { name:"Fanuc 0i-MF mill",    control:"Fanuc 0i-MF",   type:"mill",  brand:"fanuc", travel:[24, 16, 18], rpm:10000, feed:800, tools:24, eob:false },
+  fanuc_0mc:    { name:"Fanuc 0-MC mill",     control:"Fanuc 0-MC (1990)", type:"mill", brand:"fanuc", travel:[20, 14, 16], rpm:6000, feed:400, tools:16, eob:true },
+  okuma_m560:   { name:"Okuma M560-V",        control:"Okuma OSP",     type:"mill",  brand:"okuma", travel:[41.3, 22, 18.1], rpm:15000, feed:1260, tools:32, eob:false },
+  haas_st10:    { name:"Haas ST-10",          control:"Haas NGC",      type:"lathe", brand:"haas",  travel:[7.5, 0, 14], rpm:6000, feed:400, tools:12, eob:false },
+  okuma_lb3000: { name:"Okuma LB3000",        control:"Okuma OSP",     type:"lathe", brand:"okuma", travel:[10.2, 0, 25.6], rpm:5000, feed:780, tools:12, eob:false }
 };
 let recentMachines = ["haas_vf2", "haas_st10", "okuma_m560"];
 const machineLabel = id => `${MACHINES[id].name} (${MACHINES[id].type})`;
@@ -612,13 +677,38 @@ const FILES = {
     "O1200 (CLEAR PASS)",
     "N1000 G00 X80. Y20.",
     "N1010 X80. Y60.",
-    "N1020 RTS"]}
+    "N1020 RTS"]},
+  "BRACKET_0MC.nc": { machine:"fanuc_0mc", src:[
+    "O0042 (BRACKET OP1);",
+    "N10 G20 G90 G17 G40 G49 G80;",
+    "N20 T3 M06 (1/2 END MILL);",
+    "N30 G54 G00 X-0.3 Y0.;",
+    "N40 S2400 M03;",
+    "N50 G43 H03 Z1. M08;",
+    "N60 G01 Z-0.25 F8.;",
+    "N70 X1.5 F15.;",
+    "N80 G03 X2. Y0.5 R0.5;",
+    "N90 G01 Y1.5;",
+    "N100 G00 Z1. M09;",
+    "N110 M05;",
+    "N120 T5 M06 (#7 DRILL);",
+    "N130 G54 G00 X0.5 Y1.;",
+    "N140 S2000 M03;",
+    "N150 G43 H05 Z1. M08;",
+    "N160 G99 G83 X0.5 Y1. Z-0.6 R0.1 Q0.15 F6.;",
+    "N170 X1.5;",
+    "N180 G80 G00 Z1. M09;",
+    "N190 G91 G28 Z0.;",
+    "N200 M30;"]}
 };
 
 let fileName = "POCKET_2X1.nc", machineId = "haas_vf2";
 let editMode = "en", style = "long", showMode = "both", layout = "order";
 let colorBy = "motion", future = "grey";
 let doc = [], view = [], lineState = [], curLine = 0, editing = null;
+// Keyboard selection: curRef is the selected word slot on curLine ("0", "1"… in program order, "c3" in columns,
+// "h:R" for a hint). pendingIns is a new, still-empty word being typed in at index `at`.
+let curRef = "0", pendingIns = null, capsSwitch = true, fileEob = false;
 let expanded = new Set(), autoN = true;
 const N_STEP = 10;
 let undoStack = [], redoStack = [];
@@ -636,17 +726,31 @@ const isCode = (t, c) => /^[GM]\d/.test(t) && pad2(t) === c;
 
 const KEYWORDS = ["CALL","RTS","GOTO"];
 const isKw = t => /^[A-Z]{2,}/.test(t);
+// ";" is the end-of-block mark on Fanuc-style controls. A line can hold several blocks, so split on it
+// (outside comments). The marks themselves aren't kept: they're written back on save when the machine needs them.
+function splitBlocks(line){
+  const out = []; let cur = "", depth = 0, hit = false;
+  for (const ch of line){
+    if (ch==="(") depth++; else if (ch===")") depth = Math.max(0, depth-1);
+    if (ch===";" && !depth){ out.push(cur); cur = ""; hit = true; } else cur += ch;
+  }
+  if (cur.trim() || !out.length) out.push(cur);
+  return { blocks: out, eob: hit };
+}
 function tokenize(line){ const out = []; const re = /\([^)]*\)?|\b(?:CALL|RTS|GOTO)\b|[A-Za-z][-+]?[\d.]*/gi; let m; while ((m = re.exec(line))) out.push(m[0].startsWith("(") ? m[0] : m[0].toUpperCase()); return out; }
 function load(name){
   stopSim(true);
   fileName = name; machineId = FILES[name].machine; setDialect(); bumpRecent(machineId); drawMachineChip();
-  doc = FILES[name].src.map(tokenize);
+  fileEob = false; doc = [];
+  for (const line of FILES[name].src){ const b = splitBlocks(line); if (b.eob) fileEob = true; b.blocks.forEach(x => doc.push(tokenize(x))); }
   expanded = new Set();
   const ex = FILES[name].expand; if (ex) doc.forEach((t, i) => { if (t[0]===ex) expanded.add(i); });
   undoStack = []; redoStack = [];
   document.getElementById("wtitle").textContent = name + " - GlossCode";
   document.getElementById("tabname").textContent = name;
-  curLine = 0; render(); showInfo(0, null); document.getElementById("ed").scrollTop = 0; setMsg("Opened " + name);
+  curLine = 0; curRef = "0"; pendingIns = null; render(); showInfo(0, null); document.getElementById("ed").scrollTop = 0;
+  const m = MACHINES[machineId];
+  setMsg("Opened " + name + (fileEob && m.eob ? `. Lines end with ; as ${m.name} needs.` : fileEob ? `. Its lines end with ;, which are kept when you save.` : m.eob ? `. ${m.name} needs ; at the end of each line, so it's added when you save.` : ""));
 }
 
 /* ---------- Dictionary and modes ---------- */
@@ -730,6 +834,8 @@ function word(t, st, ctx){
     if (!e) return { g:t, e:"?"+k, unk:true, d:`${k} isn't in the dictionary or this machine's file.` };
     return { g:t, e:e[style], d:e.desc, code:k, long:e.long };
   }
+  // Inside a canned cycle, a word can mean something special (Haas G76 A is the tool angle). cycleHelp says so.
+  if (st.cycleCode && !"FSXYZ".includes(L)){ const cw = cycleWord(st.cycleCode, L); if (cw?.en) return { g:t, e:cw.en+v, ...(f.implied ? { imp:true } : {}), d:`${cw.what} (${st.cycleCode})` }; }
   const a = DICT.address[L];
   if (!a) return { g:t, e:"?"+L, unk:true, d:`Address letter ${L} isn't in the dictionary.` };
   const imp = f.implied ? { imp:true, d2:`No decimal point, so this reads as ${v} ${st.units==="inch"?"in":"mm"}. Write ${L}${f.intended} for ${f.intended.replace(/\.$/,"")} ${st.units==="inch"?"in":"mm"}.` } : {};
@@ -773,6 +879,28 @@ function lineKind(li){
   return st.motion==="G00" ? "rapid" : st.motion==="G01" ? "feed" : (st.motion==="G02"||st.motion==="G03") ? "arc" : null;
 }
 
+/* ---------- Canned cycle help data (RULES.cycleHelp) ----------
+   Base entries are Fanuc-style ("mill", "lathe"); "haas.lathe" and the like override them for one control.
+   Word entries are [example, what it does, English word]. */
+function cycleHelp(code){
+  const type = mtype(), CH = RULES.cycleHelp || {};
+  let b = MACHINES[machineId].brand; const seen = [];
+  while (b && RULES.dialects[b] && !seen.includes(b)){ seen.unshift(b); b = RULES.dialects[b].inherits; }
+  const layers = [CH[type], ...seen.map(n => CH[n+"."+type])].filter(Boolean);
+  const out = { words:{} };
+  for (const ly of layers) Object.assign(out.words, ly.common?.words || {});
+  for (const ly of layers){ const e = ly[code]; if (!e) continue; for (const [k, v] of Object.entries(e)){ if (k==="words") Object.assign(out.words, v); else out[k] = v; } }
+  return out;
+}
+function cycleWord(code, L){
+  if (!DIALECT.cycles?.[code]) return null;
+  const w = cycleHelp(code).words[L]; return w ? { ex:w[0], what:w[1], en:w[2] } : null;
+}
+function cycleLetterFor(code, en){
+  if (!DIALECT.cycles?.[code]) return null;
+  const hit = Object.entries(cycleHelp(code).words).find(([, w]) => w[2]===en); return hit ? hit[0] : null;
+}
+
 /* ---------- English to G-code ---------- */
 const PREFIXES = [
   ["RPM","S","Spindle speed in RPM", st => st.spin==="rpm" ? null : "G96 (surface speed) is active, so this S reads as surface speed. Add MODERPM (G97) first."],
@@ -789,6 +917,7 @@ const PREFIXES = [
   ["ARCI","I","Arc center offset X", null], ["ARCJ","J","Arc center offset Y", null], ["ARCK","K","Arc center offset Z", null],
   ["RAD","R","Arc radius", null], ["RPLN","R","Cycle retract plane", null], ["PECK","Q","Peck depth", null],
   ["SEC","P","Dwell seconds", null], ["LBL","P","Subprogram label (N number) to call", null], ["PROG","O","Program number", null], ["SEQ","N","Sequence number", null],
+  ["FROM","P","First line of a lathe cycle's contour", null], ["TO","Q","Last line of a lathe cycle's contour", null], ["DEPTH","D","Depth of each pass", null], ["THDHT","K","Thread height", null], ["WOFS","H","Work offset number (Okuma G15 H)", null],
   ["X","X","X position", null], ["Y","Y","Y position", null], ["Z","Z","Z position", null]
 ].map(([p,l,d,chk]) => ({p,l,d,chk}));
 
@@ -807,6 +936,7 @@ function fromEnglish(txt, st){
   const m = T.match(/^([A-Z]+)([-+]?\d*\.?\d+\.?)$/);
   if (m){
     let p = PREFIXES.find(x => x.p===m[1]);
+    if (st?.cycleCode){ const L = cycleLetterFor(st.cycleCode, m[1]); if (L) return { g:L+m[2] }; }
     if (!p && /^I[XYZ]$/.test(m[1])) p = PREFIXES.find(x => x.p==="INC"+m[1][1]);
     if (p){
       let L = p.l;
@@ -860,22 +990,82 @@ const COLS = [
 ].map(([id, label, test]) => ({ id, label, test }));
 const colOf = t => COLS.findIndex(c => c.test(t));
 
+/* ---------- Word hints ----------
+   Words a code on this line still needs, shown as grey "R##" text after the line's words. The data comes from
+   the dialect: canned cycle requires/choices, wordHints (arcs, G43 H, G41 D), dwellWords and subCalls.
+   When a code takes one of several sets (R, or I and J), using any word of one set hides the other sets. */
+const ARC_CENTERS = { G17:["I","J"], G18:["I","K"], G19:["J","K"] };
+function hintItems(li){
+  const toks = doc[li], st = lineState[li]; if (!toks || !st) return [];
+  const D = DIALECT, words = toks.filter(t => !t.startsWith("(") && !isKw(t));
+  const present = new Set(words.map(t => t[0]));
+  if (pendingIns && pendingIns.li===li && pendingIns.hintL) present.add(pendingIns.hintL);
+  const codes = [...new Set(words.filter(t => /^[GM]\d/.test(t)).map(pad2)), ...toks.filter(t => isKw(t))];
+  const items = [];
+  for (const c of codes){
+    const cyc = D.cycles?.[c];
+    if (cyc){
+      for (const r of cyc.requires || []){ if (r==="F" && !cyc.leadF && st.F!=null) continue; items.push({ code:c, sets:[[r]] }); }
+      if (cyc.choices) items.push({ code:c, sets:cyc.choices });
+    }
+    const wh = D.wordHints?.[c];
+    if (wh?.arc) items.push({ code:c, sets:[["R"], ARC_CENTERS[st.plane] || ["I","J"]] });
+    for (const r of wh?.requires || []) items.push({ code:c, sets:[[r]] });
+    if (c==="G04") items.push({ code:c, sets:(D.dwellWords || ["P"]).map(l => [l]) });
+    const sc = D.subCalls?.[c]; if (sc) items.push({ code:c, sets:[[sc.word]] });
+  }
+  const out = [], have = new Set();
+  for (const it of items){
+    const chosen = it.sets.find(set => set.some(l => present.has(l)));
+    (chosen ? [chosen] : it.sets).forEach((set, si) => set.filter(l => !present.has(l)).forEach((l, k) => {
+      if (have.has(l)) return; have.add(l); out.push({ L:l, code:it.code, sets:it.sets, alt: !chosen && si>0 && k===0 });
+    }));
+  }
+  return out;
+}
+// The English word a hint fills in: RAD for an arc R, RPLN for a cycle R, ANGLE for Haas G76 A, and so on.
+function englishPrefix(L, st){ const w = word(L+"1.", st); return w.unk ? L : w.e.replace(/1\.0?$/, ""); }
+function hintMeaning(h){
+  const cw = cycleWord(h.code, h.L); if (cw) return cw.what;
+  if (DIALECT.wordHints?.[h.code]?.arc) return h.L==="R" ? "Arc radius" : `Distance from the start point to the arc center along ${{I:"X",J:"Y",K:"Z"}[h.L]}`;
+  if (h.code==="G04") return "Dwell time";
+  if (DIALECT.subCalls?.[h.code]) return DIALECT.subCalls[h.code].target==="label" ? "N number of the subprogram to run" : "Program number to call";
+  if (h.L==="H") return "Length offset number, usually the same as the tool number";
+  if (h.L==="D") return "Diameter offset number for cutter comp";
+  const m = DIALECT.wordMeaning?.[h.L]; return m ? m[0].toUpperCase() + m.slice(1) : (DICT.address[h.L]?.desc || "");
+}
+const needsText = h => h.sets.map(s => s.join(" and ")).join(", or ");
+
 function slotsFor(li){
-  const toks = doc[li], cells = view[li];
+  const toks = doc[li], cells = view[li], W = COLW();
   if (layout==="order"){
-    const s = toks.map((t, i) => ({ ref:String(i), idx:[i], g:t, e:cells[i].e, u:cells[i].u || "", imp:!!cells[i].imp, cm:!!cells[i].cm, unk:!!cells[i].unk, n: i===0 && /^N\d/.test(t), w:COLW() }));
-    s.push({ ref:String(toks.length), idx:[], g:"", e:"", add:true, w:COLW() });
+    const tok = i => ({ ref:String(i), idx:[i], g:toks[i], e:cells[i].e, u:cells[i].u || "", imp:!!cells[i].imp, cm:!!cells[i].cm, unk:!!cells[i].unk, n: i===0 && /^N\d/.test(toks[i]), w:W });
+    const pend = pendingIns && pendingIns.li===li && pendingIns.at!=null ? { ref:"i", idx:[], ins:pendingIns.at, g:"", e:"", add:true, pend:true, w:W } : null;
+    const st = lineState[li] || newState();
+    const hints = hintItems(li).map(h => ({ ref:"h:"+h.L, idx:[], hint:h, g:h.L+"##", e:englishPrefix(h.L, st)+"##", w:W }));
+    const cmIdx = toks.length && toks[toks.length-1].startsWith("(") ? toks.length-1 : toks.length;
+    const s = [];
+    for (let i = 0; i <= toks.length; i++){
+      if (pend && pend.ins===i) s.push(pend);
+      if (i===cmIdx) s.push(...hints);
+      if (i < toks.length) s.push(tok(i));
+    }
+    s.push({ ref:String(toks.length), idx:[], g:"", e:"", add:true, w:W });
     return s;
   }
+  const hl = hintItems(li), st = lineState[li] || newState();
   return USED.map(ci => {
     const idx = toks.map((_, i) => i).filter(i => colOf(toks[i])===ci);
+    const hs = idx.length ? [] : hl.filter(h => colOf(h.L+"1")===ci);
     return { ref:"c"+ci, col:ci, idx, g: idx.map(i => toks[i]).join(" "), e: idx.map(i => cells[i].e).filter(Boolean).join(" "), u: idx.length===1 ? (cells[idx[0]].u || "") : "", imp: idx.some(i => cells[i].imp),
-      cm: COLS[ci].id==="NOTE", unk: idx.some(i => cells[i].unk), n: COLS[ci].id==="N", w: WIDTHS[ci] };
+      cm: COLS[ci].id==="NOTE", unk: idx.some(i => cells[i].unk), n: COLS[ci].id==="N", w: WIDTHS[ci],
+      hints: hs.length ? hs : null, hg: hs.map(h => (h.alt ? "or " : "") + h.L+"##").join(" "), he: hs.map(h => (h.alt ? "or " : "") + englishPrefix(h.L, st)+"##").join(" ") };
   });
 }
 function computeColumns(){
   const used = new Set();
   doc.forEach(t => t.forEach(w => used.add(colOf(w))));
+  doc.forEach((_, li) => hintItems(li).forEach(h => used.add(colOf(h.L+"1"))));
   USED = COLS.map((_, i) => i).filter(i => used.has(i));
   WIDTHS = {};
   for (const ci of USED){
@@ -1177,10 +1367,11 @@ function render(){
   PROBLEMS.forEach(p => (PBYLINE[p.li] ||= []).push(p));
   EXEC = interpret();
   computeColumns();
+  fixSel();
   const W = COLW();
   const colhead = document.getElementById("colhead");
   if (layout==="order"){
-    const maxCols = Math.max(...doc.map(l => l.filter(t => !t.startsWith("(")).length)) + 1;
+    const maxCols = Math.max(...doc.map((_, li) => slotsFor(li).filter(s => !s.cm).length));
     colhead.innerHTML = `<span class="gut"></span>` + Array.from({length:maxCols}, (_, i) => `<span class="ch" style="width:${W}ch">${i+1}</span>`).join("");
   } else colhead.innerHTML = `<span class="gut"></span>` + USED.map(ci => `<span class="ch" style="width:${WIDTHS[ci]}ch">${COLS[ci].label}</span>`).join("");
   document.getElementById("edwrap").className = "edwrap layout-" + layout;
@@ -1195,18 +1386,22 @@ function render(){
   ed.innerHTML = rows.map(({li, key, ins, from}) => {
     const slots = slotsFor(li);
     const hit = s => findQ && (s.g.toUpperCase().includes(findQ) || s.e.toUpperCase().includes(findQ));
-    const cls = s => `cell${s.unk?" unk":""}${s.imp?" imp":""}${s.cm?" cm":""}${s.n?" n":""}${s.add?" add":""}${hit(s)?" fhit":""}`;
+    const sel = s => !ins && li===curLine && s.ref===curRef && !editing;
+    const cls = s => `cell${s.unk?" unk":""}${s.imp?" imp":""}${s.cm?" cm":""}${s.n?" n":""}${s.add?" add":""}${s.hint || s.hints?" hint":""}${sel(s)?" sel":""}${hit(s)?" fhit":""}`;
     const unit = s => s.u ? `<small class="u">${esc(s.u)}</small>` : "";
     const wd = s => s.cm && layout==="order" ? "" : `width:${s.w}ch`;
-    const en = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc((s.e || s.g) + (s.u ? " " + s.u : ""))}">${s.add ? "+" : s.cm ? `<span class="cmx">${esc(s.g)}</span>` : esc(s.e) + unit(s)}</span>`).join("");
-    const gc = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc(s.g)}">${s.add ? "" : esc(s.g)}</span>`).join("");
+    const or = s => s.hint?.alt ? `<i class="or">or</i>` : "";
+    const hintTitle = s => s.hint ? `${s.hint.code} needs ${needsText(s.hint)}. Click to add ${s.hint.L}.` : `Still needed: ${s.hg}. Click to add it.`;
+    const en = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc(s.hint || s.hints ? hintTitle(s) : (s.e || s.g) + (s.u ? " " + s.u : ""))}">${s.hint ? or(s) + esc(s.e) : s.hints ? esc(s.he) : s.add ? "+" : s.cm ? `<span class="cmx">${esc(s.g)}</span>` : esc(s.e) + unit(s)}</span>`).join("");
+    const gc = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc(s.hint || s.hints ? hintTitle(s) : s.g)}">${s.hint ? or(s) + esc(s.g) : s.hints ? esc(s.hg) : s.add ? "" : esc(s.g)}</span>`).join("");
+    const eob = eobOn() ? [`<span class="cell eob" title="End of block. ${esc(MACHINES[machineId].name)} needs ; at the end of every line, so GlossCode writes it for you.">EOB</span>`, `<span class="cell eob" title="End of block">;</span>`] : ["", ""];
     const tgt = ins ? null : callTarget(doc[li]);
     const xp = tgt!=null ? (subRange(tgt) ? `<button class="xp" data-x="${li}">${expanded.has(li) ? "▾ hide" : "▸ show"} ${tgt}</button>` : `<span class="xp bad">${tgt} not found</span>`) : "";
     const kind = lineKind(li);
     const lp = ins ? null : PBYLINE[li], worst = lp ? lp.reduce((a, p) => SEV_RANK[p.sev] > SEV_RANK[a] ? p.sev : a, "info") : null;
     const pmark = lp ? `<span class="pm ${worst}" title="${esc(lp.map(p => p.msg).join("\n"))}">${SEV_ICON[worst]}</span>` : "";
     const c = `ln${worst?" p-"+worst:""}${li===curLine && !ins?" cur":""}${ins?" ins":""}${kind?" k-"+kind:""}${fhits.includes(li) && li===curLine?" fcur":""}${simIdx!=null && li===curLine && !ins?" simcur":""}`;
-    return `<div class="${c}" data-key="${key}" data-li="${li}"${ins?` title="Inserted from the subprogram called on ${from}. Edits here change the subprogram itself."`:""}><div class="r en"><span class="gut">${pmark}</span>${en}</div><div class="r gc"><span class="gut">${ins?"↳":li+1}</span>${gc}${xp}</div></div>`;
+    return `<div class="${c}" data-key="${key}" data-li="${li}"${ins?` title="Inserted from the subprogram called on ${from}. Edits here change the subprogram itself."`:""}><div class="r en"><span class="gut">${pmark}</span>${en}${eob[0]}</div><div class="r gc"><span class="gut">${ins?"↳":li+1}</span>${gc}${eob[1]}${xp}</div></div>`;
   }).join("");
   drawViews(); drawModes(); status(); updateFindCount(fhits); drawProblems();
   drawMachineChip();
@@ -1221,11 +1416,22 @@ function status(){
   document.getElementById("st-warn").innerHTML = (e || w || i) ? `<span class="se">✕ ${e}</span> <span class="sw2">⚠ ${w}</span> <span class="si">i ${i}</span>` : `<span class="ok">✓ No problems</span>`;
 }
 function setMsg(t, bad){ const m = document.getElementById("st-msg"); m.textContent = t || ""; m.className = "msg" + (bad ? " bad" : ""); }
+// The canned cycle a line uses: one written on the line, or the active one on a continuation line.
+function lineCycle(li){
+  const k = (doc[li] || []).filter(t => /^G\d/.test(t)).map(pad2).find(c => DIALECT.cycles?.[c]);
+  return k || lineState[li]?.cycleCode || null;
+}
+const cycBtn = code => code && DIALECT.cycles?.[code] ? `<button class="cyc" data-cyc="${code}" title="F1">How ${code} works…</button>` : "";
 function showInfo(li, idx, warn){
   const c = idx!=null ? view[li]?.[idx] : null; const box = document.getElementById("info");
-  if (!c){ const lp = PBYLINE[curLine]; box.innerHTML = lp ? lp.map(p => `<span class="warn ${p.sev}"><b>${esc(p.title)}.</b> ${esc(p.msg)}</span>`).join("") : "<span>Hover a word to see what it means.</span>"; return; }
-  box.innerHTML = `<span><span class="k">${esc(c.g)}</span> &nbsp;→&nbsp; <span class="k">${esc(c.e || "—")}${c.u ? `<small class="u">${esc(c.u)}</small>` : ""}</span></span><span>${esc(c.d)}</span>` + (warn ? `<span class="warn">${esc(warn)}</span>` : "") + (c.unk ? `<span class="warn">Unknown words are flagged instead of guessed.</span>` : "");
+  if (!c){ const lp = PBYLINE[curLine]; box.innerHTML = (lp ? lp.map(p => `<span class="warn ${p.sev}"><b>${esc(p.title)}.</b> ${esc(p.msg)}</span>`).join("") : "<span>Hover a word to see what it means.</span>") + cycBtn(lineCycle(curLine)); return; }
+  box.innerHTML = `<span><span class="k">${esc(c.g)}</span> &nbsp;→&nbsp; <span class="k">${esc(c.e || "—")}${c.u ? `<small class="u">${esc(c.u)}</small>` : ""}</span></span><span>${esc(c.d)}</span>` + (warn ? `<span class="warn">${esc(warn)}</span>` : "") + (c.unk ? `<span class="warn">Unknown words are flagged instead of guessed.</span>` : "")
+    + cycBtn(c.code && DIALECT.cycles?.[c.code] ? c.code : lineCycle(li));
 }
+function showHintInfo(h){
+  document.getElementById("info").innerHTML = `<span class="hintmsg"><b>${esc(h.code)}</b> needs ${esc(needsText(h))}.</span><span><span class="k">${esc(h.L)}</span> &nbsp;${esc(hintMeaning(h))}</span><span style="color:#777">Click it, or select it and press Enter, to fill it in.</span>` + cycBtn(DIALECT.cycles?.[h.code] ? h.code : null);
+}
+document.getElementById("info").addEventListener("mousedown", e => { const b = e.target.closest(".cyc"); if (!b) return; e.preventDefault(); openCycleHelp(b.dataset.cyc); });
 const MODE_ROWS = [
   ["Motion", st => st.cycleCode || st.motion, ["motion","cycleCode"]],
   ["Units", st => st.unitCode, ["unitCode"]],
@@ -1256,21 +1462,25 @@ function drawModes(){
 ed.addEventListener("mouseover", e => {
   if (editing) return;
   const c = e.target.closest(".cell"); ed.querySelectorAll(".hot").forEach(x => x.classList.remove("hot"));
-  if (!c || c.classList.contains("add")) return;
+  if (!c || c.classList.contains("add") || c.classList.contains("eob")) return;
   ed.querySelectorAll(`.cell[data-k="${c.dataset.k}"][data-r="${c.dataset.r}"]`).forEach(x => x.classList.add("hot"));
   const s = slotsFor(+c.dataset.l).find(s => s.ref===c.dataset.r);
-  showInfo(+c.dataset.l, s?.idx[0]);
+  if (s?.hint || s?.hints) showHintInfo(s.hint || s.hints[0]); else showInfo(+c.dataset.l, s?.idx[0]);
 });
 ed.addEventListener("mouseleave", () => { if (!editing) showInfo(curLine, null); });
 ed.addEventListener("mousedown", e => {
   const x = e.target.closest(".xp[data-x]");
   if (x){ e.preventDefault(); if (editing) commit(); const li = +x.dataset.x; expanded.has(li) ? expanded.delete(li) : expanded.add(li); render(); return; }
   const c = e.target.closest(".cell");
-  if (!c){ const ln = e.target.closest(".ln"); if (ln && !editing){ e.preventDefault(); selectLine(+ln.dataset.li); } return; }
+  if (!c || c.classList.contains("eob")){ const ln = e.target.closest(".ln"); if (ln && !editing){ e.preventDefault(); selectLine(+ln.dataset.li); } return; }
   if (e.target.tagName==="INPUT") return;
   e.preventDefault();
   if (editing && !commit()) return;
-  startEdit(+c.dataset.l, c.dataset.r, c.dataset.k);
+  const li = +c.dataset.l, ref = c.dataset.r;
+  if (ref.startsWith("h:")){ startHint(li, ref.slice(2), c.dataset.k); return; }
+  const s = slotsFor(li).find(x => x.ref===ref);
+  if (s?.hints && s.hints.length===1){ startHint(li, s.hints[0].L, c.dataset.k); return; }
+  startEdit(li, ref, c.dataset.k);
 });
 
 /* ---------- N numbers and subprograms ---------- */
@@ -1290,22 +1500,37 @@ function subRange(n){
   return [s, e];
 }
 function mainEnd(){ const i = doc.findIndex(isEnd); return i < 0 ? doc.length-1 : i; }
+// The N number for a new line after line `after`: step 10, or the midpoint when there's no room.
+function nextN(after){
+  if (!autoN) return { n:null, msg:"New line" };
+  let cur = null, next = null;
+  for (let i = after; i >= 0 && cur===null; i--) cur = nOf(doc[i]);
+  for (let i = after+1; i < doc.length && next===null; i++) next = nOf(doc[i]);
+  let n = (cur ?? 0) + N_STEP;
+  if (next!=null && n >= next) n = next - (cur ?? 0) > 1 ? (cur ?? 0) + Math.floor((next - (cur ?? 0)) / 2) : null;
+  return n!=null ? { n, msg:`New line numbered N${n}` } : { n:null, bad:true, msg:`No free N number between N${cur} and N${next}. Use Program › Renumber to make room.` };
+}
 function newLine(after){
   pushUndo();
-  let words = [], msg = "New line";
-  if (autoN){
-    let cur = null, next = null;
-    for (let i = after; i >= 0 && cur===null; i--) cur = nOf(doc[i]);
-    for (let i = after+1; i < doc.length && next===null; i++) next = nOf(doc[i]);
-    let n = (cur ?? 0) + N_STEP;
-    if (next!=null && n >= next) n = next - (cur ?? 0) > 1 ? (cur ?? 0) + Math.floor((next - (cur ?? 0)) / 2) : null;
-    if (n!=null){ words = ["N"+n]; msg = `New line numbered N${n}`; }
-    else msg = `No free N number between N${cur} and N${next}. Use Program › Renumber to make room.`;
-  }
+  const nn = nextN(after), words = nn.n!=null ? ["N"+nn.n] : [];
   doc.splice(after+1, 0, words);
   expanded = new Set([...expanded].map(i => i > after ? i+1 : i));
-  curLine = after+1; render(); setMsg(msg, !words.length && autoN);
+  curLine = after+1; render(); setMsg(nn.msg, nn.bad);
   startEdit(after+1, layout==="order" ? String(words.length) : "c" + USED.find(ci => COLS[ci].id==="G"), "m"+(after+1));
+}
+// Shift+Enter: break the line after token `after`. The words to its right move to a new line below.
+function breakLine(li, after){
+  const toks = doc[li];
+  if (layout!=="order" || after >= toks.length-1){ newLine(li); return; }
+  pushUndo();
+  const rest = toks.splice(after+1);
+  const nn = /^N\d/.test(rest[0]) ? { n:null } : nextN(li);
+  const words = nn.n!=null ? ["N"+nn.n, ...rest] : rest;
+  doc.splice(li+1, 0, words);
+  expanded = new Set([...expanded].map(i => i > li ? i+1 : i));
+  curLine = li+1; curRef = String(words.length - rest.length);
+  render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`)); ed.focus({preventScroll:true});
+  setMsg(`Moved ${rest.join(" ")} to a new line${nn.n!=null ? " numbered N"+nn.n : ""}.`);
 }
 function deleteLine(){
   if (editing) { editing = null; closeAC(); }
@@ -1330,30 +1555,54 @@ function renumber(){
   render(); setMsg(`Renumbered ${count} lines by ${N_STEP}. Subprogram labels were left alone so their calls still work.`);
 }
 
-/* ---------- Editing ---------- */
+/* ---------- Editing ----------
+   Keyboard model: ← → pick a word, ↑ ↓ change line, Enter edits the selected word and Enter again keeps it
+   selected. While editing, Space (or typing the next letter in G-code) starts a new word to the right,
+   Shift+Enter breaks the line there, Tab moves to the next word. */
 let ac = null;
-function startEdit(li, ref, key){
+function startEdit(li, ref, key, opts = {}){
   if (simIdx!=null) stopSim(true);
   key = key || "m"+li;
-  curLine = li; render();
+  const prevRef = curRef;
+  curLine = li; if (ref!=="i") curRef = ref; render();
+  ed.querySelectorAll(".cell.sel").forEach(x => x.classList.remove("sel"));
   const ln = ed.querySelector(`.ln[data-key="${key}"]`) || ed.querySelector(`.ln[data-key="m${li}"]`);
   if (!ln) return;
-  const slot = slotsFor(li).find(s => s.ref===ref) || slotsFor(li).find(s => s.add);
+  const slot = slotsFor(li).find(s => s.ref===ref) || slotsFor(li).find(s => s.add && !s.pend);
   if (!slot) return;
   if (slot.cm && editMode==="en"){ setMsg("Comments are edited in G-code mode.", true); return; }
   const cell = ln.querySelector(`${editMode==="en" ? ".r.en" : ".r.gc"} .cell[data-r="${slot.ref}"]`);
   if (!cell) return;
   scrollToLn(ln);
-  const cur = slot.add ? "" : (editMode==="en" ? slot.e : slot.g);
-  cell.classList.remove("cm"); if (slot.cm) cell.style.width = Math.max(cur.length + 2, COLW()) + "ch";
+  const cur = opts.prefill ?? (slot.add || slot.hints ? "" : (editMode==="en" ? slot.e : slot.g));
+  cell.classList.remove("cm", "hint", "sel"); if (slot.cm) cell.style.width = Math.max(cur.length + 2, COLW()) + "ch";
   cell.innerHTML = `<input id="cell-input" aria-label="Edit word" autocomplete="off" spellcheck="false" value="${esc(cur)}">`;
   const input = cell.querySelector("input");
-  editing = { li, key, slot, input, cell, items:[], sel:0 };
-  input.focus(); input.select();
-  input.addEventListener("input", openAC);
+  editing = { li, key, slot, input, cell, items:[], sel:0, prevRef };
+  input.focus();
+  if (opts.prefill!=null) input.setSelectionRange(cur.length, cur.length); else input.select();
+  input.addEventListener("input", onInput);
   input.addEventListener("keydown", onKey);
   input.addEventListener("blur", () => setTimeout(() => { if (editing && editing.input===input){ if (commit()) render(); } }, 120));
   showInfo(li, slot.idx[0]);
+  openAC();
+}
+// Start typing the word a hint asks for: the letter (or its English word) is filled in, ready for the number.
+function startHint(li, L, key, typed){
+  const st = lineState[li] || newState();
+  const pre = editMode==="en" ? englishPrefix(L, st) : L;
+  const prefill = typed && /[A-Za-z(]/.test(typed) ? typed : pre + (typed || "");
+  if (layout==="cols"){ pendingIns = { li, at:null, hintL:L }; startEdit(li, "c"+colOf(L+"1"), key, { prefill }); return; }
+  pendingIns = { li, at:insertPos(doc[li], {}), hintL:L };
+  startEdit(li, "i", key, { prefill });
+  const h = hintItems(li); setMsg(`Type the ${L} value and press Enter.` + (h.length ? ` Still needed after this: ${h.map(x => x.L).join(" ")}` : ""));
+}
+function onInput(){
+  // In G-code, typing a letter right after a number starts the next word: G01X becomes G01 | X.
+  if (editing && editMode==="gc"){
+    const m = editing.input.value.match(/^([A-Za-z][-+]?[\d.]*[\d.])([A-Za-z])$/);
+    if (m){ editing.input.value = m[1]; nextWord(m[2].toUpperCase()); return; }
+  }
   openAC();
 }
 function openAC(){
@@ -1363,7 +1612,7 @@ function openAC(){
   const items = suggestions(q, editing.li); editing.items = items; editing.sel = 0;
   ac = document.createElement("div"); ac.className = "ac";
   ac.innerHTML = items.length ? items.map((it, i) => `<div class="it${i===0?" sel":""}" data-i="${i}"><span class="w">${esc(it.w)}</span><span class="g">${esc(it.g)}</span><span class="d">${esc(it.d)}</span></div>`).join("")
-    : `<div class="hint">${q ? "No matches. Enter keeps what you typed." : (editMode==="en" ? "Type a word, like SPIN, COOL or RPM. Spaces separate words." : "Type a code, like G0 or M3. Spaces separate words.")}</div>`;
+    : `<div class="hint">${q ? "No matches. Enter keeps what you typed." : (editMode==="en" ? "Type a word, like SPIN, COOL or RPM. Space starts the next word." : "Type a code, like G0 or M3. Space starts the next word.")}</div>`;
   const r = editing.cell.getBoundingClientRect(), pr = ed.getBoundingClientRect();
   ac.style.left = (r.left - pr.left + ed.scrollLeft) + "px";
   ac.style.top = (r.bottom - pr.top + ed.scrollTop + 2) + "px";
@@ -1385,22 +1634,46 @@ function pick(i){
   if (it.prefix){ openAC(); return true; }
   return false;
 }
+// Use the highlighted suggestion if what was typed is only the start of it. True means keep editing.
+function takeSuggestion(tab){
+  const q = lastWord(editing.input.value.trim()).toUpperCase();
+  const top = editing.items[editing.sel];
+  const exact = top && (top.w===q || top.fill===q);
+  return !!(top && q && !exact && (tab || editing.sel>0 || top.score>=2) && pick(editing.sel));
+}
+// Finish this word and start a new one to its right (Space, or a letter typed after a G-code number).
+function nextWord(prefill){
+  const { li, key, slot } = editing;
+  const r = commit(); if (!r) return;
+  if (layout==="cols"){
+    const want = prefill ? colOf(prefill+"1") : -1;
+    const ci = USED.includes(want) ? want : USED[USED.indexOf(slot.col) + 1];
+    if (ci==null){ render(); ed.focus({preventScroll:true}); return; }
+    startEdit(li, "c"+ci, key, prefill ? { prefill } : {}); return;
+  }
+  pendingIns = { li, at: r.n ? r.at + r.n : r.at };
+  startEdit(li, "i", key, prefill ? { prefill } : {});
+}
 function onKey(e){
+  if (e.key==="CapsLock") return;
   if (e.key==="ArrowDown"){ e.preventDefault(); moveSel(1); }
   else if (e.key==="ArrowUp"){ e.preventDefault(); moveSel(-1); }
-  else if (e.key==="Escape"){ e.preventDefault(); editing = null; closeAC(); render(); setMsg(""); ed.focus({preventScroll:true}); }
-  else if (e.key==="Enter" && (e.ctrlKey || (!editing.input.value.trim() && editing.slot.add))){
+  else if (e.key==="Escape"){ e.preventDefault(); const prev = editing.prevRef; editing = null; pendingIns = null; closeAC(); curRef = prev; render(); setMsg(""); ed.focus({preventScroll:true}); }
+  else if (e.key===" " && !e.ctrlKey && !e.altKey){
+    const v = editing.input.value;
+    if (v.trimStart().startsWith("(") && !v.includes(")")) return;   // spaces inside a comment are just spaces
     e.preventDefault();
-    const li = editing.li;
-    if (!commit()) return;
-    newLine(li);
+    if (!v.trim() || takeSuggestion(false)) return;
+    nextWord();
+  }
+  else if (e.key==="Enter" && (e.shiftKey || e.ctrlKey)){
+    e.preventDefault();
+    const li = editing.li, r = commit(); if (!r) return;
+    if (e.ctrlKey) newLine(li); else breakLine(li, r.n ? r.at + r.n - 1 : r.at - 1);
   }
   else if (e.key==="Enter" || e.key==="Tab"){
     e.preventDefault();
-    const q = lastWord(editing.input.value.trim()).toUpperCase();
-    const top = editing.items[editing.sel];
-    const exact = top && (top.w===q || top.fill===q);
-    if (top && q && !exact && (e.key==="Tab" || editing.sel>0 || top.score>=2)){ if (pick(editing.sel)) return; }
+    if (takeSuggestion(e.key==="Tab")) return;
     const { li, key, slot } = editing;
     const r = commit(); if (!r) return;
     if (e.key==="Tab"){
@@ -1415,7 +1688,11 @@ function onKey(e){
         ref = "c" + USED[p];
       }
       startEdit(li, ref, key);
-    } else { render(); ed.focus({preventScroll:true}); }
+    } else {
+      // Enter: stop editing but keep the word selected
+      curRef = layout==="order" ? String(Math.min(r.at, doc[li].length)) : slot.ref;
+      render(); ed.focus({preventScroll:true}); showSelInfo();
+    }
   }
 }
 function insertPos(toks, slot){
@@ -1426,6 +1703,8 @@ function commit(){
   if (!editing) return { at:0, n:0 };
   const { li, slot, input } = editing; const toks = doc[li]; const st = lineState[li];
   const raw = input.value.trim();
+  // An English word left as it was keeps its G-code exactly as written (X1. stays X1., not X1.0).
+  if (editMode==="en" && slot.idx.length && raw.toUpperCase()===(slot.e || "").toUpperCase()){ closeAC(); editing = null; pendingIns = null; return { at:slot.idx[0], n:slot.idx.length }; }
   let parts = [], warn = null;
   if (raw.startsWith("(")) parts = [raw];
   else if (editMode==="en"){
@@ -1435,9 +1714,9 @@ function commit(){
       if (r.g) parts.push(r.g); if (r.warn) warn = r.warn;
     }
   } else parts = raw.toUpperCase().split(/\s+/).filter(Boolean);
-  closeAC(); editing = null;
+  closeAC(); editing = null; pendingIns = null;
   const old = slot.idx.map(i => toks[i]);
-  const at = slot.idx.length ? slot.idx[0] : insertPos(toks, slot);
+  const at = slot.idx.length ? slot.idx[0] : (slot.ins ?? insertPos(toks, slot));
   if (old.join(" ") === parts.join(" ")) return { at, n: parts.length };
   pushUndo();
   [...slot.idx].sort((a, b) => b - a).forEach(i => toks.splice(i, 1));
@@ -1447,6 +1726,70 @@ function commit(){
   else setMsg(parts.length ? parts.filter(p => !p.startsWith("(")).map(p => `${p} → ${word(p, lineState[li]).e}`).join("   ") : "Removed");
   showInfo(li, parts.length ? at : null, warn);
   return { at, n: parts.length };
+}
+
+/* ---------- Word selection (keyboard) ---------- */
+const selSlot = () => slotsFor(curLine).find(s => s.ref===curRef);
+// Keep the selection on a slot that exists after an edit, undo or layout change.
+function fixSel(){
+  if (!doc[curLine]) return;
+  const sl = slotsFor(curLine).filter(s => !s.pend); if (!sl.length || sl.some(s => s.ref===curRef)) return;
+  const n = parseInt(curRef, 10);
+  curRef = (layout==="order" && !isNaN(n) ? sl.find(s => s.ref===String(n)) || sl.filter(s => /^\d+$/.test(s.ref)).pop() : sl[0]).ref;
+}
+function showSelInfo(){
+  const s = selSlot(); if (!s) return;
+  if (s.hint) showHintInfo(s.hint); else if (s.hints) showHintInfo(s.hints[0]); else showInfo(curLine, s.idx[0] ?? null);
+}
+function moveWord(d, to){
+  if (editing && !commit()) return;
+  const sl = slotsFor(curLine).filter(s => !s.pend);
+  let i = sl.findIndex(s => s.ref===curRef); if (i < 0) i = 0;
+  i = to==="home" ? 0 : to==="end" ? sl.length-1 : Math.max(0, Math.min(sl.length-1, i+d));
+  curRef = sl[i].ref; render(); showSelInfo();
+}
+function moveLine(d){
+  const sl = slotsFor(curLine);
+  const i = Math.max(0, sl.findIndex(s => s.ref===curRef));
+  const li = Math.max(0, Math.min(doc.length-1, curLine+d)); if (li===curLine) return;
+  const sl2 = slotsFor(li).filter(s => !s.pend);
+  curRef = layout==="cols" && sl2.some(s => s.ref===curRef) ? curRef : sl2[Math.min(i, sl2.length-1)].ref;
+  selectLine(li); showSelInfo();
+}
+function editSel(typed){
+  const s = selSlot() || slotsFor(curLine).find(x => x.add);
+  if (s.hint) return startHint(curLine, s.hint.L, "m"+curLine, typed);
+  if (s.hints && !typed && s.hints.length===1) return startHint(curLine, s.hints[0].L, "m"+curLine);
+  startEdit(curLine, s.ref, "m"+curLine, typed!=null ? { prefill:typed } : {});
+}
+// Space on a selected word: insert a new, empty word to its right and start typing it.
+function spaceSel(){
+  const s = selSlot();
+  if (layout==="cols" || !s || s.add || s.hint) return editSel();
+  pendingIns = { li:curLine, at: Math.max(...s.idx) + 1 };
+  startEdit(curLine, "i", "m"+curLine);
+}
+function breakSel(){
+  const s = selSlot();
+  if (!s || !s.idx.length) return newLine(curLine);
+  breakLine(curLine, Math.max(...s.idx));
+}
+function deleteWord(back){
+  const s = selSlot(); if (!s || !s.idx.length) return;
+  const toks = doc[curLine], gone = s.idx.map(i => toks[i]).join(" ");
+  pushUndo();
+  [...s.idx].sort((a, b) => b - a).forEach(i => toks.splice(i, 1));
+  if (layout==="order") curRef = String(Math.max(0, s.idx[0] - (back ? 1 : 0)));
+  render(); showSelInfo(); setMsg(`Deleted ${gone}. Ctrl+Z brings it back.`);
+}
+// Caps Lock switches between editing the G-code line and the English line. A word being edited stays open.
+function toggleEditMode(){
+  const was = editing ? { li:editing.li, key:editing.key, slot:editing.slot } : null;
+  if (editing){ const r = commit(); if (!r) return; curRef = layout==="order" ? String(Math.min(r.at, doc[was.li].length)) : was.slot.ref; }
+  const to = editMode==="en" ? "gc" : "en";
+  if (showMode!=="both") setShow(to); else { editMode = to; setPressed(mgc, men, to==="gc"); render(); }
+  if (was) startEdit(was.li, curRef, was.key); else ed.focus({preventScroll:true});
+  setMsg(`Caps Lock: editing ${to==="gc" ? "G-code" : "English"}. Press it again to switch back.`);
 }
 
 /* ---------- Selection ---------- */
@@ -1491,6 +1834,218 @@ findq.addEventListener("keydown", e => { if (e.key==="Enter"){ e.preventDefault(
 document.getElementById("f-next").onclick = () => findNext(1);
 document.getElementById("f-prev").onclick = () => findNext(-1);
 document.getElementById("f-x").onclick = closeFind;
+
+/* ---------- Canned cycle guide (F1) ----------
+   One page per cycle in the selected machine's table: what it does, a rough sketch, an example line with
+   every word it takes (English above, G-code below), and what each word does. Text comes from
+   RULES.cycleHelp; the word lists come from the dialect's cycles table, so they match the checks. */
+const cdlg = document.getElementById("cdlg");
+let cSel = null;
+const EX_DEFAULT = { X:"1.", Y:"0.5", Z:"-0.5", R:"0.1", F:"6.", Q:"0.1", P:"0.5", K:"1", L:"1", I:"0.1", J:"0.1", D:"0.1", U:"0.02", W:"0.005", S:"600", T:"0101", A:"60" };
+function openCycleHelp(code){
+  if (editing && !commit()) return;
+  const list = Object.keys(DIALECT.cycles || {}).sort();
+  if (!code){
+    const s = selSlot(), t = s?.idx.length ? doc[curLine][s.idx[0]] : null;
+    const k = t && /^G\d/.test(t) ? pad2(t) : null;
+    code = (k && DIALECT.cycles?.[k] ? k : null) || (s?.hint && DIALECT.cycles?.[s.hint.code] ? s.hint.code : null) || lineCycle(curLine) || list[0];
+  }
+  cSel = code; drawCycleHelp(); cdlg.hidden = false;
+}
+function cycleWordsFor(code){
+  const def = DIALECT.cycles[code], rows = [];
+  (def.requires || []).forEach(L => rows.push({ L, need:"req" }));
+  (def.choices || []).forEach((set, si) => set.forEach(L => rows.push({ L, need:"one", set:si, sets:def.choices })));
+  (def.optional || []).forEach(L => { if (!rows.some(r => r.L===L)) rows.push({ L, need:"opt" }); });
+  return rows;
+}
+function drawCycleHelp(){
+  const list = Object.keys(DIALECT.cycles || {}).sort(), m = MACHINES[machineId];
+  document.getElementById("c-title").textContent = `Canned cycle guide · ${m.name} (${DIALECT.label}, ${m.type})`;
+  document.getElementById("clist").innerHTML = list.length
+    ? `<div class="cgrp">${m.type==="lathe" ? "Lathe" : "Mill"} cycles on ${esc(DIALECT.label)}</div>` + list.map(c => `<div class="ci${c===cSel?" sel":""}" data-c="${c}"><b>${c}</b><span>${esc(DIALECT.cycles[c].name)}</span></div>`).join("")
+    : `<div class="cgrp">No cycles in this machine's table yet.</div>`;
+  const main = document.getElementById("cmain"), ins = document.getElementById("c-ins");
+  if (!cSel || !DIALECT.cycles?.[cSel]){
+    main.innerHTML = `<p class="about">${esc(DIALECT.label)} ${m.type} cycles aren't in the tables yet${DIALECT.referenceOnly ? " (its LAP and threading cycles are listed for reference only)" : ""}.</p>`;
+    ins.disabled = true; document.getElementById("c-note").textContent = ""; return;
+  }
+  ins.disabled = false;
+  const code = cSel, def = DIALECT.cycles[code], help = cycleHelp(code), rows = cycleWordsFor(code);
+  const en = entry(code);
+  // Example line: every word the cycle takes, using the first of any either/or sets.
+  const exWords = rows.filter(r => r.need!=="one" || r.set===0).map(r => r.L + (help.words[r.L]?.[0] ?? EX_DEFAULT[r.L] ?? "1."));
+  const toks = ["N100", code, ...exWords]; sortLine(toks);
+  const st = { ...newState(), cycle:true, cycleCode:code, chg:[] };
+  const W = COLW(), cells = toks.map(t => word(t, st));
+  const exRow = (cls, f) => `<div class="r ${cls}"><span class="gut"></span>${cells.map((c, i) => `<span class="cell${i===0?" n":""}" style="width:${Math.max(W, toks[i].length+1, (c.e||"").length + (c.u ? 3 : 1))}ch">${f(c, i)}</span>`).join("")}</div>`;
+  const ex = `<div class="cex"><div class="lbl">Example with every word it takes${def.choices ? ` (using ${def.choices[0].join(" ")}; ${def.choices.slice(1).map(s => s.join(" ")).join(" or ")} can be used instead)` : ""}</div>`
+    + exRow("en", c => esc(c.e) + (c.u ? `<small class="u">${esc(c.u)}</small>` : "")) + exRow("gc", (c, i) => esc(toks[i])) + `</div>`;
+  const what = L => help.words[L]?.[1] || (DIALECT.wordMeaning?.[L] ? DIALECT.wordMeaning[L][0].toUpperCase() + DIALECT.wordMeaning[L].slice(1) + "." : DICT.address[L]?.desc || "");
+  const needChip = r => r.need==="req" ? (r.L==="F" && !def.leadF ? `<span class="need req" title="Unless an F is already active">Required*</span>` : `<span class="need req">Required</span>`)
+    : r.need==="one" ? `<span class="need one" title="Use one of: ${esc(r.sets.map(s => s.join(" ")).join(" or "))}">One of ${esc(r.sets.map(s => s.join(" ")).join(" / "))}</span>` : `<span class="need opt">Optional</span>`;
+  const table = `<table class="cwords"><thead><tr><th>Word</th><th>English</th><th>Needed</th><th>What it does</th></tr></thead><tbody>${rows.map(r => {
+    const w = r.L + (help.words[r.L]?.[0] ?? EX_DEFAULT[r.L] ?? "1."), c = word(w, st);
+    return `<tr><td class="w">${esc(r.L)}</td><td class="e">${esc(englishPrefix(r.L, st))}</td><td>${needChip(r)}</td><td>${esc(what(r.L))}</td></tr>`; }).join("")}</tbody></table>`;
+  main.innerHTML = `<h4><code>${code}</code>${esc(def.name)}<small>${en ? esc(en.long) + " · " : ""}${esc(DIALECT.label)}</small></h4>`
+    + `<p class="about">${esc(help.about || en?.desc || "")}</p>`
+    + `<div class="csk">${cycleSketch(help.sketch, help.labels || {}, def)}<div class="key"><span><i style="border-color:${SKC.rapid};border-top-style:dashed"></i>Rapid</span><span><i style="border-color:${SKC.feed}"></i>Feed</span><span><b style="color:${SKC.lab};font-family:var(--w-mono)">Z R Q</b> &nbsp;Words on the line</span><span style="max-width:160px;color:#888">A rough sketch, not to scale.</span></div></div>`
+    + ex + table;
+  document.getElementById("c-note").textContent = [def.note, DIALECT.verified ? "" : `${DIALECT.label} tables are a first draft, not yet checked against the manual.`].filter(Boolean).join(" ");
+}
+document.getElementById("clist").addEventListener("click", e => { const it = e.target.closest(".ci"); if (!it) return; cSel = it.dataset.c; drawCycleHelp(); });
+document.getElementById("c-close").onclick = document.getElementById("c-x").onclick = () => { cdlg.hidden = true; ed.focus({preventScroll:true}); };
+// Start a new line below the selected one with just the cycle code; the grey hints then walk through its words.
+document.getElementById("c-ins").onclick = () => {
+  cdlg.hidden = true;
+  pushUndo();
+  const nn = nextN(curLine), words = [...(nn.n!=null ? ["N"+nn.n] : []), cSel];
+  doc.splice(curLine+1, 0, words);
+  expanded = new Set([...expanded].map(i => i > curLine ? i+1 : i));
+  curLine++; translateAll();
+  const h = hintItems(curLine);
+  curRef = h.length ? "h:"+h[0].L : String(words.length);
+  render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`)); ed.focus({preventScroll:true}); showSelInfo();
+  setMsg(`Added ${words.join(" ")}. The grey words after it are what it still needs: Enter fills the selected one, → moves to the next.`);
+};
+
+/* Sketches: plain SVG, 380×230. Mill cycles are a side section through the hole;
+   lathe cycles are the top half of the part seen from the front, chuck on the left. */
+const SKC = { rapid:"#e8a33d", feed:"#0f6cbd", lab:"#6a2fd6", part:"#e8ecf1", edge:"#8f9bab", guide:"#b9c2cf", finish:"#0e9384" };
+function cycleSketch(kind, labels, def){
+  const defs = `<defs>${["rapid","feed","lab","finish"].map(k => `<marker id="ah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${SKC[k]}"/></marker>`).join("")}<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#d3d9e1" stroke-width="2"/></pattern></defs>`;
+  const L = (x1, y1, x2, y2, k, arrow) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${SKC[k]}" stroke-width="${k==="lab" ? 1 : 2}"${k==="rapid" ? ' stroke-dasharray="5 4"' : ""}${arrow ? ` marker-end="url(#ah-${k})"` : ""}/>`;
+  const P = (pts, k, arrow, w) => `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="${SKC[k]}" stroke-width="${w || 2}"${k==="rapid" ? ' stroke-dasharray="5 4"' : ""}${arrow ? ` marker-end="url(#ah-${k})"` : ""} stroke-linejoin="round"/>`;
+  const G = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${SKC.guide}" stroke-width="1" stroke-dasharray="3 3"/>`;
+  const T = (x, y, t, anchor) => `<text x="${x}" y="${y}" font-size="13" font-weight="700" fill="${SKC.lab}" font-family="Cascadia Mono,Consolas,monospace" text-anchor="${anchor || "middle"}">${esc(t)}</text>`;
+  const N = (x, y, t, anchor) => `<text x="${x}" y="${y}" font-size="10.5" fill="#6b7480" font-family="Segoe UI,system-ui,sans-serif" text-anchor="${anchor || "start"}">${esc(t)}</text>`;
+  const Dm = (x1, y1, x2, y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${SKC.lab}" stroke-width="1" marker-start="url(#ah-lab)" marker-end="url(#ah-lab)"/>`;
+  const poly = pts => `<polygon points="${pts.map(p => p.join(",")).join(" ")}" fill="url(#hatch)" stroke="${SKC.edge}" stroke-width="1.2"/><polygon points="${pts.map(p => p.join(",")).join(" ")}" fill="${SKC.part}" fill-opacity=".55" stroke="none"/>`;
+  let g = "";
+  const mill = ["drill","dwell","peck","peck-hs","tap","tap-lh","bore-feed","bore-stop","bore-dwell","finebore"];
+  if (mill.includes(kind)){
+    const top = 120, bot = 222, x1 = 168, x2 = 212, zi = 32, zr = 92, zz = 186, cx = 190;
+    const point = ["drill","dwell","peck","peck-hs","tap","tap-lh"].includes(kind);
+    let left = [[x1, top], [x1, zz]], right = [[x2, zz], [x2, top]];
+    if (kind.startsWith("tap")){ left = [[x1, top]]; right = []; for (let y = top; y < zz; y += 8){ left.push([x1-4, y+4], [x1, y+8]); right.unshift([x2, y+8], [x2+4, y+4]); } right.push([x2, top]); }
+    g += poly([[16, top], ...left, ...(point ? [[cx, zz+12]] : []), ...right, [364, top], [364, bot], [16, bot]]);
+    g += G(40, zi, 340, zi) + G(40, zr, 340, zr) + G(40, zz, 160, zz);
+    g += N(44, zi-5, "Initial Z  (G98 returns here)") + T(30, zr+4, "R") + N(44, zr-5, "G99 returns here") + T(30, zz+4, "Z");
+    g += `<path d="M${cx-7},${zi-26} h14 v16 l-7,8 l-7,-8 z" fill="#c7ced8" stroke="#8f9bab"/>`;
+    g += L(cx-12, zi, cx-12, zr, "rapid", true);
+    const down = (x, y1, y2) => L(x, y1, x, y2, "feed", true);
+    if (kind==="peck" || kind==="peck-hs"){
+      const q = 32;
+      if (kind==="peck") g += down(cx-12, zr, zr+q) + L(cx-6, zr+q, cx-6, zr, "rapid", true) + L(cx, zr, cx, zr+q-4, "rapid", true) + down(cx, zr+q-4, zr+2*q) + L(cx+6, zr+2*q, cx+6, zr, "rapid", true) + L(cx+12, zr, cx+12, zr+2*q-4, "rapid", true) + down(cx+12, zr+2*q-4, zz);
+      else g += down(cx-12, zr, zr+q) + L(cx-6, zr+q, cx-6, zr+q-7, "rapid", true) + down(cx-6, zr+q-7, zr+2*q) + L(cx, zr+2*q, cx, zr+2*q-7, "rapid", true) + down(cx, zr+2*q-7, zz) + N(222, zr+q-2, "backs off a little");
+      g += L(cx+18, zz, cx+18, zr, "rapid", true) + Dm(150, zr, 150, zr+q) + T(140, zr+q/2+5, "Q");
+    } else if (kind==="finebore"){
+      g += down(cx-8, zr, zz) + `<circle cx="${cx-8}" cy="${zz+4}" r="4.5" fill="#fff" stroke="${SKC.lab}"/>` + T(cx-26, zz+6, "P");
+      g += L(cx-8, zz-8, cx+10, zz-8, "lab", true) + T(cx+2, zz-13, "Q") + L(cx+10, zz-8, cx+10, zr, "rapid", true);
+      g += N(226, zz-30, "spindle stops, oriented,") + N(226, zz-17, "moves off the wall by Q,") + N(226, zz-4, "then rapids out");
+    } else {
+      g += down(cx-8, zr, zz);
+      const outK = ["drill","dwell","bore-stop"].includes(kind) ? "rapid" : "feed";
+      g += L(cx+8, zz, cx+8, zr, outK, true);
+      if (["dwell","bore-dwell"].includes(kind)) g += `<circle cx="${cx}" cy="${zz+4}" r="4.5" fill="#fff" stroke="${SKC.lab}"/>` + T(cx-22, zz+6, "P") + N(226, zz, "pauses for P at the bottom");
+      if (kind==="bore-stop") g += N(226, zz, "spindle stops, rapids out");
+      if (kind==="bore-feed") g += N(226, zz, "feeds back out");
+      if (kind.startsWith("tap")) g += N(226, zz-14, kind==="tap" ? "M03 in, reverses to" : "M04 in, reverses to") + N(226, zz-1, kind==="tap" ? "M04 at Z, feeds out" : "M03 at Z, feeds out") + N(226, top-20, "F = pitch × rpm");
+    }
+    if (kind==="drill") g += N(226, zz, "rapids back out");
+    return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${g}</svg>`;
+  }
+  if (kind==="backbore"){
+    const top = 100, bot = 176, zi = 30, zr = 206, zz = 146, cx = 190;
+    g += poly([[16, top], [176, top], [176, zz], [160, zz], [160, bot], [16, bot]]) + poly([[204, top], [364, top], [364, bot], [220, bot], [220, zz], [204, zz]]);
+    g += G(40, zi, 340, zi) + G(40, zr, 340, zr) + G(40, zz, 150, zz);
+    g += N(44, zi-5, "Initial Z") + T(30, zr+4, "R") + T(30, zz+4, "Z") + N(44, zr-6, "below the part");
+    g += L(cx-8, zi, cx-8, zr, "rapid", true) + L(cx-8, zr+8, cx+6, zr+8, "lab", true) + T(cx+16, zr+12, labels.shift || "Q");
+    g += L(cx+6, zr, cx+6, zz, "feed", true) + N(232, zz+30, "shifted off center to pass") + N(232, zz+43, "through, shifts back by Q,") + N(232, zz+56, "then cuts upward to Z");
+    return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${g}</svg>`;
+  }
+  // Lathe: centerline at the bottom, part face at x=290, X is drawn as a radius.
+  const CL = 212, face = 290;
+  g += `<line x1="8" y1="${CL}" x2="372" y2="${CL}" stroke="#9aa6b5" stroke-dasharray="14 4 3 4"/>` + N(24, CL-4, "centerline");
+  g += `<rect x="4" y="40" width="14" height="${CL-40}" fill="#c7ced8" stroke="#8f9bab"/>`;
+  if (kind==="thread" || kind==="thread-cycle"){
+    const crest = 72, root = 100, z0 = 120, pitch = 16;
+    const teeth = []; for (let x = z0; x < face-8; x += pitch) teeth.push([x+pitch/2, root], [x+pitch, crest]);
+    g += poly([[18, 56], [z0-10, 56], [z0-10, crest], [z0, crest], ...teeth, [face, crest], [face, CL], [18, CL]]);
+    g += G(z0, 40, z0, CL) + T(z0, CL+14, "Z") + Dm(200, CL, 200, root) + T(214, 160, "X") + N(222, 160, kind==="thread" ? "minor ⌀ (last pass)" : "⌀ of this pass");
+    g += Dm(z0+pitch, 63, z0+2*pitch, 63) + T(z0+1.5*pitch, 58, "F") + N(z0+2*pitch+8, 60, "lead");
+    if (kind==="thread"){
+      const n = 5, ds = Array.from({length:n}, (_, i) => (root-crest) * Math.sqrt((i+1)/n));
+      ds.forEach((d, i) => { g += L(330, crest+d, z0+2, crest+d, "feed", i===n-1) .replace('stroke-width="2"', `stroke-width="${i===n-1 ? 2 : 1}" stroke-opacity="${i===n-1 ? 1 : .55}"`); });
+      g += L(330, 40, 330, root, "rapid", true) + L(z0, root, z0, 40, "rapid", true) + L(z0, 40, 330, 40, "rapid", true);
+      g += G(56, crest, z0, crest) + G(56, crest+ds[0], z0, crest+ds[0]) + G(76, root, z0, root);
+      g += Dm(96, crest, 96, root) + T(86, (crest+root)/2+5, labels.height || "K", "end");
+      g += Dm(66, crest, 66, crest+ds[0]) + T(60, crest+ds[0]/2+5, labels.first || "D", "end");
+      g += `<path d="M322,14 h16 l-8,14 z" fill="#c7ced8" stroke="#8f9bab"/>` + T(346, 26, "A", "start") + N(300, 120, "each pass is", "start") + N(300, 133, "a little shallower", "start");
+    } else {
+      g += L(330, crest+10, z0+2, crest+10, "feed").replace('stroke-width="2"', 'stroke-width="1" stroke-opacity=".55"') + L(330, crest+19, z0+2, crest+19, "feed").replace('stroke-width="2"', 'stroke-width="1" stroke-opacity=".55"');
+      g += L(330, 40, 330, root, "rapid", true) + L(330, root, z0, root, "feed", true) + L(z0, root, z0, 40, "rapid", true) + L(z0, 40, 330, 40, "rapid", true);
+      g += N(374, 130, "one pass per line", "end");
+    }
+    return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${g}</svg>`;
+  }
+  if (kind==="turn" || kind==="face"){
+    g += poly([[18, 56], [face, 56], [face, CL], [18, CL]]);
+    if (kind==="turn"){
+      const zx = 140, xd = 100;
+      g += G(zx, 40, zx, CL) + T(zx, CL+14, "Z") + Dm(220, CL, 220, xd) + T(232, 165, "X");
+      g += L(330, 40, 330, xd, "rapid", true) + L(330, xd, zx, xd, "feed", true) + L(zx, xd, zx, 40, "feed", true) + L(zx, 40, 330, 40, "rapid", true);
+      g += G(zx, 72, face, 72) + G(zx, 86, face, 86) + N(374, 130, "feeds out, rapids back", "end") + N(150, 125, "R tapers the pass");
+    } else {
+      const zx = 266, xd = 172;
+      g += G(zx, 30, zx, CL) + T(zx, CL+14, "Z") + Dm(240, CL, 240, xd) + T(228, 196, "X", "end");
+      g += L(336, 36, zx, 36, "rapid", true) + L(zx, 36, zx, xd, "feed", true) + L(zx, xd, 336, xd, "feed", true) + L(336, xd, 336, 36, "rapid", true);
+      g += N(374, 110, "one face", "end") + N(374, 123, "pass per line", "end");
+    }
+    return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${g}</svg>`;
+  }
+  if (["rough","face-rough","path-rough","finish"].includes(kind)){
+    const C = [[300,150],[232,150],[232,110],[150,110],[120,80],[60,80],[60,50]];
+    const cx = y => y<=80 ? 60 : y<=110 ? 120 + (y-80) : 232;
+    const cy = x => x>232 ? 150 : x>150 ? 110 : x>120 ? 80 + (x-120) : x>60 ? 80 : 50;
+    g += poly([[18, 50], ...C.slice().reverse(), [300, CL], [18, CL]]);
+    g += `<polyline points="60,50 310,50 310,150" fill="none" stroke="#b9c2cf" stroke-dasharray="2 3"/>` + N(250, 44, "bar stock");
+    if (kind==="rough"){
+      for (let y = 60; y < 150; y += 12) g += L(322, y, cx(y)+5, y, "feed").replace('stroke-width="2"', 'stroke-width="1.2" stroke-opacity=".7"');
+      g += Dm(338, 60, 338, 72) + T(346, 70, labels.depth || "D", "start");
+    } else if (kind==="face-rough"){
+      for (let x = 292; x > 62; x -= 12) g += L(x, 36, x, cy(x)-5, "feed").replace('stroke-width="2"', 'stroke-width="1.2" stroke-opacity=".7"');
+      g += Dm(292, 26, 280, 26) + T(300, 30, labels.depth || "D", "start");
+    } else if (kind==="path-rough"){
+      for (const k of [3, 2, 1]) g += P(C.map(([x, y]) => [x + k*10, y - k*10]), "feed", false, 1.2).replace("<polyline", '<polyline stroke-opacity=".7"');
+      g += Dm(300, 160, 330, 160) + T(338, 164, "K", "start") + Dm(312, 150, 312, 120) + T(320, 138, "I", "start");
+    }
+    if (kind==="finish") g += P(C.map(([x, y]) => [x+5, y-5]), "rapid", false, 1) + P(C, "feed", true, 2.5);
+    else g += P(C, "finish", false, 2.2) + P(C.map(([x, y]) => [x+4, y-4]), "finish", false, 1).replace("<polyline", '<polyline stroke-dasharray="2 2"');
+    g += T(300, 168, "P") + N(268, 182, "first N of the contour") + T(48, 46, "Q", "end") + N(24, 32, "last N");
+    if (kind!=="finish" && kind!=="path-rough") g += N(130, 150, "U, W: stock left for G70");
+    return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${g}</svg>`;
+  }
+  if (kind==="groove"){
+    const top = 60, gx = 180, gw = 16, gd = 110;
+    g += poly([[18, top], [gx, top], [gx, gd], [gx+gw, gd], [gx+gw, top], [face, top], [face, CL], [18, CL]]);
+    g += `<rect x="${gx+gw}" y="${top}" width="${gw}" height="${gd-top}" fill="none" stroke="#b9c2cf" stroke-dasharray="2 3"/>`;
+    g += L(gx+4, 36, gx+4, top+16, "feed", true) + L(gx+8, top+16, gx+8, top+10, "rapid") + L(gx+8, top+10, gx+8, top+32, "feed", true) + L(gx+12, top+32, gx+12, top+26, "rapid") + L(gx+12, top+26, gx+12, gd, "feed", true) + L(gx+15, gd, gx+15, 36, "rapid", true);
+    g += Dm(gx-12, top, gx-12, top+16) + T(gx-20, top+12, "I", "end") + Dm(gx+8, 26, gx+8+gw, 26) + T(gx+8+gw/2, 20, "K");
+    g += Dm(140, CL, 140, gd) + T(128, 170, "X", "end") + G(gx+2*gw, 30, gx+2*gw, CL) + T(gx+2*gw, CL+14, "Z") + N(240, 100, "pecks in by I,") + N(240, 113, "steps over by K");
+    return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${g}</svg>`;
+  }
+  if (kind==="face-groove"){
+    const zx = 230, y1 = 140, y2 = 156;
+    g += poly([[18, 56], [face, 56], [face, y1], [zx, y1], [zx, y2], [face, y2], [face, CL], [18, CL]]);
+    g += `<rect x="${zx}" y="${y1-16}" width="${face-zx}" height="16" fill="none" stroke="#b9c2cf" stroke-dasharray="2 3"/>`;
+    g += L(336, y1+4, face-20, y1+4, "feed", true) + L(face-20, y1+8, face-14, y1+8, "rapid") + L(face-14, y1+8, face-40, y1+8, "feed", true) + L(face-40, y1+12, face-34, y1+12, "rapid") + L(face-34, y1+12, zx, y1+12, "feed", true) + L(zx, y2-1, 336, y2-1, "rapid", true);
+    g += Dm(face, y2+12, face-20, y2+12) + T(face-10, y2+26, "K") + Dm(320, y1, 320, y1-16) + T(328, y1-4, "I", "start");
+    g += G(zx, 40, zx, CL) + T(zx, CL+14, "Z") + N(150, 110, "pecks in by K, steps out by I");
+    return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${g}</svg>`;
+  }
+  return `<svg viewBox="0 0 380 230" width="380" height="230">${defs}${N(20, 110, "No sketch for this cycle yet.")}</svg>`;
+}
 
 /* ---------- Toolpath and simulation ---------- */
 function interpret(){
@@ -1723,12 +2278,15 @@ const MENUS = {
     { label:"Find next", sc:"F3", fn:() => findNext(1), dis:() => !findQ },
     "-",
     { label:"New line below", sc:"Ctrl+Enter", fn:() => newLine(curLine) },
+    { label:"Break line after the selected word", sc:"Shift+Enter", fn:() => { if (editing && !commit()) return; breakSel(); } },
+    { label:"Delete selected word", sc:"Delete", fn:() => { if (editing && !commit()) return; deleteWord(); } },
     { label:"Delete line", sc:"Ctrl+Shift+K", fn:deleteLine }
   ],
   View: [
     { grp:"Edit in" },
     R("English", () => editMode==="en", () => men.click()),
     R("G-code", () => editMode==="gc", () => mgc.click()),
+    R("Caps Lock switches between them", () => capsSwitch, () => { capsSwitch = !capsSwitch; setMsg(capsSwitch ? "Caps Lock now switches between editing G-code and English." : "Caps Lock no longer switches lines."); }),
     "-", { grp:"Show" },
     R("English and G-code", () => showMode==="both", () => setShow("both")),
     R("English only", () => showMode==="en", () => setShow("en")),
@@ -1763,14 +2321,15 @@ const MENUS = {
     { label:"Hide all subprograms", fn:() => { expanded.clear(); render(); } }
   ],
   Simulate: [
-    { label:"Play / Pause", sc:"Space", fn:togglePlay },
-    { label:"Step forward one line", sc:"→", fn:() => simStep(1) },
-    { label:"Step back one line", sc:"←", fn:() => simStep(-1) },
+    { label:"Play / Pause", sc:"F5", fn:togglePlay },
+    { label:"Step forward one line", sc:"Ctrl+→", fn:() => simStep(1) },
+    { label:"Step back one line", sc:"Ctrl+←", fn:() => simStep(-1) },
     { label:"Restart", fn:simReset },
     { label:"Stop simulating", sc:"Esc", fn:() => stopSim(), dis:() => simIdx==null }
   ],
   Help: [
-    { label:"Keyboard shortcuts", fn:() => setMsg("Ctrl+Z undo · Ctrl+Y redo · Ctrl+F find · F3 next · F8 next problem · Ctrl+Shift+M problems · Ctrl+Enter new line · ↑↓ select line · Space play · → step") },
+    { label:"Canned cycle guide…", sc:"F1", fn:() => openCycleHelp() },
+    { label:"Keyboard shortcuts", fn:() => setMsg("↑↓ line · ←→ word · Enter edit/done · Space new word · Shift+Enter break line · Del delete word · Caps Lock G-code/English · F1 cycle guide · F5 play · Ctrl+→ step · Ctrl+Z undo · Ctrl+F find · F8 next problem") },
     { label:"About the dictionary", fn:() => setMsg("Words come from gcode-words.json plus the selected machine's file.") }
   ]
 };
@@ -1799,6 +2358,10 @@ document.addEventListener("mousedown", e => { if (openMenu && !menubar.contains(
 /* ---------- Keyboard ---------- */
 document.getElementById("app").addEventListener("keydown", e => {
   const k = e.key.toLowerCase(), ctrl = e.ctrlKey || e.metaKey;
+  if (e.key==="CapsLock"){ if (capsSwitch && ed.contains(e.target)) toggleEditMode(); return; }
+  if (!cdlg.hidden){ if (e.key==="Escape" || e.key==="F1"){ e.preventDefault(); cdlg.hidden = true; ed.focus({preventScroll:true}); } return; }
+  if (e.key==="F1"){ e.preventDefault(); openCycleHelp(); return; }
+  if (e.key==="F5"){ e.preventDefault(); if (editing && !commit()) return; togglePlay(); return; }
   if (ctrl && k==="f"){ e.preventDefault(); openFind(); return; }
   if (e.key==="F3"){ e.preventDefault(); findNext(e.shiftKey ? -1 : 1); return; }
   if (e.key==="F8"){ e.preventDefault(); if (editing && !commit()) return; nextProblem(e.shiftKey ? -1 : 1); return; }
@@ -1811,13 +2374,20 @@ document.getElementById("app").addEventListener("keydown", e => {
   if (ctrl && e.shiftKey && k==="k"){ e.preventDefault(); deleteLine(); return; }
   if (ctrl && e.key==="Enter"){ e.preventDefault(); newLine(curLine); return; }
   if (e.target!==ed) return;
-  if (e.key==="ArrowDown"){ e.preventDefault(); selectLine(curLine+1); }
-  else if (e.key==="ArrowUp"){ e.preventDefault(); selectLine(curLine-1); }
-  else if (e.key===" "){ e.preventDefault(); togglePlay(); }
-  else if (e.key==="ArrowRight"){ e.preventDefault(); simStep(1); }
-  else if (e.key==="ArrowLeft"){ e.preventDefault(); simStep(-1); }
+  if (ctrl && e.key==="ArrowRight"){ e.preventDefault(); simStep(1); }
+  else if (ctrl && e.key==="ArrowLeft"){ e.preventDefault(); simStep(-1); }
+  else if (e.key==="ArrowDown"){ e.preventDefault(); moveLine(1); }
+  else if (e.key==="ArrowUp"){ e.preventDefault(); moveLine(-1); }
+  else if (e.key==="ArrowRight"){ e.preventDefault(); moveWord(1); }
+  else if (e.key==="ArrowLeft"){ e.preventDefault(); moveWord(-1); }
+  else if (e.key==="Home"){ e.preventDefault(); moveWord(0, "home"); }
+  else if (e.key==="End"){ e.preventDefault(); moveWord(0, "end"); }
+  else if (e.key==="Enter" && e.shiftKey){ e.preventDefault(); breakSel(); }
+  else if (e.key==="Enter"){ e.preventDefault(); editSel(); }
+  else if (e.key===" "){ e.preventDefault(); spaceSel(); }
+  else if (e.key==="Delete" || e.key==="Backspace"){ e.preventDefault(); deleteWord(e.key==="Backspace"); }
   else if (e.key==="Escape"){ if (openMenu) closeMenu(); else if (simIdx!=null) stopSim(); }
-  else if (e.key==="Enter"){ e.preventDefault(); startEdit(curLine, layout==="order" ? "0" : "c"+USED[0]); }
+  else if (!ctrl && !e.altKey && e.key.length===1 && /[A-Za-z0-9.(#+-]/.test(e.key)){ e.preventDefault(); editSel(e.key.toUpperCase()); }
 });
 
 /* ---------- Toolbar ---------- */
@@ -1828,14 +2398,22 @@ men.onclick = () => { if (editing) commit(); editMode = "en"; setPressed(mgc, me
 ["both","en","gc"].forEach(m => document.getElementById("v-"+m).onclick = () => setShow(m));
 document.getElementById("l-order").onclick = () => setLayout("order");
 document.getElementById("l-cols").onclick = () => setLayout("cols");
-function save(){ if (editing) commit(); setMsg(`Saved ${fileName}. Only the G-code is written, with its original CRLF line endings.`); }
+// End of block: ";" goes after every line when the machine profile asks for it, or when the file already had them.
+const eobOn = () => !!MACHINES[machineId].eob || fileEob;
+// What Save writes (the core does this in C): the G-code words only, one block per line, ";" if needed, CRLF.
+function serialize(){ return doc.map(t => t.join(" ") + (eobOn() ? ";" : "")).join("\r\n") + "\r\n"; }
+function save(){
+  if (editing) commit();
+  const n = serialize().length;
+  setMsg(`Saved ${fileName} (${n} bytes). Only the G-code is written, with CRLF line endings${eobOn() ? " and ; at the end of every line" : ""}.`);
+}
 
 /* ---------- Machine profiles ---------- */
 function bumpRecent(id){ recentMachines = [id, ...recentMachines.filter(x => x!==id)].slice(0, 5); }
 function useMachine(id){
   if (editing && !commit()) return;
   machineId = id; bumpRecent(id); setDialect(); render();
-  setMsg(`Machine: ${machineLabel(id)}. Words and checks now follow its profile.`);
+  setMsg(`Machine: ${machineLabel(id)}. Words and checks now follow its profile.${MACHINES[id].eob ? " Lines end with ; on this control." : ""}`);
 }
 function drawMachineChip(){
   const c = document.getElementById("mchip"); if (!c) return;
@@ -1896,6 +2474,7 @@ function drawProfiles(){
   document.getElementById("pf-rpm").value = m.rpm;
   document.getElementById("pf-feed").value = m.feed;
   document.getElementById("pf-tools").value = m.tools;
+  document.getElementById("pf-eob").checked = !!m.eob;
   document.getElementById("pf-file").textContent = `machines\\${pSel}.json`;
   const ov = DICT.machineOverrides?.[m.brand] || {};
   const keys = Object.keys(ov);
@@ -1911,7 +2490,8 @@ function readProfileForm(){
     brand: document.getElementById("pf-brand").value,
     type: document.getElementById("pf-type").value,
     travel: [num("pf-x"), num("pf-y"), num("pf-z")],
-    rpm: num("pf-rpm"), feed: num("pf-feed"), tools: num("pf-tools")
+    rpm: num("pf-rpm"), feed: num("pf-feed"), tools: num("pf-tools"),
+    eob: document.getElementById("pf-eob").checked
   });
 }
 document.getElementById("plist").addEventListener("click", e => { const it = e.target.closest(".pi"); if (!it) return; readProfileForm(); pSel = it.dataset.id; drawProfiles(); });
@@ -1940,6 +2520,7 @@ const LIST = [
   ["CHECKS_DEMO.nc", "10/31/2026 7:40 AM", "NC File", "1 KB"],
   ["FLANGE_OP1.nc", "10/29/2026 2:44 PM", "NC File", "1 KB"],
   ["LATHE_CHECKS.nc", "10/31/2026 7:44 AM", "NC File", "1 KB"],
+  ["BRACKET_0MC.nc", "10/31/2026 11:02 PM", "NC File", "1 KB"],
   ["OKUMA_PLATE.MIN", "10/31/2026 7:48 AM", "MIN File", "1 KB"],
   ["POCKET_2X1.nc", "10/31/2026 6:20 AM", "NC File", "1 KB"],
   ["SHAFT_OD.nc", "10/30/2026 11:15 AM", "NC File", "1 KB"]
@@ -1961,6 +2542,9 @@ const FEATURES = [
   ["Editing", "Find, with matches in both G-code and English", 1],
   ["Editing", "Find and replace, with whole-word and regex options", 0],
   ["Editing", "Autocomplete for English words and G-codes", 1],
+  ["Editing", "Keyboard editing by word: arrows move, Enter edits, Space starts the next word, Shift+Enter breaks the line", 1],
+  ["Editing", "Caps Lock switches between editing G-code and English", 1],
+  ["Editing", "Hint text for the words a code still needs (G02 shows R## or I## J##); click one to fill it in", 1],
   ["Editing", "Select several lines to copy, cut, paste, move or delete together", 0],
   ["Editing", "Comment out or block-delete (/) a line with one key", 0],
   ["Editing", "Go to line or N number (Ctrl+G), and bookmarks", 0],
@@ -1969,6 +2553,7 @@ const FEATURES = [
   ["Lines", "Line colors by rapid, feed, arc and cycle", 1],
   ["Reading", "English line above every G-code line, long or short words", 1],
   ["Reading", "Active modes panel for the selected line", 1],
+  ["Reading", "Canned cycle guide (F1): sketch, example line and every word the cycle takes", 1],
   ["Reading", "Subprogram calls expanded inline", 1],
   ["Reading", "Tool list: every tool, its offsets, and the lines that use it", 0],
   ["Reading", "Program stats: travel extents, cut distance and a rough run time", 0],
@@ -2001,6 +2586,7 @@ const FEATURES = [
   ["Machines", "Okuma OSP dialect: G15 H work offsets, G56 length offset, CALL / RTS", 1],
   ["Machines", "Okuma lathe LAP cycles (G85, G87) and contour definitions checked", 0],
   ["Machines", "Machine profile picker with recent machines, and a profile editor", 1],
+  ["Machines", "End-of-block ; for older controls, set per machine profile and written on save", 1],
   ["Machines", "An editor for the word dictionary", 0],
   ["Comfort", "Menus with shortcuts shown, with no separate toolbar", 1],
   ["Comfort", "Font size zoom, dark theme and adjustable column width", 0],

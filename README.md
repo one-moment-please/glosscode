@@ -34,6 +34,10 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Problems panel](docs/images/problems.png) | ![Lathe checks](docs/images/lathe-checks.png) | ![Okuma mill](docs/images/okuma-mill.png) |
 
+| Word hints | Canned cycle guide | End of block |
+|---|---|---|
+| ![Word hints](docs/images/word-hints.png) | ![Canned cycle guide](docs/images/cycle-guide.png) | ![End of block](docs/images/end-of-block.png) |
+
 | Machine picker | Machine profiles | Open dialog |
 |---|---|---|
 | ![Machine picker](docs/images/machine-menu.png) | ![Machine profiles](docs/images/machine-profiles.png) | ![Open dialog](docs/images/native-open-dialog.png) |
@@ -42,7 +46,10 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 
 **Editing**
 - Menu bar (File, Edit, View, Program, Simulate), undo and redo, and Find that matches both G-code and English.
-- Edit either line. A toggle switches between typing G-code and typing English, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
+- Edit either line. A toggle (or Caps Lock) switches between typing G-code and typing English, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
+- Keyboard editing by word: arrows move between words and lines, Enter edits and Enter again finishes, Space starts the next word, Shift+Enter breaks the line.
+- Grey hint text after a code shows the words it still needs (`G02` shows `R## or I## J##`). Click one to fill it in; picking R hides I and J.
+- A canned cycle guide (F1) with a sketch of each cycle, an example line, and what every word does.
 - Automatic N numbers on new lines (step 10, or the midpoint when there's no room), plus a Renumber command that leaves subprogram labels alone.
 - Warnings when a word clashes with the active mode, such as an inches-per-rev feed while G94 is on.
 - A Problems panel that checks the program as you type: canned cycles missing words (G83 with no Q), feed moves with no F or with the spindle off, a word repeated in a line, two codes from one group, numbers with no decimal point, arcs that don't close, missing length offsets, and codes that mean something else on the selected control (G54 on an Okuma). See [`docs/checks.md`](docs/checks.md).
@@ -63,6 +70,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 **Machines**
 - Mill and lathe modes, since some codes mean different things on each (G50, G76, G98, G99).
 - Per-machine definition files that override dictionary entries (for example Haas M88/M89 and M97).
+- An end-of-block setting per machine profile for older controls that need `;` at the end of every line.
 - Haas and Fanuc mills and lathes, plus a first draft of Okuma OSP (G15 H work offsets, G56 H length offsets, CALL and RTS). [`docs/checks.md`](docs/checks.md) lists what each control covers so far.
 
 See [`docs/features.md`](docs/features.md) for the full list and what is still under discussion.
@@ -91,12 +99,12 @@ docs/checks.md          Every check, the rules file format, and Haas/Okuma cover
 docs/features.md        Feature list and open questions
 docs/images/            Mockup screenshots
 docs/mockup/index.html  Clickable mockup; open it in a browser
-examples/               Sample programs used by the mockup (Haas mill and lathe)
+examples/               Sample programs used by the mockup (Haas, Fanuc and Okuma; BRACKET_0MC.nc ends lines with ;)
 ```
 
 ## Try the mockup
 
-Open [`docs/mockup/index.html`](docs/mockup/index.html) in any browser. Click a word to edit it, switch the Edit, Words and Show toggles, and use **▸ show N1000** to expand the subprogram. It loads its fonts from Google Fonts, so it looks best online.
+Open [`docs/mockup/index.html`](docs/mockup/index.html) in any browser. Click a word to edit it (or use the arrow keys and Enter), switch the Edit, Words and Show toggles, and use **▸ show N1000** to expand the subprogram. Press F1 on a canned cycle to see how it works. It loads its fonts from Google Fonts, so it looks best online.
 
 ## License
 
