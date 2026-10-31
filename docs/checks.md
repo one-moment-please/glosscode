@@ -80,6 +80,16 @@ A machine definition file will be able to change any rule's severity or turn it 
 
 A dialect inherits from another and overrides by key. Objects like `cycles` and `foreign` merge one entry at a time, and `null` removes an inherited entry (Haas has no G87 back bore; it uses G77). Each cycle entry lists `requires`, `optional`, `choices` (one of several sets), `labels` (words that name N numbers), and flags: `feed` (uses F as a feed rate), `leadF` (F is the thread lead), `speed` (needs S), `spindle` (needs the spindle running), `startsSpindle` (the cycle starts it) and `modal` (false for one-shot lathe cycles).
 
+### Word hints
+
+`wordHints` lists the words other codes need, so the editor can show them as grey hint text after the code (`G02` shows `R## or I## J##`). An entry is either `{ "arc": true }` (R, or the two centers for the active plane: I/J under G17, I/K under G18, J/K under G19) or `{ "requires": [...] }`. Canned cycles don't need entries here: their hints come from `requires` and `choices` in `cycles`, G04 uses `dwellWords`, and subprogram calls use `subCalls`, so the hints always match the checks. Once a line uses any word from one choice, the other choices' hints go away.
+
+### Cycle help
+
+`cycleHelp` (beside `dialects`) feeds the canned cycle guide (F1). It's keyed `mill` and `lathe` for the Fanuc-style base, with `haas.mill`, `haas.lathe` and so on overriding by cycle. Each cycle has `about` (what it does), `sketch` (which drawing to use), optional `labels` (letters on the drawing, since Fanuc G76 calls the thread height P where Haas calls it K) and `words`. A word entry is `[example value, what it does]` or `[example value, what it does, English word]`. The English word, when given, is what the editor shows for that letter while the cycle is active, so Haas `G76 ... A60` reads `ANGLE60` instead of an unknown word. `common` holds words shared by every cycle of that type (X, Y, Z, R, F on a mill).
+
+The word list in the guide (and whether each word is required, one of a choice, or optional) comes from the dialect's `cycles` table, not from `cycleHelp`.
+
 `verified: false` marks tables written from general knowledge that still need checking against the control's programming manual. The mockup shows a banner in the Problems panel for those.
 
 ## How much Haas and Okuma support there is today
