@@ -264,6 +264,49 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
 .sev{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:99px;white-space:nowrap}
 .sev.error{background:#fdecea;color:#a3271b}.sev.warning{background:#fff4e5;color:#8a4b00}.sev.info{background:var(--accent-soft);color:var(--accent)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sev.error{background:#3a1d1a;color:#f2a49b}:root:not([data-theme="light"]) .sev.warning{background:#3a2a12;color:#f3c27a}}
+/* ---------- Round 5: no toolbar, machine chip, profile dialog ---------- */
+.app{height:816px}
+.tabctl{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tabctl .lab{margin-left:6px}
+.mchip{margin-left:auto;display:flex;align-items:center;gap:7px;height:22px;padding:0 8px 0 10px;border:1px solid #d1d1d1;border-radius:4px;background:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
+.mchip:hover,.mchip.open{background:#f6f6f6;border-color:#b9b9b9}
+.mchip .mlab{color:#777}
+.mchip b{font-weight:600}
+.mchip .mtype{font-size:10.5px;padding:0 6px;border-radius:99px;background:#e8f1fb;color:#0f6cbd}
+.mchip .car{color:#666;font-size:10px}
+.mmenu{left:auto;min-width:320px}
+.mmenu .sub{color:#888;font-size:11.5px;margin-left:4px}
+.pdlg{width:780px;height:540px}
+.pbody{flex:1;display:grid;grid-template-columns:220px 1fr;min-height:0;background:#fff}
+.pside{display:flex;flex-direction:column;border-right:1px solid #e5e5e5;background:#f6f6f6;min-height:0}
+.plist{flex:1;overflow:auto;padding:6px;display:flex;flex-direction:column;gap:2px}
+.pi{display:flex;flex-direction:column;padding:6px 9px;border-radius:5px;cursor:default}
+.pi span{font-size:11.5px;color:#777}
+.pi:hover{background:#ececec}
+.pi.sel{background:#cce4f7}
+.prow{display:flex;gap:6px;padding:8px;border-top:1px solid #e5e5e5}
+.prow .btn{flex:1}
+.pform{padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto}
+.pgrid{display:grid;grid-template-columns:110px 1fr;gap:7px 12px;align-items:center}
+.pgrid label{color:#555;font-size:12.5px}
+.pgrid input,.pgrid select{font:12.5px var(--w-ui);border:1px solid #d1d1d1;border-bottom-color:#9a9a9a;border-radius:4px;padding:4px 7px;background:#fff;color:#1b1b1b;min-width:0}
+.pgrid input:focus,.pgrid select:focus{outline:none;border-bottom:2px solid #0f6cbd}
+.pgrid input:disabled{background:#f3f3f3;color:#aaa}
+.trio{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr;gap:6px;align-items:center;color:#777;font-size:12px}
+.unit{display:flex;align-items:center;gap:6px}
+.unit input{width:120px}
+.unit small{color:#777}
+.ph{font-size:12px;font-weight:600;color:#444}
+.ph span{font-weight:400;color:#888}
+.pcodes{border:1px solid #e5e5e5;border-radius:4px;overflow:auto;max-height:130px}
+.pcodes table{border-collapse:collapse;width:100%;font-size:12px}
+.pcodes th{text-align:left;font-weight:400;color:#666;padding:4px 8px;border-bottom:1px solid #eee;background:#fafafa}
+.pcodes td{padding:3px 8px;font-family:var(--w-mono);border-bottom:1px solid #f3f3f3}
+.pcodes td.en{color:#0f6cbd;font-weight:700}
+.pcodes td.none{font-family:var(--w-ui);color:#888}
+.pfile{font-size:11.5px;color:#777}
+.pfile span{font-family:var(--w-mono);color:#444}
+.pfoot{display:flex;justify-content:flex-end}
 </style>
 </head>
 <body>
@@ -289,35 +332,17 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
     <div class="app" id="app">
       <div class="tbar"><span class="logo">G</span><span class="ttl" id="wtitle">POCKET_2X1.nc - GlossCode</span><span class="cap"><span>&#x2013;</span><span>&#x25A2;</span><span>&#x2715;</span></span></div>
       <div class="menubar" id="menubar"></div>
-      <div class="cmd">
-        <button class="btn" id="b-open">Open…</button>
-        <button class="btn" id="b-save">Save</button>
-        <span class="vsep"></span>
-        <button class="iconbtn" id="b-undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
-        <button class="iconbtn" id="b-redo" title="Redo (Ctrl+Y)" aria-label="Redo">↷</button>
-        <button class="iconbtn" id="b-find" title="Find (Ctrl+F)" aria-label="Find">⌕<small>Find</small></button>
-        <span class="vsep"></span>
-        <span class="lab">Machine</span>
-        <select class="wsel" id="machine" aria-label="Machine definition">
-          <option value="haas_vf2">Haas VF-2 (mill)</option>
-          <option value="fanuc_0imf">Fanuc 0i-MF (mill)</option>
-          <option value="okuma_m560">Okuma M560-V, OSP (mill)</option>
-          <option value="haas_st10">Haas ST-10 (lathe)</option>
-          <option value="okuma_lb3000">Okuma LB3000, OSP (lathe)</option>
-        </select>
-        <span class="vsep"></span>
-        <span class="lab">Edit</span>
-        <span class="toggle" role="group" aria-label="Edit mode"><button id="m-gc" aria-pressed="false">G-code</button><button id="m-en" aria-pressed="true">English</button></span>
-        <span class="vsep"></span>
-        <span class="lab">Show</span>
-        <span class="toggle" role="group" aria-label="Rows shown"><button id="v-both" aria-pressed="true">Both</button><button id="v-en" aria-pressed="false">English</button><button id="v-gc" aria-pressed="false">G-code</button></span>
-      </div>
       <div class="main">
         <div class="edwrap" id="edwrap">
           <div class="tabs"><span class="tab" id="tabname">POCKET_2X1.nc</span>
-            <span class="legend"><span class="sw rapid"></span>Rapid<span class="sw feed"></span>Feed<span class="sw arc"></span>Arc<span class="sw cyc"></span>Cycle</span>
+            <span class="tabctl">
+            <span class="lab">Edit</span>
+            <span class="toggle sm" role="group" aria-label="Edit mode"><button id="m-gc" aria-pressed="false">G-code</button><button id="m-en" aria-pressed="true">English</button></span>
+            <span class="lab">Show</span>
+            <span class="toggle sm" role="group" aria-label="Rows shown"><button id="v-both" aria-pressed="true">Both</button><button id="v-en" aria-pressed="false">English</button><button id="v-gc" aria-pressed="false">G-code</button></span>
             <span class="lab">Layout</span>
             <span class="toggle sm" role="group" aria-label="Layout"><button id="l-order" aria-pressed="true">In order</button><button id="l-cols" aria-pressed="false">Columns</button></span>
+            </span>
           </div>
           <div class="find" id="findbar" hidden>
             <span>Find</span><input id="findq" aria-label="Find text" placeholder="G43, COOL, X1.5…" autocomplete="off" spellcheck="false">
@@ -359,6 +384,34 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
       </div>
       <div class="status"><span id="st-pos">Ln 1</span><span id="st-mode">Editing English</span><span id="st-modal"></span><span id="st-warn" class="w"></span><span class="msg" id="st-msg"></span></div>
 
+      <div class="dim" id="pdlg" hidden>
+        <div class="dlg pdlg" role="dialog" aria-label="Machine profiles">
+          <div class="tbar"><span class="ttl" style="padding-left:2px">Machine profiles</span><span class="cap"><span id="p-x">&#x2715;</span></span></div>
+          <div class="pbody">
+            <div class="pside">
+              <div class="plist" id="plist"></div>
+              <div class="prow"><button class="btn" id="p-new">New</button><button class="btn" id="p-dup">Duplicate</button></div>
+            </div>
+            <div class="pform">
+              <div class="pgrid">
+                <label for="pf-name">Name</label><input id="pf-name">
+                <label for="pf-control">Control</label><input id="pf-control">
+                <label for="pf-brand">Dialect</label><select id="pf-brand"><option value="haas">Haas</option><option value="fanuc">Fanuc</option><option value="okuma">Okuma OSP</option></select>
+                <label for="pf-type">Machine type</label><select id="pf-type"><option value="mill">Mill</option><option value="lathe">Lathe</option></select>
+                <label>Travel (in)</label><span class="trio"><span>X</span><input id="pf-x" inputmode="decimal"><span>Y</span><input id="pf-y" inputmode="decimal"><span>Z</span><input id="pf-z" inputmode="decimal"></span>
+                <label for="pf-rpm">Max spindle</label><span class="unit"><input id="pf-rpm" inputmode="numeric"><small>rpm</small></span>
+                <label for="pf-feed">Max feed</label><span class="unit"><input id="pf-feed" inputmode="decimal"><small>in/min</small></span>
+                <label for="pf-tools">Tool pockets</label><input id="pf-tools" inputmode="numeric">
+              </div>
+              <div class="ph">Brand-specific codes <span>(override the shared dictionary)</span></div>
+              <div class="pcodes"><table><thead><tr><th>Code</th><th>Long</th><th>Short</th><th>Meaning</th></tr></thead><tbody id="pf-codes"></tbody></table></div>
+              <div class="pfile">Saved as <span id="pf-file"></span> next to the program dictionary.</div>
+            </div>
+          </div>
+          <div class="foot pfoot"><span class="btns"><button class="btn pri" id="p-save">Save and use</button><button class="btn" id="p-cancel">Cancel</button></span></div>
+        </div>
+      </div>
+
       <div class="dim" id="dlg" hidden>
         <div class="dlg" role="dialog" aria-label="Open">
           <div class="tbar"><span class="ttl" style="padding-left:2px" id="dlg-title">Open</span><span class="cap"><span id="dlg-x">&#x2715;</span></span></div>
@@ -388,7 +441,8 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
   </div>
 
   <div class="notes">
-    <div class="note"><h3>Menus, not a ribbon</h3><p>A classic menu bar plus one slim toolbar keeps the most vertical space for code. A ribbon suits apps with hundreds of formatting commands, and this app has about forty. Every command lives in a menu with its shortcut shown, and the toolbar holds only the ones you use every few minutes.</p></div>
+    <div class="note"><h3>Menus, not a ribbon</h3><p>Every command lives in the menu bar with its shortcut shown, so there's no separate toolbar. That leaves the most room for code. The only controls outside the menus are the Edit, Show and Layout toggles above the editor, and the machine picker at the right end of the menu bar.</p></div>
+    <div class="note"><h3>Machine profiles</h3><p>The machine picker lists recent machines first, then the other profiles. <b>Edit this profile…</b> or <b>New machine profile…</b> opens the profile editor: name, control, dialect, mill or lathe, travel, spindle and feed limits, tool pockets, and the brand's own codes. Each profile is saved as one JSON file in a <code>machines</code> folder, and the logic checks read their limits from it.</p></div>
     <div class="note"><h3>Sort words</h3><p><b>Program › Sort words</b> puts every line in one fixed order: N, setup G-codes, motion, X, Y, Z, I/J/K/R, F, S, T/H/D, M, others, then the comment. On Fanuc-style controls the order of words in a line doesn't change what it does, so sorting is safe there. Each sort can be undone in one step.</p></div>
     <div class="note"><h3>Columns by word type</h3><p>This layout gives each word type its own column, so X values are always under X and M-codes always sit together. Only the columns a file actually uses appear. Rare words go in an Other column near the end, so there are no rows of empty columns. Click an empty cell to add a word of that type in the right place.</p></div>
     <div class="note"><h3>Simulation and preview</h3><p>▶ plays the program one move at a time. The editor follows along, and the tool marker shows where the cutter is. When you're not playing, moves after the selected line are greyed out, or hidden if you choose that in View. <b>View › Toolpath colors › By tool</b> gives each tool its own color, like the spot drill (T2) here.</p></div>
@@ -422,12 +476,14 @@ const DICT = {"about":"Starter dictionary for the interleaved English line. Each
 const RULES = {"about":"Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, codes that mean something else on that control, and limits. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.","version":1,"rules":{"dup-address":{"severity":"error","title":"Word repeated in a line","message":"{letter} appears {count} on this line ({words}). The control uses one of them or alarms.","why":"Each address letter except G and M can appear once per block."},"empty-value":{"severity":"error","title":"Address with no value","message":"{letter} has no number after it."},"modal-group-clash":{"severity":"error","title":"Two codes from one group","message":"{codes} are both {group} codes. Only one can be active, so the control alarms or uses the last one.","why":"Codes in the same modal group cancel each other."},"m-conflict":{"severity":"error","title":"M-codes that contradict each other","message":"{codes} on the same line contradict each other."},"foreign-code":{"severity":"warning","title":"Code means something else here","message":"{text}"},"cycle-missing-word":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {word}: {meaning}."},"cycle-missing-choice":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {choices}."},"cycle-stray-word":{"severity":"info","title":"Word the cycle doesn't use","message":"{cycle} ({name}) doesn't use {word}, so it is ignored or alarms."},"missing-label":{"severity":"error","title":"Jump to a label that isn't there","message":"{word} points to {label}, which isn't in this file."},"no-feed-rate":{"severity":"error","title":"Feed move with no feed rate","message":"This {move} runs at feed rate, but no F has been set yet.","why":"Most controls alarm on the first feed move without F; some reuse a stale value."},"feed-mode-changed":{"severity":"warning","title":"Feed rate from the other feed mode","message":"F{f} was set under {old} but {new} is active now, so it reads as {reading}.","why":"F is not cleared when G94/G95 changes."},"feed-plausibility":{"severity":"info","title":"Feed rate looks like the wrong mode","message":"F{f} {unit} is unusually {size}. Check that {mode} is the mode you meant."},"spindle-off-feed":{"severity":"warning","title":"Cutting with the spindle stopped","message":"This {move} cuts while the spindle is stopped ({spin})."},"no-speed":{"severity":"warning","title":"Spindle started with no speed","message":"{code} starts the spindle but no S has been set."},"arc-no-center":{"severity":"error","title":"Arc with no center or radius","message":"{code} needs R or {centers} to define the arc."},"arc-r-and-ijk":{"severity":"warning","title":"Arc with both R and center","message":"This arc has both R and {centers}. Most controls use R and ignore the others."},"arc-full-circle-r":{"severity":"error","title":"Full circle written with R","message":"The arc starts and ends at the same point, which R can't describe. Use {centers}."},"arc-radius-mismatch":{"severity":"warning","title":"Arc end isn't on the circle","message":"Start is {r1} from the center but the end is {r2} from it (off by {diff})."},"comp-start-on-arc":{"severity":"error","title":"Cutter comp started on an arc","message":"{code} has to start on a G00 or G01 move, not an arc."},"comp-no-d":{"severity":"warning","title":"Cutter comp with no D offset","message":"{code} turns on cutter comp but no D offset has been given."},"tlo-missing":{"severity":"warning","title":"Z move with no tool length offset","message":"First Z move after the tool change on {line}, but {tlo} hasn't been called for this tool."},"tlo-h-mismatch":{"severity":"info","title":"Length offset doesn't match tool","message":"{h} is used with {t}. Usually the H number matches the tool number."},"cycle-left-on":{"severity":"warning","title":"Canned cycle still active","message":"{cycle} is still active at the {event}. Add G80 first."},"comp-left-on":{"severity":"warning","title":"Cutter comp still active","message":"{comp} is still active at the {event}. Add G40 first."},"g28-absolute":{"severity":"warning","title":"G28 in absolute mode","message":"G28 under G90 moves through work position {axes} on the way home. Use G28 G91 with {zeros} instead."},"css-no-clamp":{"severity":"warning","title":"Surface speed with no RPM limit","message":"G96 is on but no G50 S max RPM has been set. Small diameters can overspeed the spindle."},"dwell-no-time":{"severity":"error","title":"Dwell with no time","message":"G04 needs {words} for the dwell time."},"rapid-below-zero":{"severity":"info","title":"Rapid below Z0","message":"Rapid to Z{z}, below Z0. If Z0 is the top of the part, this rapids into it."},"no-program-end":{"severity":"warning","title":"No program end","message":"The file has no {ends}."},"missing-decimal":{"severity":"warning","title":"Number with no decimal point","message":"{word} has no decimal point, so the control reads it as {letter}{value} {unit}. Write {letter}{intended} if you mean {amount} {unit}.","why":"Fanuc-style controls read a whole number on a distance word as the smallest increment (0.0001 in or 0.001 mm)."},"unknown-word":{"severity":"info","title":"Word not in the dictionary","message":"{word} isn't in the dictionary or this machine's file."}},"dialects":{"fanuc":{"label":"Fanuc-style (0i, 30i and compatibles)","verified":true,"mill":{"modalGroups":{"motion":["G00","G01","G02","G03"],"plane":["G17","G18","G19"],"distance":["G90","G91"],"feed mode":["G93","G94","G95"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"tool length":["G43","G44","G49"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G88","G89"],"cycle return":["G98","G99"],"work offset":["G54","G55","G56","G57","G58","G59"],"speed mode":["G96","G97"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M07","M09"],["M08","M09"]],"programEnds":["M02","M30"],"toolLength":{"on":["G43","G44"],"word":"H","label":"G43 H"},"toolChange":"M06","dwellWords":["P","X"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G76":{"name":"Fine bore","requires":["Z","R","Q"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true,"speed":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true}},"wordMeaning":{"Z":"the hole bottom","R":"the retract plane","Q":"the peck depth or shift","P":"the dwell time","F":"the feed rate"},"foreign":{"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."},"M88":{"severity":"warning","text":"M88 is Haas through-spindle coolant. Check what your builder uses."},"M89":{"severity":"warning","text":"M89 is Haas through-spindle coolant off. Check what your builder uses."}}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G32","G90","G92","G94"],"plane":["G17","G18","G19"],"feed mode":["G98","G99"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"speed mode":["G96","G97"],"work offset":["G54","G55","G56","G57","G58","G59"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M08","M09"]],"programEnds":["M02","M30"],"speedClamp":{"code":"G50","word":"S"},"dwellWords":["P","X","U"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"diameterX":true,"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G70":{"name":"Finish contour","requires":["P","Q"],"optional":["F","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G71":{"name":"OD/ID roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Two-block format on most Fanuc controls; this table checks the second block."},"G72":{"name":"Face roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","P","Q","F"],"optional":["R","U","W"],"modal":false,"spindle":true,"leadF":true},"G90":{"name":"OD/ID turning cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true},"G92":{"name":"Thread cycle","requires":["X","Z","F"],"optional":["U","W","R"],"spindle":true,"leadF":true},"G94":{"name":"Facing cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true}},"wordMeaning":{"P":"the first line of the contour","Q":"the last line of the contour","U":"the X finish allowance","W":"the Z finish allowance","D":"the depth of each pass","K":"the thread height","F":"the feed rate or thread lead","X":"the end diameter","Z":"the end position"},"foreign":{"G91":{"severity":"warning","text":"Fanuc-style lathes use U and W for incremental moves; G91 needs the optional G-code system B or C."},"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."}}}},"haas":{"label":"Haas NGC","inherits":"fanuc","verified":true,"mill":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G76":{"name":"Fine bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","P","L"],"feed":true,"spindle":true},"G77":{"name":"Back bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","L"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G87":null,"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true}},"foreign":{"M97":null,"M88":null,"M89":null}},"lathe":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G71":{"name":"OD/ID roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T","R"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Haas uses a one-block G71."},"G72":{"name":"Face roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G73":{"name":"Irregular-path roughing","requires":["P","Q","D","I","K"],"optional":["U","W","F","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G74":{"name":"Face groove / peck drill","requires":["Z"],"optional":["X","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G75":{"name":"OD/ID groove","requires":["X"],"optional":["Z","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","K","D","F"],"optional":["A","I","P","Q","U","W"],"modal":false,"spindle":true,"leadF":true,"note":"Haas uses a one-block G76: K thread height, D first pass depth, F lead."}},"foreign":{"M97":null}}},"okuma":{"label":"Okuma OSP (P300 and later)","inherits":"fanuc","verified":false,"keywords":["CALL","RTS","GOTO","IF","NAT","MODIN","MODOUT"],"mill":{"modalGroups":{"work offset":["G15"],"tool length":["G53","G54","G55","G56","G57","G58","G59"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G89"]},"toolLength":{"on":["G56"],"word":"H","label":"G56 H"},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"cycles":{"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F"],"feed":true,"spindle":true}},"foreign":{"G43":{"severity":"warning","text":"Okuma calls the tool length offset with G56 H, not G43."},"G54":{"severity":"error","text":"On Okuma, G54 is the X-axis tool length offset, not work offset 1. Select work offsets with G15 H1."},"G55":{"severity":"error","text":"On Okuma, G55 is the Y-axis tool length offset, not work offset 2. Select work offsets with G15 H2."},"G57":{"severity":"error","text":"On Okuma, G57 is a 4th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G58":{"severity":"error","text":"On Okuma, G58 is a 5th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G59":{"severity":"error","text":"On Okuma, G59 is a 6th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G28":{"severity":"warning","text":"Okuma returns to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."},"M99":{"severity":"warning","text":"Okuma subprograms end with RTS. M99 is for repeating a main program."},"M88":null,"M89":null}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G33"],"feed mode":["G94","G95"],"distance":["G90","G91"]},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"dwellWords":["F"],"cycles":{"G70":null,"G71":null,"G72":null,"G76":null,"G90":null,"G92":null,"G94":null},"referenceOnly":{"G85":"LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)","G86":"LAP copy roughing","G87":"LAP finishing","G81":"Start of longitudinal contour definition","G82":"Start of transverse contour definition","G80":"End of contour definition","G71":"Compound threading, longitudinal","G72":"Compound threading, transverse","G33":"Single thread cut"},"foreign":{"G98":{"severity":"warning","text":"Okuma lathes set feed per minute with G94, not G98."},"G99":{"severity":"warning","text":"Okuma lathes set feed per revolution with G95, not G99."},"G91":null,"G28":{"severity":"warning","text":"Okuma lathes return to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."}}}}}};
 
 const MACHINES = {
-  haas_vf2:     { type:"mill",  brand:"haas" },
-  fanuc_0imf:   { type:"mill",  brand:"fanuc" },
-  okuma_m560:   { type:"mill",  brand:"okuma" },
-  haas_st10:    { type:"lathe", brand:"haas" },
-  okuma_lb3000: { type:"lathe", brand:"okuma" }
+  haas_vf2:     { name:"Haas VF-2",          control:"Haas NGC",      type:"mill",  brand:"haas",  travel:[30, 16, 20], rpm:8100, feed:650, tools:20 },
+  fanuc_0imf:   { name:"Fanuc 0i-MF mill",    control:"Fanuc 0i-MF",   type:"mill",  brand:"fanuc", travel:[24, 16, 18], rpm:10000, feed:800, tools:24 },
+  okuma_m560:   { name:"Okuma M560-V",        control:"Okuma OSP",     type:"mill",  brand:"okuma", travel:[41.3, 22, 18.1], rpm:15000, feed:1260, tools:32 },
+  haas_st10:    { name:"Haas ST-10",          control:"Haas NGC",      type:"lathe", brand:"haas",  travel:[7.5, 0, 14], rpm:6000, feed:400, tools:12 },
+  okuma_lb3000: { name:"Okuma LB3000",        control:"Okuma OSP",     type:"lathe", brand:"okuma", travel:[10.2, 0, 25.6], rpm:5000, feed:780, tools:12 }
 };
+let recentMachines = ["haas_vf2", "haas_st10", "okuma_m560"];
+const machineLabel = id => `${MACHINES[id].name} (${MACHINES[id].type})`;
 const FILES = {
   "POCKET_2X1.nc": { machine:"haas_vf2", expand:"N100", src:[
     "O1001 (POCKET 2X1)",
@@ -583,8 +639,7 @@ const isKw = t => /^[A-Z]{2,}/.test(t);
 function tokenize(line){ const out = []; const re = /\([^)]*\)?|\b(?:CALL|RTS|GOTO)\b|[A-Za-z][-+]?[\d.]*/gi; let m; while ((m = re.exec(line))) out.push(m[0].startsWith("(") ? m[0] : m[0].toUpperCase()); return out; }
 function load(name){
   stopSim(true);
-  fileName = name; machineId = FILES[name].machine; setDialect();
-  document.getElementById("machine").value = machineId;
+  fileName = name; machineId = FILES[name].machine; setDialect(); bumpRecent(machineId); drawMachineChip();
   doc = FILES[name].src.map(tokenize);
   expanded = new Set();
   const ex = FILES[name].expand; if (ex) doc.forEach((t, i) => { if (t[0]===ex) expanded.add(i); });
@@ -1154,8 +1209,7 @@ function render(){
     return `<div class="${c}" data-key="${key}" data-li="${li}"${ins?` title="Inserted from the subprogram called on ${from}. Edits here change the subprogram itself."`:""}><div class="r en"><span class="gut">${pmark}</span>${en}</div><div class="r gc"><span class="gut">${ins?"↳":li+1}</span>${gc}${xp}</div></div>`;
   }).join("");
   drawViews(); drawModes(); status(); updateFindCount(fhits); drawProblems();
-  document.getElementById("b-undo").disabled = !undoStack.length;
-  document.getElementById("b-redo").disabled = !redoStack.length;
+  drawMachineChip();
 }
 function status(){
   const st = lineState[curLine] || newState();
@@ -1656,6 +1710,8 @@ const MENUS = {
     { label:"Open…", sc:"Ctrl+O", fn:() => openDlg() },
     { label:"Save", sc:"Ctrl+S", fn:save },
     { label:"Save As…", sc:"Ctrl+Shift+S", fn:() => setMsg("Save As shows the standard Windows Save dialog.") },
+    "-",
+    { label:"Machine profiles…", fn:() => openProfiles(machineId) },
     "-", { grp:"Recent files" },
     ...Object.keys(FILES).map(f => ({ label:f, fn:() => load(f) }))
   ],
@@ -1670,7 +1726,10 @@ const MENUS = {
     { label:"Delete line", sc:"Ctrl+Shift+K", fn:deleteLine }
   ],
   View: [
-    { grp:"Show" },
+    { grp:"Edit in" },
+    R("English", () => editMode==="en", () => men.click()),
+    R("G-code", () => editMode==="gc", () => mgc.click()),
+    "-", { grp:"Show" },
     R("English and G-code", () => showMode==="both", () => setShow("both")),
     R("English only", () => showMode==="en", () => setShow("en")),
     R("G-code only", () => showMode==="gc", () => setShow("gc")),
@@ -1717,7 +1776,8 @@ const MENUS = {
 };
 const menubar = document.getElementById("menubar");
 let openMenu = null, menuEl = null;
-menubar.innerHTML = Object.keys(MENUS).map(m => `<span class="mi" data-m="${m}">${m}</span>`).join("");
+menubar.innerHTML = Object.keys(MENUS).map(m => `<span class="mi" data-m="${m}">${m}</span>`).join("")
+  + `<span class="mchip" id="mchip" role="button" tabindex="0" aria-haspopup="menu" title="Machine profile"></span>`;
 function showMenu(name){
   closeMenu();
   const mi = menubar.querySelector(`[data-m="${name}"]`); mi.classList.add("open"); openMenu = name;
@@ -1768,12 +1828,110 @@ men.onclick = () => { if (editing) commit(); editMode = "en"; setPressed(mgc, me
 ["both","en","gc"].forEach(m => document.getElementById("v-"+m).onclick = () => setShow(m));
 document.getElementById("l-order").onclick = () => setLayout("order");
 document.getElementById("l-cols").onclick = () => setLayout("cols");
-document.getElementById("b-undo").onclick = undo;
-document.getElementById("b-redo").onclick = redo;
-document.getElementById("b-find").onclick = openFind;
-document.getElementById("machine").onchange = e => { machineId = e.target.value; setDialect(); render(); setMsg("Machine file: " + e.target.selectedOptions[0].text); };
 function save(){ if (editing) commit(); setMsg(`Saved ${fileName}. Only the G-code is written, with its original CRLF line endings.`); }
-document.getElementById("b-save").onclick = save;
+
+/* ---------- Machine profiles ---------- */
+function bumpRecent(id){ recentMachines = [id, ...recentMachines.filter(x => x!==id)].slice(0, 5); }
+function useMachine(id){
+  if (editing && !commit()) return;
+  machineId = id; bumpRecent(id); setDialect(); render();
+  setMsg(`Machine: ${machineLabel(id)}. Words and checks now follow its profile.`);
+}
+function drawMachineChip(){
+  const c = document.getElementById("mchip"); if (!c) return;
+  const m = MACHINES[machineId];
+  c.innerHTML = `<span class="mlab">Machine</span><b>${esc(m.name)}</b><span class="mtype">${m.type}</span><span class="car">▾</span>`;
+}
+let mmenu = null;
+function closeMachineMenu(){ mmenu?.remove(); mmenu = null; document.getElementById("mchip").classList.remove("open"); }
+function openMachineMenu(){
+  closeMenu(); if (mmenu){ closeMachineMenu(); return; }
+  const chip = document.getElementById("mchip"); chip.classList.add("open");
+  const others = Object.keys(MACHINES).filter(id => !recentMachines.includes(id));
+  const row = (id) => `<div class="it" data-id="${id}"><span class="ck">${id===machineId ? "●" : ""}</span><span>${esc(MACHINES[id].name)} <span class="sub">${MACHINES[id].control} · ${MACHINES[id].type}</span></span><span class="sc"></span></div>`;
+  mmenu = document.createElement("div"); mmenu.className = "menu mmenu";
+  mmenu.innerHTML = `<div class="grp">Recent machines</div>${recentMachines.map(row).join("")}`
+    + (others.length ? `<div class="sep"></div><div class="grp">Other profiles</div>${others.map(row).join("")}` : "")
+    + `<div class="sep"></div><div class="it" data-act="edit"><span class="ck"></span><span>Edit this profile…</span><span class="sc"></span></div>`
+    + `<div class="it" data-act="new"><span class="ck"></span><span>New machine profile…</span><span class="sc"></span></div>`
+    + `<div class="it" data-act="all"><span class="ck"></span><span>Manage all profiles…</span><span class="sc"></span></div>`;
+  mmenu.style.right = "6px";
+  menubar.appendChild(mmenu);
+  mmenu.addEventListener("mousedown", e => {
+    e.preventDefault();
+    const it = e.target.closest(".it"); if (!it) return;
+    closeMachineMenu();
+    if (it.dataset.id) useMachine(it.dataset.id);
+    else if (it.dataset.act==="new") openProfiles(newProfile());
+    else openProfiles(machineId);
+  });
+}
+document.addEventListener("mousedown", e => { if (mmenu && !mmenu.contains(e.target) && !e.target.closest("#mchip")) closeMachineMenu(); });
+menubar.addEventListener("mousedown", e => { if (e.target.closest("#mchip")){ e.preventDefault(); openMachineMenu(); } });
+menubar.addEventListener("keydown", e => { if (e.target.id==="mchip" && (e.key==="Enter" || e.key===" ")){ e.preventDefault(); openMachineMenu(); } });
+
+const pdlg = document.getElementById("pdlg");
+let pSel = null;
+function newProfile(){
+  let n = 1; while (MACHINES["custom_"+n]) n++;
+  const base = MACHINES[machineId];
+  MACHINES["custom_"+n] = { ...base, travel:[...base.travel], name:`New ${base.type} ${n}`, isNew:true };
+  return "custom_"+n;
+}
+function openProfiles(id){
+  if (editing && !commit()) return;
+  pSel = id; drawProfiles(); pdlg.hidden = false;
+  document.getElementById("pf-name").focus();
+}
+function drawProfiles(){
+  document.getElementById("plist").innerHTML = Object.keys(MACHINES).map(id =>
+    `<div class="pi${id===pSel ? " sel" : ""}" data-id="${id}"><b>${esc(MACHINES[id].name)}</b><span>${MACHINES[id].control} · ${MACHINES[id].type}${id===machineId ? " · in use" : ""}</span></div>`).join("");
+  const m = MACHINES[pSel];
+  document.getElementById("pf-name").value = m.name;
+  document.getElementById("pf-control").value = m.control;
+  document.getElementById("pf-brand").value = m.brand;
+  document.getElementById("pf-type").value = m.type;
+  ["x","y","z"].forEach((a, i) => document.getElementById("pf-"+a).value = m.travel[i]);
+  document.getElementById("pf-y").disabled = m.type==="lathe";
+  document.getElementById("pf-rpm").value = m.rpm;
+  document.getElementById("pf-feed").value = m.feed;
+  document.getElementById("pf-tools").value = m.tools;
+  document.getElementById("pf-file").textContent = `machines\\${pSel}.json`;
+  const ov = DICT.machineOverrides?.[m.brand] || {};
+  const keys = Object.keys(ov);
+  document.getElementById("pf-codes").innerHTML = keys.length
+    ? keys.map(k => `<tr><td>${k}</td><td class="en">${esc(ov[k].long)}</td><td>${esc(ov[k].short)}</td><td>${esc(ov[k].desc)}</td></tr>`).join("")
+    : `<tr><td colspan="4" class="none">No brand-specific codes yet. Codes added here are used only by ${esc(m.brand)} machines.</td></tr>`;
+}
+function readProfileForm(){
+  const m = MACHINES[pSel], num = id => parseFloat(document.getElementById(id).value) || 0;
+  Object.assign(m, {
+    name: document.getElementById("pf-name").value.trim() || m.name,
+    control: document.getElementById("pf-control").value.trim(),
+    brand: document.getElementById("pf-brand").value,
+    type: document.getElementById("pf-type").value,
+    travel: [num("pf-x"), num("pf-y"), num("pf-z")],
+    rpm: num("pf-rpm"), feed: num("pf-feed"), tools: num("pf-tools")
+  });
+}
+document.getElementById("plist").addEventListener("click", e => { const it = e.target.closest(".pi"); if (!it) return; readProfileForm(); pSel = it.dataset.id; drawProfiles(); });
+document.getElementById("pf-type").onchange = () => { readProfileForm(); drawProfiles(); };
+document.getElementById("pf-brand").onchange = () => { readProfileForm(); drawProfiles(); };
+document.getElementById("p-new").onclick = () => { readProfileForm(); pSel = newProfile(); drawProfiles(); document.getElementById("pf-name").select(); };
+document.getElementById("p-dup").onclick = () => {
+  readProfileForm();
+  const src = MACHINES[pSel]; let n = 1; while (MACHINES[pSel+"_copy"+(n>1?n:"")]) n++;
+  const id = pSel+"_copy"+(n>1?n:""); MACHINES[id] = { ...src, travel:[...src.travel], name: src.name + " copy" }; pSel = id; drawProfiles();
+};
+document.getElementById("p-save").onclick = () => {
+  readProfileForm(); delete MACHINES[pSel].isNew;
+  pdlg.hidden = true; useMachine(pSel);
+  setMsg(`Saved machines\\${pSel}.json and switched to ${MACHINES[pSel].name}.`);
+};
+document.getElementById("p-cancel").onclick = document.getElementById("p-x").onclick = () => {
+  for (const id of Object.keys(MACHINES)) if (MACHINES[id].isNew) delete MACHINES[id];
+  pdlg.hidden = true; drawMachineChip();
+};
 
 const dlg = document.getElementById("dlg"), dlgName = document.getElementById("dlg-name");
 const LIST = [
@@ -1792,7 +1950,6 @@ function drawDlg(){
   dlgName.textContent = dlgSel || "";
 }
 function openDlg(){ if (editing) commit(); dlgSel = fileName; drawDlg(); dlg.hidden = false; }
-document.getElementById("b-open").onclick = () => openDlg();
 document.getElementById("dlg-files").addEventListener("click", e => { const r = e.target.closest("tr"); if (!r || r.dataset.dir) return; dlgSel = r.dataset.n; document.querySelectorAll("#dlg-files tr").forEach(x => x.classList.toggle("sel", x===r)); dlgName.textContent = dlgSel; });
 document.getElementById("dlg-files").addEventListener("dblclick", e => { const r = e.target.closest("tr"); if (!r || r.dataset.dir) return; dlg.hidden = true; load(r.dataset.n); });
 document.getElementById("dlg-open").onclick = () => { dlg.hidden = true; if (dlgSel && FILES[dlgSel]) load(dlgSel); };
@@ -1843,8 +2000,9 @@ const FEATURES = [
   ["Machines", "Machine definition files for dialect, limits and brand codes", 1],
   ["Machines", "Okuma OSP dialect: G15 H work offsets, G56 length offset, CALL / RTS", 1],
   ["Machines", "Okuma lathe LAP cycles (G85, G87) and contour definitions checked", 0],
-  ["Machines", "An editor for machine files and the word dictionary", 0],
-  ["Comfort", "Menus with shortcuts shown, plus a slim toolbar", 1],
+  ["Machines", "Machine profile picker with recent machines, and a profile editor", 1],
+  ["Machines", "An editor for the word dictionary", 0],
+  ["Comfort", "Menus with shortcuts shown, with no separate toolbar", 1],
   ["Comfort", "Font size zoom, dark theme and adjustable column width", 0],
   ["Comfort", "Fast scrolling in very large files (100,000+ lines)", 0]
 ];
