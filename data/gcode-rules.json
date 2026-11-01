@@ -436,6 +436,37 @@
       }
     },
 
+    "mazak": {
+      "label": "Mazak EIA/ISO (Mazatrol M Plus, 640M, Matrix)",
+      "inherits": "fanuc",
+      "inheritWords": true,
+      "verified": false,
+      "mill": {
+        "source": { "manual": "Mazak EIA/ISO Programming Manual C735PBT019E (Mazatrol M1, M2, M32, M Plus, Fusion 640M 5X/Nexus)", "revision": "2001", "section": "Chapters 3, 5, 8 and 13: G and M code lists, units, dwell, fixed cycles, subprograms" },
+        "modalGroups": {
+          "canned cycle":["G73", "G74", "G75", "G76", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "G88", "G89"]
+        },
+        "cycles": {
+          "G73": { "name": "High-speed peck", "requires": ["Z", "Q", "R", "F"], "optional": ["X", "Y", "P", "D", "K", "I", "J", "L"], "feed": true, "spindle": true },
+          "G74": { "name": "Left-hand tap", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "P", "D", "J", "H", "L"], "feed": true, "spindle": true },
+          "G75": { "name": "Boring", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "Q", "P", "D", "K", "I", "J", "L"], "feed": true, "spindle": true },
+          "G76": { "name": "Fine bore", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "Q", "P", "D", "J", "L"], "feed": true, "spindle": true },
+          "G77": { "name": "Back spot facing", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "Q", "P", "E", "J", "L"], "feed": true, "spindle": true },
+          "G78": { "name": "Boring", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "Q", "P", "D", "K", "L"], "feed": true, "spindle": true },
+          "G79": { "name": "Boring", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "Q", "P", "D", "K", "E", "L"], "feed": true, "spindle": true },
+          "G81": { "name": "Drill", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "L"], "feed": true, "spindle": true },
+          "G82": { "name": "Drill with dwell", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "P", "D", "I", "J", "L"], "feed": true, "spindle": true },
+          "G83": { "name": "Peck drill", "requires": ["Z", "Q", "R", "F"], "optional": ["X", "Y", "P", "D", "K", "I", "J", "L"], "feed": true, "spindle": true },
+          "G84": { "name": "Tap", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "P", "D", "J", "H", "L"], "feed": true, "spindle": true },
+          "G85": { "name": "Ream", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "P", "D", "E", "L"], "feed": true, "spindle": true },
+          "G86": { "name": "Bore, stop, rapid out", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "P", "L"], "feed": true, "spindle": true },
+          "G87": { "name": "Back bore", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "Q", "P", "D", "J", "L"], "feed": true, "spindle": true },
+          "G88": { "name": "Bore, dwell, stop", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "P", "L"], "feed": true, "spindle": true },
+          "G89": { "name": "Bore with dwell", "requires": ["Z", "R", "F"], "optional": ["X", "Y", "P", "L"], "feed": true, "spindle": true }
+        }
+      }
+    },
+
     "okuma": {
       "label": "Okuma OSP (P300 and later)",
       "inherits": "fanuc",

@@ -118,6 +118,25 @@
     }
   },
   "machineOverrides": {
+    "mazak.mill": {
+      "G75": { "long": "BORECYC", "short": "BOR1", "desc": "Boring cycle (Mazak)" },
+      "G77": { "long": "BACKSPOT", "short": "BKSF", "desc": "Back spot facing cycle (Mazak)" },
+      "G78": { "long": "BORECYC2", "short": "BOR2", "desc": "Boring cycle (Mazak)" },
+      "G79": { "long": "BORECYC3", "short": "BOR3", "desc": "Boring cycle (Mazak)" },
+      "G85": { "long": "REAM", "short": "REAM", "desc": "Reaming cycle (Mazak)" },
+      "G87": { "long": "BACKBORE", "short": "BKBR", "desc": "Back boring cycle" },
+      "G88": { "long": "BOREDWST", "short": "BRDS", "desc": "Boring cycle, dwell, spindle stop" },
+      "M07": { "long": "MISTON", "short": "MON", "desc": "Mist coolant on" },
+      "M09": { "long": "COOLOFF", "short": "COFF", "desc": "All coolant and air off (Mazak)" },
+      "M10": { "long": "TOOLCLMP", "short": "TCLP", "desc": "Spindle tool clamp (Mazak)" },
+      "M11": { "long": "TOOLUNCL", "short": "TUNC", "desc": "Spindle tool unclamp (Mazak)" },
+      "M19": { "long": "SPINORNT", "short": "ORNT", "desc": "Orient the spindle" },
+      "M48": { "long": "OVRON", "short": "OVON", "desc": "Overrides on" },
+      "M49": { "long": "OVROFF", "short": "OVOF", "desc": "Overrides off" },
+      "M50": { "long": "AIRBLAST", "short": "AIR", "desc": "Air blast on (Mazak)" },
+      "M51": { "long": "TSCON", "short": "TSC", "desc": "Through-spindle coolant on (Mazak)" },
+      "M52": { "long": "TAPCOOL", "short": "TCOL", "desc": "Tapping coolant on (Mazak)" }
+    },
     "haasclassic.mill": {
       "G87": { "long": "BOREJOG",  "short": "BRJG", "desc": "Bore, stop the spindle, jog out by hand" },
       "G88": { "long": "BOREDJOG", "short": "BRDJ", "desc": "Bore, dwell, stop the spindle, jog out by hand" }
