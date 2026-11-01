@@ -1,0 +1,7 @@
+O0300 (EOB AND TWO BLOCKS);
+N10 G20 G90; N20 G00 X1. (A;B) Y2.;
+
+/N30 G01 Z-.1 F5.;
+N40 #100=1 G00 Z1.;
+(été café);
+N50 M30;

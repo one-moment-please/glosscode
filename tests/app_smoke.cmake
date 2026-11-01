@@ -1,0 +1,33 @@
+# Runs the program with tests/app_smoke.html on a copy of a sample program and checks what it saved.
+# cmake -DAPP=<glosscode> -DSRC=<repo root> -DWORK=<scratch folder> [-DWRAPPER=xvfb-run] -P app_smoke.cmake
+file(MAKE_DIRECTORY "${WORK}")
+set(in "${WORK}/SMOKE.nc")
+set(out "${in}.smoke.nc")
+file(COPY_FILE "${SRC}/examples/POCKET_2X1.nc" "${in}")
+file(REMOVE "${out}")
+set(cmd "${APP}" --ui "${SRC}/tests/app_smoke.html" "${in}")
+if(WRAPPER)
+    set(cmd ${WRAPPER} -a ${cmd})
+endif()
+# Keep the test's settings and WebView data out of the real user folders.
+set(ENV{HOME} "${WORK}/home")
+set(ENV{XDG_CONFIG_HOME} "${WORK}/home/config")
+set(ENV{XDG_CACHE_HOME} "${WORK}/home/cache")
+execute_process(COMMAND ${cmd} RESULT_VARIABLE rc TIMEOUT 90)
+if(NOT rc EQUAL 0)
+    message(FATAL_ERROR "The program exited with ${rc}")
+endif()
+if(NOT EXISTS "${out}")
+    message(FATAL_ERROR "The program didn't save ${out}")
+endif()
+# The only change is " (SMOKE)" added to the second line; everything else, CRLF included, is kept.
+# Compared as hex, since file(READ) as text drops carriage returns.
+file(READ "${in}" text HEX)
+file(READ "${out}" got HEX)
+string(HEX "O1001 (POCKET 2X1)" line)
+string(HEX " (SMOKE)" added)
+string(REPLACE "${line}0d0a" "${line}${added}0d0a" want "${text}")
+if(NOT got STREQUAL want OR want STREQUAL text)
+    message(FATAL_ERROR "The saved file isn't the original with one line changed")
+endif()
+message(STATUS "Smoke test passed")
