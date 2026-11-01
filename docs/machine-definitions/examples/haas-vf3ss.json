@@ -21,5 +21,5 @@
     "spindle15k": { "label": "15,000 rpm spindle", "machine": { "maxRpm": 15000 } }
   },
 
-  "notes": "Lower table load than the VF-3 and a coarser ballscrew; neither changes the program."
+  "notes": "Lower table load than the VF-3 and a coarser ballscrew; neither changes the program. Tool changer capacity varies by build: published specs show 24+1 and 30+1 side-mount changers, and some machines have 40+1. Check the machine."
 }
