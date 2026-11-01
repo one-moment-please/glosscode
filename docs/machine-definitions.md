@@ -5,6 +5,7 @@
 ## Summary
 
 - **GlossCode ships controls; users make machine profiles.** The built-in files are arranged like the manuals: control series › control model › machine type (Haas › NGC › mill). Users add a named profile for each real machine ("VF-3SS (cell 1)") with the numbers from their spec sheet, the options it has, and shop limits such as "keep the spindle under 8,000 rpm".
+- **Contradictions in the manuals are shown, not hidden.** An entry lists each reading with its page. A machine profile can settle it, by an option (the tool changer type) or by the user's answer, and until then the word is marked and the Problems panel says which reading is in use.
 - **Every control level has a Generic choice**, worked out by GlossCode from the entries under it, which shows only what they all share and flags codes that aren't on every control.
 - **One file per node, built in layers.** Each file names the files it builds on (`extends`) and only holds what's different. Under the control tree sit the process bases (mill, lathe, router, laser, wire EDM…), and on top sits the user's machine profile.
 - **Everything about a machine goes in its file:** the English words, address letters and number format, modal groups, canned cycles and their help text, subprogram calls, machine options (travel, live tooling, Y axis), and which checks are on and how severe they are.
@@ -250,7 +251,7 @@ Every level also has   Generic   (only what all the entries under it share)
 ```
 
 - **Control series** is the builder of the control: Haas, Okuma, Fanuc, Siemens, Mazak, LinuxCNC.
-- **Control model** is one generation of that control, written from one set of manuals: Haas NGC, Haas classic, the 1995 Haas control, Okuma OSP-P200L. Manual editions that agree go in one control model. Where an edition changed something, the entry says which (see **Editions** below), so Haas NGC doesn't split into "NGC 2020" and "NGC 2025".
+- **Control model** is one generation of that control, written from one set of manuals: Haas NGC, Haas classic, the 1995 Haas control, Okuma OSP-P200L. Manual editions that agree go in one control model. Where an edition changed something, the entry says which (see [Contradictions in the manuals](#contradictions-in-the-manuals)), so Haas NGC doesn't split into "NGC 2020" and "NGC 2025".
 - **Machine type** is mill, lathe, mill-turn and so on, because the same control speaks a different language on each (G50 is the spindle limit on a Haas lathe and scaling off on a Haas mill). A control that only exists for one type, like the OSP-P200L lathe control, has one entry here.
 
 ### Generic
@@ -324,18 +325,48 @@ A code or cycle that depends on an option lists it in `needs`, the way lathe cyc
 
 (M41, M42 and G143 aren't in the dictionary yet; this shows the shape.) In a program, a code whose `needs` aren't met still reads as English, so old programs make sense, and a new `needs-option` check says why: "This machine has no gearbox, so M41 has no effect." On a Generic or a profile that leaves an option unset, codes that need it are allowed and get no check.
 
-### Editions
+### Contradictions in the manuals
 
-Manuals for one control model don't always agree. The 2020 NGC mill manual says M39 turns the side-mount changer and the 2025 one says the umbrella changer. Any entry can carry its own `source`, and an entry that changed between editions can give both:
+Manuals don't always agree, between editions or even between two pages of one edition. The ones found so far:
+
+| Code | What disagrees | Likely depends on |
+|---|---|---|
+| M39 (Haas mill) | 2020 manual (p. 417): turns the side-mount changer. 2025 (p. 444): turns the umbrella changer | The machine's tool changer |
+| G114–G129 (Haas lathe) | 2020 p. 361 and 2025 p. 396: G154 P3–P18. 2020 p. 362 and 2025 p. 397: P5–P20 (G110–G129 = P1–P20) | Probably a manual error, but only the control can say |
+| G74 I (Haas lathe) | 2020: peck increment as a radius. 2025 (p. 365): as a diameter | The control's software version |
+| G268/G269 (Haas mill) | 2025: group 14. 2020: group 02 | Unknown |
+
+GlossCode doesn't pick a side quietly. An entry with a contradiction lists each **reading**, where it comes from, and what decides between them:
 
 ```jsonc
-"M39": { "long": "TCROTATE", "short": "TCROT", "desc": "Rotate the tool carousel",
-         "source": [{ "manual": "Haas Mill 96-8210", "revision": "N (2020)", "page": 417 },
-                    { "manual": "Haas Mill 96-8210", "revision": "V (2025)", "page": 444 }],
-         "unsettled": "2020 says side-mount changer, 2025 says umbrella" }
+"M39": { "long": "TCROTATE", "short": "TCROT",
+  "readings": {
+    "side-mount": { "desc": "Rotate the side-mount tool carousel",
+                    "source": { "manual": "Haas Mill 96-8210", "revision": "N (2020)", "page": 417 } },
+    "umbrella":   { "desc": "Rotate the umbrella tool carousel",
+                    "source": { "manual": "Haas Mill 96-8210", "revision": "V (2025)", "page": 444 } } },
+  "decidedBy": "toolChanger" },       // an option in the profile settles it
+
+"G114": { "long": "WORK11", "short": "W11",
+  "readings": {
+    "p5": { "desc": "Work offset 11 (G154 P5)", "source": { "revision": "V (2025)", "page": 397 } },
+    "p3": { "desc": "Work offset 11 (G154 P3)", "source": { "revision": "V (2025)", "page": 396 } } },
+  "default": "p5",                     // used until the profile settles it
+  "group": "g110-g129-mapping" }       // one answer settles G110 to G129 together
 ```
 
-`unsettled` shows in the word's tooltip until someone checks it on a machine.
+How it reaches the user:
+
+1. **Settled by the profile without asking.** When `decidedBy` names an option and the profile has it set (side-mount tool changer), GlossCode uses that reading and says nothing. This covers contradictions that are really about the machine.
+2. **A mark on the word.** When nothing settles it, the word gets a small dotted underline in the editor. Hovering shows both readings with their manual pages, which one GlossCode is using, and a **Settle for this machine…** button.
+3. **One note per program in the Problems panel.** The check `unsettled-meaning` gives an info once per code, not on every line: "M39: the 2020 and 2025 Haas manuals disagree on which tool changer it turns. Using: side-mount." It's a warning when the reading changes what the program does (which work offset G114 picks), and info when it only changes the English.
+4. **A list in the machine profile.** The profile window has a **Manual conflicts** section with every open contradiction for its control. Each one shows the readings, how to check it on the machine ("Set G114 and look at which offset is active on the Work Offsets page"), and a choice. The answer is saved in the profile:
+
+   ```jsonc
+   "settled": { "g110-g129-mapping": "p5", "G74.I": "diameter" }
+   ```
+
+A profile in the shop folder settles a contradiction once for everyone who uses that machine. Generic and unset profiles keep the default and the note. When a later manual or a check on a real machine settles a contradiction for good, the built-in entry drops `readings`, and settled answers that no longer apply are ignored.
 
 ### The files
 
