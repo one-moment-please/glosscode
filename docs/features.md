@@ -31,7 +31,8 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Inline expansion of subprogram calls, marked with purple N numbers; edits change the subprogram
 - [ ] Library calls read by name (`G65 P9101` reads MACRO SLOTMILL, `Z-0.15` reads DEP-0.15) and expand to show the lines they run, in green; the toolpath preview follows them
 - [ ] Show toggle: both lines, English only, or G-code only
-- [ ] Layout toggle: words in program order, or columns by word type with rare words at the end
+- [ ] Layout toggle: words in program order, or columns by word type, most used first (motion and cycle codes, X Y Z, F, S, spindle M-codes…) with rare words at the end. The order is set in the machine's rules
+- [ ] In columns, an empty cell shows the value still active from an earlier line (motion, position, feed, speed, spindle, tool, coolant, cycle R and Q) as a greyed-out box. View › Carried-over values turns it off
 - [ ] Active-modes panel for the selected line, with a mark on modes set on that line
 - [ ] Line colors: rapid (amber), feed (blue), arc (teal), cycle (magenta)
 - [ ] Canned cycle guide (F1, Help menu, or "How G76 works…" in the side panel): a sketch of how the cycle moves, an example line with every word it takes (English above), and what each word does and whether it's required. A button starts a new line with that cycle

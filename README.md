@@ -68,7 +68,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 
 **Reading**
 - Show both lines, English only, or G-code only.
-- Two layouts: words in program order, or columns by word type (X, Y, Z, F and so on each keep their own column, with rare words at the end). A Sort command puts the words on each line in a consistent order.
+- Two layouts: words in program order, or columns by word type (motion and cycle codes first, then X, Y, Z, F, S and the spindle M-codes, with rare words at the end). In columns, values still active from earlier lines show greyed out in the empty cells. A Sort command puts the words on each line in a consistent order.
 - Subprogram and canned-cycle calls (for example Haas `M97 P1000`) expand inline below the call, marked with purple N numbers. Editing an expanded row edits the subprogram itself.
 - An active-modes panel for the selected line: motion, units, absolute or incremental, plane, feed mode and rate, spindle, coolant, tool and offsets. A dot marks modes set on that line.
 - Line colors by motion: amber for rapid, blue for feed, teal for arcs, magenta for drilling cycles.
