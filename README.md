@@ -96,7 +96,7 @@ Windows first, with a native Linux build later.
 - **System file dialogs** through [nativefiledialog-extended](https://github.com/btzy/nativefiledialog-extended).
 - **Build with MinGW-w64 or clang** so the same toolchain works on both systems.
 
-More detail is in [`docs/architecture.md`](docs/architecture.md).
+More detail is in [`docs/architecture.md`](docs/architecture.md). Releases, installers and portable copies are covered in [`docs/releasing.md`](docs/releasing.md).
 
 ![Open uses the standard Windows dialog](docs/images/native-open-dialog.png)
 
@@ -109,9 +109,11 @@ data/library/           Built-in subprogram library (reusable subprograms with v
 docs/architecture.md    Core, platform layer, UI and build plan
 docs/checks.md          Every check, the rules file format, and Haas/Okuma coverage
 docs/features.md        Feature list and open questions
+docs/releasing.md       Version number, release files, update check, and what a first release still needs
 docs/subprogram-library.md  Subprogram library: file format, variables, call or write in, folders
 docs/images/            Mockup screenshots
 docs/mockup/index.html  Clickable mockup; open it in a browser
+VERSION                 Current version number
 examples/               Sample programs used by the mockup (Haas, Fanuc and Okuma; BRACKET_0MC.nc ends lines with ;)
 ```
 

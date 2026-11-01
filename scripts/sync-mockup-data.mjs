@@ -1,6 +1,7 @@
 // Copies data/gcode-words.json, data/gcode-rules.json and the subprogram library into the mockup,
 // which embeds them so it works as a single file. The library is data/library/*.json (built in) plus
-// docs/subprogram-library/examples/*.json, which the mockup shows as a shop's library. Run from the repo root:
+// docs/subprogram-library/examples/*.json, which the mockup shows as a shop's library. Also copies the
+// VERSION file into the About window's APP_VERSION. Run from the repo root:
 //   node scripts/sync-mockup-data.mjs
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 
@@ -20,5 +21,10 @@ const library = [["data/library", "builtin"], ["docs/subprogram-library/examples
 const libRe = /^const LIBRARY = .*;$/m;
 if (!libRe.test(html)) throw new Error(`No "const LIBRARY = ...;" line in ${page}`);
 html = html.replace(libRe, () => `const LIBRARY = ${JSON.stringify(library)};`);
+const version = readFileSync("VERSION", "utf8").trim();
+if (!/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/.test(version)) throw new Error(`VERSION "${version}" isn't MAJOR.MINOR.PATCH`);
+const verRe = /^const APP_VERSION = .*;$/m;
+if (!verRe.test(html)) throw new Error(`No "const APP_VERSION = ...;" line in ${page}`);
+html = html.replace(verRe, () => `const APP_VERSION = ${JSON.stringify(version)};`);
 writeFileSync(page, html);
 console.log("Updated", page);
