@@ -167,3 +167,17 @@ if(GLOSSCODE_TESTS)
                  -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/app_smoke.cmake")
     endif()
 endif()
+
+# ---------- Install (Linux packages and the portable archive; see scripts/package-linux.sh) ----------
+# Windows packages are made from the one .exe by packaging/windows/glosscode.iss instead.
+if(NOT WIN32)
+    include(GNUInstallDirs)
+    install(TARGETS glosscode RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES packaging/linux/glosscode.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+    foreach(size 16 32 48 128 256 512)
+        install(FILES assets/logo/glosscode-${size}.png
+                DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/${size}x${size}/apps RENAME glosscode.png)
+    endforeach()
+    install(FILES assets/logo/glosscode.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
+    install(FILES LICENSE THIRD_PARTY_NOTICES.md CHANGELOG.md README.md DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/glosscode)
+endif()

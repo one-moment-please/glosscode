@@ -4,7 +4,7 @@
 
 GlossCode is a G-code editor that shows a plain-English line above every line of code, with each code lined up under its English word. It tracks active modes, colors rapid and feed moves, and expands subprogram calls inline.
 
-> **Status: early development.** The core (parser, mode tracking, English words and checks) is written in C and the program opens and saves files on Windows and Linux, using the UI from the clickable mockup in [`docs/mockup/`](docs/mockup/index.html). There is no release yet. The screenshots below come from the mockup. To build it, see [`docs/building.md`](docs/building.md).
+> **Status: early development.** The core (parser, mode tracking, English words and checks) is written in C and the program opens and saves files on Windows and Linux, using the UI from the clickable mockup in [`docs/mockup/`](docs/mockup/index.html). Downloads for Windows and Linux are on the [Releases page](https://github.com/one-moment-please/glosscode/releases), starting with 0.1.0, a preview. The screenshots below come from the mockup. To build it, see [`docs/building.md`](docs/building.md).
 
 ![GlossCode editor mockup](docs/images/editor-overview.png)
 

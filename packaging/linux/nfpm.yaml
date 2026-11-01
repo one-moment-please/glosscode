@@ -1,0 +1,59 @@
+# nFPM config for the GlossCode .deb and .rpm (https://nfpm.goreleaser.com).
+# scripts/package-linux.sh runs it in the folder where `cmake --install` staged the files (stage/usr);
+# $GC_VERSION comes from the VERSION file.
+name: glosscode
+version: ${GC_VERSION}
+version_schema: semver
+release: "1"
+arch: amd64
+platform: linux
+section: editors
+priority: optional
+maintainer: GlossCode <319282511+one-moment-please@users.noreply.github.com>
+vendor: GlossCode
+homepage: https://github.com/one-moment-please/glosscode
+license: MIT
+description: |-
+  G-code editor with a plain-English line above every line of code
+  GlossCode shows each G-code word in a fixed-width column with its English
+  word above it, tracks active modes, colors rapid and feed moves, expands
+  subprogram calls inline and checks programs for common mistakes. Haas,
+  Fanuc and Okuma mills and lathes.
+
+contents:
+  - src: stage/usr/bin/glosscode
+    dst: /usr/bin/glosscode
+    file_info: { mode: 0755 }
+  - src: stage/usr/share/applications/glosscode.desktop
+    dst: /usr/share/applications/glosscode.desktop
+  - src: stage/usr/share/icons/hicolor/
+    dst: /usr/share/icons/hicolor/
+    type: tree
+  - src: stage/usr/share/doc/glosscode/
+    dst: /usr/share/doc/glosscode/
+    type: tree
+  # LICENSE and THIRD_PARTY_NOTICES.md together, where Debian looks for a package's licenses.
+  - src: copyright
+    dst: /usr/share/doc/glosscode/copyright
+
+overrides:
+  deb:
+    depends:
+      - libc6 (>= 2.35)
+      - libstdc++6
+      - libgcc-s1
+      - libgtk-3-0t64 | libgtk-3-0
+      - libwebkit2gtk-4.1-0
+      - libjavascriptcoregtk-4.1-0
+  rpm:
+    depends:
+      - libstdc++
+      - (gtk3 or libgtk-3-0)
+      - (webkit2gtk4.1 or libwebkit2gtk-4_1-0)
+
+deb:
+  fields:
+    Bugs: https://github.com/one-moment-please/glosscode/issues
+rpm:
+  group: Applications/Editors
+  summary: G-code editor with a plain-English line above every line of code
