@@ -34,6 +34,10 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Problems panel](docs/images/problems.png) | ![Lathe checks](docs/images/lathe-checks.png) | ![Okuma mill](docs/images/okuma-mill.png) |
 
+| Expanded simulation view |
+|---|
+| ![Expanded simulation view](docs/images/simulation-expanded.png) |
+
 | Word hints | Canned cycle guide | End of block |
 |---|---|---|
 | ![Word hints](docs/images/word-hints.png) | ![Canned cycle guide](docs/images/cycle-guide.png) | ![End of block](docs/images/end-of-block.png) |
@@ -81,7 +85,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 
 **Previews**
 - XY toolpath view that follows subprogram calls, colored by move type or by tool. Moves after the selected line can be greyed out, hidden, or shown normally.
-- Simulation playback that draws the tool moves one line at a time, with step, play and speed controls.
+- Simulation playback that draws the tool moves one line at a time, with step, play and speed controls. It pauses at M00 (and M01 with optional stop on), can skip block delete (/) lines, and has an expanded view with a large toolpath.
 - A "Z by line" timeline in execution order that keeps the selected line centered.
 
 **Machines**

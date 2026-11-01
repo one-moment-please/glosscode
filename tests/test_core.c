@@ -83,7 +83,9 @@ static void test_tokenize(void)
     tok_is("call o1000", "CALL|O1000");
     tok_is("XCALL", "X|C|A|L|L");
     tok_is("GOTO5", "G|O|T|O5");
-    tok_is("/N30 #100=1 G00 Z+1.", "N30|G00|Z+1.");
+    tok_is("/N30 #100=1 G00 Z+1.", "/|N30|G00|Z+1.");   /* block delete stays the first word */
+    tok_is("  /2 N40 M01", "/2|N40|M01");
+    tok_is("N50 X1. / 2", "N50|X1.");                   /* a "/" later in the block isn't block delete */
     tok_is("X-", "X-");
     tok_is("%", "");
 }

@@ -49,6 +49,9 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Toolpath colors by move type or by tool
 - [ ] Moves after the selected line greyed out, hidden, or shown normally
 - [ ] Simulation playback: restart, step back, play/pause, step forward, speed
+- [ ] Playback pauses at M00, and at M01 when optional stop is on; block delete skips lines that start with /
+- [ ] Position line above the toolpath: X and Y (X and Z on a lathe), line number and N number
+- [ ] Expanded simulation view: large toolpath at the top left, a few program lines centered on the active line, Z by line and active modes on the right
 - [ ] Z-by-line timeline in execution order, centered on the selected line
 
 **Files and machines**
