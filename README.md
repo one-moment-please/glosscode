@@ -34,6 +34,10 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Problems panel](docs/images/problems.png) | ![Lathe checks](docs/images/lathe-checks.png) | ![Okuma mill](docs/images/okuma-mill.png) |
 
+| Expanded simulation view |
+|---|
+| ![Expanded simulation view](docs/images/simulation-expanded.png) |
+
 | Word hints | Canned cycle guide | End of block |
 |---|---|---|
 | ![Word hints](docs/images/word-hints.png) | ![Canned cycle guide](docs/images/cycle-guide.png) | ![End of block](docs/images/end-of-block.png) |
