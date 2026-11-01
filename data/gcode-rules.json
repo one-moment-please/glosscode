@@ -128,10 +128,14 @@
       "label": "Haas NGC",
       "inherits": "fanuc",
       "verified": true,
+      "source": { "manual": "Haas Mill and Lathe Operator's Manuals (NGC)", "revision": "Mill 96-8210 Rev V (2025) and Rev N (2020), Lathe 96-8910 Rev N (2020)", "section": "Programming: G codes, M codes, subprograms, settings" },
       "mill": {
+        "modalGroups": { "work offset": ["G54", "G55", "G56", "G57", "G58", "G59", "G110", "G111", "G112", "G113", "G114", "G115", "G116", "G117", "G118", "G119", "G120", "G121", "G122", "G123", "G124", "G125", "G126", "G127", "G128", "G129", "G154"] },
+        "mPerBlock": 1,
+        "dwellNoDecimal": "ms",
         "subCalls": { "M97": { "word": "P", "target": "label" }, "M98": { "word": "P", "target": "program" } },
         "cycles": {
-          "G73": { "name": "High-speed peck", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "L", "P"], "feed": true, "spindle": true },
+          "G73": { "name": "High-speed peck", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "K", "L", "P"], "feed": true, "spindle": true },
           "G74": { "name": "Left-hand tap",   "requires": ["Z", "R"], "optional": ["X", "Y", "F", "J", "L"], "feed": true, "speed": true, "startsSpindle": true },
           "G76": { "name": "Fine bore",       "requires": ["Z", "R"], "optional": ["X", "Y", "F", "I", "J", "Q", "P", "L"], "feed": true, "spindle": true },
           "G77": { "name": "Back bore",       "requires": ["Z", "R"], "optional": ["X", "Y", "F", "I", "J", "Q", "L"], "feed": true, "spindle": true },
@@ -147,6 +151,9 @@
         "foreign": { "M97": null, "M88": null, "M89": null }
       },
       "lathe": {
+        "modalGroups": { "work offset": ["G54", "G55", "G56", "G57", "G58", "G59", "G110", "G111", "G114", "G115", "G116", "G117", "G118", "G119", "G120", "G121", "G122", "G123", "G124", "G125", "G126", "G127", "G128", "G129", "G154"] },
+        "mPerBlock": 1,
+        "dwellNoDecimal": "ms",
         "subCalls": { "M97": { "word": "P", "target": "label" }, "M98": { "word": "P", "target": "program" } },
         "cycles": {
           "G71": { "name": "OD/ID roughing",       "requires": ["P", "Q", "D"], "optional": ["U", "W", "F", "I", "K", "S", "T", "R"], "labels": ["P", "Q"], "modal": false, "spindle": true, "note": "Haas uses a one-block G71." },
@@ -158,7 +165,7 @@
           "G81": { "name": "Drill on center",      "requires": ["Z", "R"], "optional": ["X", "Y", "C", "W", "F"], "feed": true, "spindle": true },
           "G82": { "name": "Spot drill on center", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "C", "W", "F"], "feed": true, "spindle": true },
           "G83": { "name": "Peck drill on center", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "C", "W", "F", "P"], "feed": true, "spindle": true },
-          "G84": { "name": "Tap on center",        "requires": ["Z", "R", "F"], "optional": ["X", "Y", "C", "W"], "feed": true, "spindle": true },
+          "G84": { "name": "Tap on center",        "requires": ["Z", "R", "F"], "optional": ["X", "Y", "C", "W"], "speed": true, "startsSpindle": true, "leadF": true },
           "G241": { "name": "Radial drill",        "requires": ["X", "R"], "optional": ["Z", "C", "Y", "F"], "feed": true, "spindle": true, "needs": ["liveTooling"] },
           "G243": { "name": "Radial peck drill",   "requires": ["X", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["Z", "C", "Y", "F", "P"], "feed": true, "spindle": true, "needs": ["liveTooling"] }
         },
@@ -178,8 +185,6 @@
           "exact stop": ["G61", "G64"],
           "rotation": ["G68", "G69"]
         },
-        "mPerBlock": 1,
-        "dwellNoDecimal": "ms",
         "cycles": {
           "G73": { "name": "High-speed peck", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
           "G74": { "name": "Left-hand tap",   "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "speed": true, "startsSpindle": true },
@@ -243,6 +248,7 @@
           "work offset": null
         },
         "unitCodes": null,
+        "mPerBlock": 8,
         "leadCodes": ["G31", "G32", "G33", "G34", "G35"],
         "mConflicts": [["M03", "M04", "M05"], ["M08", "M09"], ["M12", "M13", "M14"], ["M22", "M23"], ["M83", "M84"], ["M88", "M89"]],
         "subCalls": { "CALL": { "word": "O", "target": "program" } },
@@ -276,12 +282,12 @@
           "G99": { "severity": "warning", "text": "Okuma lathes set feed per revolution with G95, not G99." },
           "G91": null,
           "G28": { "severity": "warning", "text": "On an Okuma OSP lathe G28 cancels the torque limit (G29 sets it). It isn't a return home; that's G20." },
-          "G54": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
-          "G55": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
-          "G56": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
-          "G57": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
-          "G58": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
-          "G59": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
+          "G54": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G55": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G56": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G57": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G58": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G59": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
           "M97": { "severity": "error",   "text": "Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS." },
           "M98": { "severity": "warning", "text": "Okuma calls subprograms with CALL O_ and returns with RTS." }
         }

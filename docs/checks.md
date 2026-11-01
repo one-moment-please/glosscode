@@ -51,8 +51,8 @@ A machine definition file will be able to change any rule's severity or turn it 
 | `g28-absolute` | warning | `G28 Z0.` under G90, which moves through work Z0 on the way home |
 | `css-no-clamp` | warning | G96 on a lathe before any `G50 S` max RPM |
 | `dwell-no-time` | error | G04 with no time |
-| `dwell-milliseconds` | info | `G04 P500` on a control that reads a whole-number P as milliseconds (set by `dwellNoDecimal` in the dialect; the 1995 Haas control does) |
-| `m-per-block` | error | More M-codes on one line than the control allows (set by `mPerBlock`; the 1995 Haas control allows one) |
+| `dwell-milliseconds` | info | `G04 P500` on a control that reads a whole-number P as milliseconds (set by `dwellNoDecimal` in the dialect; Haas controls, old and NGC, do) |
+| `m-per-block` | error | More M-codes on one line than the control allows (set by `mPerBlock`; Haas allows one, Okuma P200L lathes eight) |
 | `rapid-below-zero` | info | A G00 to a negative Z (assuming Z0 is the top of the part) |
 | `no-program-end` | warning | No M30 or M02 |
 | `unknown-word` | info | A code that isn't in the dictionary or this machine's file |
@@ -100,18 +100,18 @@ The word list in the guide (and whether each word is required, one of a choice, 
 
 | Control | Translation | Checks | Confidence |
 |---|---|---|---|
-| Haas mill (NGC) | Good for 2.5-axis work | All rules above, with Haas cycle words (I/J/K peck, J retract on taps, L repeats), M97 local subprograms | High |
-| Haas lathe (NGC) | Good for turning, facing, grooving and threading | All rules above, with Haas one-block G71/G72/G73/G76, G90/G92/G94 cycles, G50 S clamp | High |
+| Haas mill (NGC) | Good for 2.5-axis work, plus English for G12/G13, G47, G70–G72 bolt patterns, G110–G129 and G154 work offsets, M10–M13 brakes | All rules above, with Haas cycle words (I/J/K peck, J retract on taps, L repeats), M97 local subprograms, one M code per line, P without a decimal as milliseconds | High: checked against the 2025 and 2020 mill manuals (see [manual-reviews/haas-ngc.md](manual-reviews/haas-ngc.md)) |
+| Haas lathe (NGC) | Good for turning, facing, grooving and threading, plus English for work offsets G110–G129 and G154, live tool, chuck, tailstock and sub-spindle M codes, M88/M89 high-pressure coolant, G95 live-tool tap | All rules above, with Haas one-block G71/G72/G73/G76, G90/G92/G94 cycles, G50 S clamp, G84 starting the spindle, one M code per line, P without a decimal as milliseconds | High: checked against the 2020 lathe manual (see [manual-reviews/haas-ngc.md](manual-reviews/haas-ngc.md)) |
 | Fanuc (0i/30i) | Same base as Haas | Same, with Fanuc cycle words and M97 flagged as Haas-only | High |
 | Haas mill, 1995 control (`haas1995`) | Same as Haas mill, plus G87/G88 manual-retract bores, G110–G129 work offsets and M16 | Haas rules with the 1995 cycle words (no P on G73/G83, no J on G74/G84), one M-code per line, P without a decimal as milliseconds, and G93/G95/G96/G154/M88/M89 flagged | High: checked against the June 1995 VF-Series Operator's Manual (see [manual-reviews/haas-vf-1995.md](manual-reviews/haas-vf-1995.md)) |
 | Okuma mill (OSP) | G15 H work offsets, G56 H length offset, G53 offset cancel, CALL / RTS subprograms, M02 | All the generic rules, plus Okuma's traps: G54–G59 (length offsets on Okuma), G43, G28, M97, M98, M99 | Medium: first draft, not yet checked against an OSP manual |
-| Okuma lathe (OSP) | G90/G91, G94/G95 feed modes, G20 home return, G28/G29 torque limit, G31–G35 thread cycles, LAP codes named | Generic rules, plus G71/G72 thread, G73/G74 grooving and G77/G78 tapping cycles, G54–G59 (info), G98/G99, G28 and M97/M98 flagged | Medium: lathe tables checked against the OSP-P200L manual (see [manual-reviews/okuma-osp-p200l.md](manual-reviews/okuma-osp-p200l.md)); LAP isn't checked yet |
+| Okuma lathe (OSP) | G90/G91, G94/G95 feed modes, G20 home return, G28/G29 torque limit, G31–G35 thread cycles, LAP codes named | Generic rules, plus G71/G72 thread, G73/G74 grooving and G77/G78 tapping cycles, up to eight M codes per line, G54–G59 (info), G98/G99, G28 and M97/M98 flagged | Medium: lathe tables checked against the OSP-P200L manual (see [manual-reviews/okuma-osp-p200l.md](manual-reviews/okuma-osp-p200l.md)); LAP isn't checked yet |
 
 ### Not covered yet
 
-**Haas mill:** G12/G13 circular pockets, G150 pocketing, G70/G71/G72 bolt patterns, G47 engraving, G51/G68 scaling and rotation, 4th and 5th axis (A/B words, G93 inverse time, G234 TCPC, G254 DWO), and macros (`#` variables, IF, WHILE, GOTO, G65 calls). Macro lines are left alone rather than flagged.
+**Haas mill:** checks for G12/G13 circular pockets, G150 pocketing, G70/G71/G72 bolt patterns and G47 engraving (they translate but their words aren't checked), G51/G68 scaling and rotation, 4th and 5th axis (A/B words, G93 inverse time, G234 TCPC, G254 DWO), and macros (`#` variables, IF, WHILE, GOTO, G65 calls). Macro lines are left alone rather than flagged.
 
-**Haas lathe:** live tooling (C axis, G112 polar interpolation, Y axis), sub-spindle and tailstock codes, bar feeder, and tool nose comp checks.
+**Haas lathe:** live tooling checks (C axis, G112 polar interpolation, Y axis, G95/G186/G195 live-tool taps, G242–G246), sub-spindle and tailstock codes, bar feeder, and tool nose comp checks.
 
 **Okuma, both:** the parts of OSP that aren't Fanuc-shaped. These need their own parser support, not just table entries:
 

@@ -59,3 +59,13 @@ No confidentiality notice was found in the extract. The manual still stays out o
 - **Two-letter words** like DA, SB, QA and SA (pp. 5, 45, 126) aren't parsed yet.
 - G181–G190 M-tool cycles, LAP checking, contour generation, the 2-turret P codes, User Task variables and schedule programs.
 - The G-code modal group table on p. 40 is a figure that didn't survive the extract.
+
+## Later check (2026-11-01): more manuals
+
+A second pass compared these tables with more Okuma and Haas manuals (see [haas-ngc.md](haas-ngc.md) for the Haas side):
+
+- **M codes per line.** P200L allows eight M codes in one block (p. 45). The `okuma` lathe tables now have `mPerBlock: 8`.
+- **G77/G78** were rechecked on p. 130: the cycle turns the spindle on at the speed already set, and won't feed if no speed was set. That matches `startsSpindle` plus `speed`, so they stay as they are.
+- **Work offsets.** Neither the P200L nor the older OSP7000L has G54–G59, even with live tooling or a Y axis. Work zero comes from the stored zero offset plus a one-block G50 shift. Haas lathes do have G54–G59, so this is decided by dialect, not by mill or lathe.
+- **OSP7000L** (Pub 3812-E, 1st edition 1994, scanned): the same core as the P200L, but it lacks G21, G24/G25, G124–G129, G144–G149, G153–G171, G191 and G205–G214, and documents only User Task 1. It allows more than one M code per block without giving a number. If someone programs an OSP7000L, it needs its own dialect that removes those codes.
+- **Not added yet:** the live-tool cycles G181–G190 and G178/G179 (modal, cancelled by G180 on its own line, G181–G184/G189/G190 only in G94 and G185–G188 only in G95), G138 Y axis, G128/G129 M/C mode, and M146/M147 (the manual contradicts itself on which is clamp).
