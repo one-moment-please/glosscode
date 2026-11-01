@@ -1,0 +1,41 @@
+{
+  "glosscode": "machine/1",
+  "id": "haas.mill",
+  "name": "Haas NGC mill",
+  "layer": "control",
+  "extends": ["fanuc.mill", "haas.common"],
+  "verified": true,
+  "about": "Excerpt. Only what Haas mills do differently from a Fanuc-style mill. M97 local subprograms come from haas.common, which haas.lathe also extends.",
+
+  "machine": { "control": "Haas NGC" },
+
+  "codes": {
+    "M88": { "long": "TSCON",    "short": "TSC",  "desc": "Through-spindle coolant on" },
+    "M89": { "long": "TSCOFF",   "short": "TSCO", "desc": "Through-spindle coolant off" },
+    "G77": { "long": "BACKBORE", "short": "BKBR", "desc": "Back boring cycle" }
+  },
+
+  "cycles": {
+    "G83": {
+      "name": "Peck drill",
+      "category": "drilling",
+      "requires": ["Z", "R"],
+      "choices": [["Q"], ["I", "J", "K"]],
+      "optional": ["X", "Y", "F", "L", "P"],
+      "feed": true,
+      "spindle": true,
+      "words": {
+        "I": ["0.2",  "First peck depth (use I, J and K instead of Q).", "PECK1"],
+        "J": ["0.02", "How much shorter each peck gets.",                "PECKLESS"],
+        "K": ["0.05", "Shortest peck allowed.",                          "PECKMIN"]
+      }
+    },
+    "G87": null
+  },
+
+  "foreign": {
+    "M97": null,
+    "M88": null,
+    "M89": null
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "glosscode": "machine/1",
+  "id": "base.wire-edm",
+  "name": "Generic wire EDM",
+  "layer": "process",
+  "extends": ["base.common"],
+  "verified": false,
+  "about": "Excerpt and first draft. Wire EDM codes vary a lot between builders, so this only holds what most Fanuc-style wire machines share. A brand layer is expected on top.",
+
+  "machine": { "process": "wire-edm", "options": { "taper": true } },
+
+  "process": { "label": "power", "on": [], "off": [] },
+
+  "addresses": {
+    "U": { "role": "axis", "long": "UTAPER", "short": "U", "desc": "Upper guide U axis (taper)" },
+    "V": { "role": "axis", "long": "VTAPER", "short": "V", "desc": "Upper guide V axis (taper)" },
+    "D": { "role": "offset", "long": "WOFS", "short": "D", "desc": "Wire offset number" }
+  },
+
+  "codes": {
+    "G40": { "long": "WOFSOFF",  "short": "WOFF", "desc": "Wire offset off" },
+    "G41": { "long": "WOFSLEFT", "short": "WOL",  "desc": "Wire offset left" },
+    "G42": { "long": "WOFSRGHT", "short": "WOR",  "desc": "Wire offset right" },
+    "G50": { "long": "TAPEROFF", "short": "TPOFF", "desc": "Taper off" },
+    "G51": { "long": "TAPERL",   "short": "TPL",  "desc": "Taper left" },
+    "G52": { "long": "TAPERR",   "short": "TPR",  "desc": "Taper right" }
+  },
+
+  "modalGroups": {
+    "motion":      ["G00", "G01", "G02", "G03"],
+    "wire offset": ["G40", "G41", "G42"],
+    "taper":       ["G50", "G51", "G52"]
+  },
+
+  "checks": {
+    "tlo-missing": "off",
+    "tlo-h-mismatch": "off",
+    "no-speed": "off",
+    "spindle-off-feed": "off",
+    "css-no-clamp": "off",
+    "rapid-below-zero": "off"
+  }
+}
