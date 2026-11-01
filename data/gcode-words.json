@@ -118,6 +118,14 @@
     }
   },
   "machineOverrides": {
+    "haasclassic.mill": {
+      "G87": { "long": "BOREJOG",  "short": "BRJG", "desc": "Bore, stop the spindle, jog out by hand" },
+      "G88": { "long": "BOREDJOG", "short": "BRDJ", "desc": "Bore, dwell, stop the spindle, jog out by hand" }
+    },
+    "fanuc.lathe": {
+      "G68": { "long": "MIRTUR", "short": "MIRT", "desc": "Mirror image for the opposite turret (Fanuc lathe)" },
+      "G69": { "long": "MIRTUROFF", "short": "MIRTOF", "desc": "Turret mirror image off (Fanuc lathe)" }
+    },
     "centroid.mill": {
       "M02": { "long": "RESTART", "short": "RSTRT", "desc": "End and restart the program (homes Z, waits for Cycle Start)" },
       "M30": { "long": "CUSTOM30", "short": "M30", "desc": "Custom M code: does nothing unless the machine defines it" },

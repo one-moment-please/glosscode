@@ -86,6 +86,7 @@
         "toolLength": { "on": ["G43", "G44"], "word": "H", "label": "G43 H" },
         "toolChange": "M06",
         "dwellWords": ["P", "X"],
+        "dwellNoDecimal": "ms",
         "subCalls": { "M98": { "word": "P", "target": "program" }, "G65": { "word": "P", "target": "program" } },
         "subReturn": ["M99"],
         "arcTolerance": { "inch": 0.001, "mm": 0.025 },
@@ -145,6 +146,7 @@
         "programEnds": ["M02", "M30"],
         "speedClamp": { "code": "G50", "word": "S" },
         "dwellWords": ["P", "X", "U"],
+        "dwellNoDecimal": "ms",
         "subCalls": { "M98": { "word": "P", "target": "program" }, "G65": { "word": "P", "target": "program" } },
         "subReturn": ["M99"],
         "diameterX": true,
@@ -152,8 +154,11 @@
         "feedPlausible": { "perRev": { "inch": 0.05, "mm": 1.5 }, "perMin": { "inch": 0.5, "mm": 10 } },
         "cycles": {
           "G70": { "name": "Finish contour",       "requires": ["P", "Q"], "optional": ["F", "S"], "labels": ["P", "Q"], "modal": false, "spindle": true },
-          "G71": { "name": "OD/ID roughing",       "requires": ["P", "Q", "U", "W", "F"], "optional": ["R", "S"], "labels": ["P", "Q"], "modal": false, "spindle": true, "note": "Two-block format on most Fanuc controls; this table checks the second block." },
-          "G72": { "name": "Face roughing",        "requires": ["P", "Q", "U", "W", "F"], "optional": ["R", "S"], "labels": ["P", "Q"], "modal": false, "spindle": true },
+          "G71": { "name": "OD/ID roughing",       "requires": ["P", "Q"], "optional": ["U", "W", "F", "S", "T", "R"], "labels": ["P", "Q"], "modal": false, "spindle": true, "note": "Two-block format on most Fanuc controls; this table checks the second block." },
+          "G72": { "name": "Face roughing",        "requires": ["P", "Q"], "optional": ["U", "W", "F", "S", "T", "R"], "labels": ["P", "Q"], "modal": false, "spindle": true },
+          "G73": { "name": "Pattern repeat",       "requires": ["P", "Q"], "optional": ["U", "W", "R", "F", "S", "T"], "labels": ["P", "Q"], "modal": false, "spindle": true },
+          "G74": { "name": "Face peck or groove",  "requires": ["Z"], "optional": ["X", "U", "W", "P", "Q", "R", "F"], "meaning": { "Z": "the bottom of the peck" }, "modal": false, "feed": true, "spindle": true },
+          "G75": { "name": "OD/ID peck groove",    "requires": ["X"], "optional": ["Z", "U", "W", "P", "Q", "R", "F"], "meaning": { "X": "the groove bottom diameter" }, "modal": false, "feed": true, "spindle": true },
           "G76": { "name": "Threading",            "requires": ["X", "Z", "P", "Q", "F"], "optional": ["R", "U", "W"], "modal": false, "spindle": true, "leadF": true },
           "G90": { "name": "OD/ID turning cycle",  "requires": ["X", "Z"], "optional": ["U", "W", "R", "F"], "feed": true, "spindle": true },
           "G92": { "name": "Thread cycle",         "requires": ["X", "Z", "F"], "optional": ["U", "W", "R"], "spindle": true, "leadF": true },
@@ -219,6 +224,20 @@
       }
     },
 
+    "haasclassic": {
+      "label": "Haas mill (classic control, 2008 to 2016)",
+      "inherits": "haas",
+      "inheritWords": true,
+      "verified": true,
+      "source": { "manual": "Haas Mill Operator's Manual 96-8000", "revision": "Rev Y, Dec. 2009", "section": "G codes, M codes and settings (p. 129 on)" },
+      "mill": {
+        "cycles": {
+          "G87": { "name": "Bore, stop and jog out", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
+          "G88": { "name": "Bore, dwell and jog out", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true }
+        }
+      }
+    },
+
     "haas1995": {
       "label": "Haas VF (1995 control)",
       "inherits": "haas",
@@ -268,6 +287,7 @@
         },
         "mPerBlock": 4,
         "dwellWords": ["P"],
+        "dwellNoDecimal": null,
         "subCalls": { "M98": { "word": "P", "target": "program" }, "G65": null },
         "cycles": {
           "G73": { "name": "High-speed peck",  "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
@@ -314,10 +334,11 @@
         },
         "mPerBlock": 4,
         "dwellWords": ["P"],
+        "dwellNoDecimal": null,
         "speedClamp": null,
         "subCalls": { "M98": { "word": "P", "target": "program" }, "G65": null },
         "cycles": {
-          "G90": null, "G92": null, "G94": null,
+          "G90": null, "G92": null, "G94": null, "G73": null, "G74": null, "G75": null,
           "G70": { "name": "Finish a profile", "requires": ["Q"], "meaning": { "Q": "the O-subroutine that holds the profile" }, "optional": ["X", "Z", "D", "E", "P"], "modal": false, "spindle": true },
           "G71": { "name": "Rough a profile along Z", "requires": ["Q"], "meaning": { "Q": "the O-subroutine that holds the profile" }, "optional": ["X", "Z", "D", "I", "R"], "modal": false, "spindle": true },
           "G72": { "name": "Rough a profile on the face", "requires": ["Q"], "meaning": { "Q": "the O-subroutine that holds the profile" }, "optional": ["X", "Z", "D", "I", "R"], "modal": false, "spindle": true },
@@ -338,6 +359,7 @@
     "tormach": {
       "label": "Tormach PathPilot",
       "inherits": "linuxcnc",
+      "inheritWords": true,
       "verified": false,
       "lathe": {
         "source": { "manual": "Tormach PathPilot User Guide for Lathes UM10751", "revision": "Dec. 2020, PathPilot 2.7.1", "section": "Programming, pp. 129 to 176" },
@@ -376,6 +398,7 @@
           "macro modal": null, "polar": null, "speed mode": null
         },
         "programEnds": ["M02", "M99"],
+        "dwellNoDecimal": null,
         "cycles": {
           "G73": { "name": "High-speed peck", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true },
           "G74": { "name": "Left-hand tap",   "requires": ["Z", "R"], "optional": ["X", "Y", "F", "Q"], "meaning": { "Q": "the pitch, in rigid tapping" }, "feed": true, "spindle": true },
@@ -400,6 +423,7 @@
       },
       "lathe": {
         "programEnds": ["M02", "M99"],
+        "dwellNoDecimal": null,
         "cycles": {
           "G71": { "name": "OD/ID roughing", "requires": ["P", "Q"], "optional": ["D", "U", "W", "I", "K", "A", "F", "R", "S"], "labels": ["P", "Q"], "modal": false, "spindle": true, "note": "Centroid takes the Fanuc two-line form or a one-line form with D as the depth of cut." },
           "G72": { "name": "Face roughing",  "requires": ["P", "Q"], "optional": ["D", "U", "W", "I", "K", "A", "F", "R", "S"], "labels": ["P", "Q"], "modal": false, "spindle": true },
@@ -418,6 +442,7 @@
       "verified": false,
       "keywords": ["CALL", "RTS", "GOTO", "IF", "NAT", "MODIN", "MODOUT"],
       "mill": {
+        "dwellNoDecimal": null,
         "modalGroups": {
           "work offset": ["G15"],
           "tool length": ["G53", "G54", "G55", "G56", "G57", "G58", "G59"],
@@ -456,13 +481,14 @@
         },
         "unitCodes": null,
         "mPerBlock": 8,
+        "dwellNoDecimal": null,
         "leadCodes": ["G31", "G32", "G33", "G34", "G35"],
         "mConflicts": [["M03", "M04", "M05"], ["M08", "M09"], ["M12", "M13", "M14"], ["M22", "M23"], ["M83", "M84"], ["M88", "M89"], ["M20", "M21"], ["M24", "M25"], ["M26", "M27"], ["M32", "M33", "M34"], ["M40", "M41", "M42", "M43", "M44"], ["M86", "M87"], ["M109", "M110"], ["M146", "M147"]],
         "subCalls": { "CALL": { "word": "O", "target": "program" } },
         "subReturn": ["RTS"],
         "dwellWords": ["F"],
         "cycles": {
-          "G70": null, "G76": null, "G90": null, "G92": null, "G94": null,
+          "G70": null, "G75": null, "G76": null, "G90": null, "G92": null, "G94": null,
           "G71": { "name": "Thread cutting, compound, along Z", "requires": ["X", "Z", "D", "H", "F"], "meaning": { "D": "the first depth of cut", "H": "the thread height", "F": "the thread lead" }, "optional": ["I", "A", "B", "U", "L", "E", "J", "M", "Q"], "modal": false, "leadF": true, "spindle": true },
           "G72": { "name": "Thread cutting, compound, on a face", "requires": ["X", "Z", "D", "H", "F"], "meaning": { "D": "the first depth of cut", "H": "the thread height", "F": "the thread lead" }, "optional": ["K", "A", "B", "U", "L", "E", "J", "M", "Q"], "modal": false, "leadF": true, "spindle": true },
           "G73": { "name": "Grooving along Z", "requires": ["X", "Z", "D"], "meaning": { "D": "the depth of each plunge" }, "optional": ["I", "K", "L", "F", "E", "T"], "modal": false, "feed": true, "spindle": true },

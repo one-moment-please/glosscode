@@ -3004,6 +3004,12 @@
      "msg": "G04 needs P or X for the dwell time."
     },
     {
+     "li": 16,
+     "id": "dwell-milliseconds",
+     "sev": "info",
+     "msg": "P500 has no decimal point, so this control reads it as 500 milliseconds (0.5 s). Write P500. if you mean 500 seconds."
+    },
+    {
      "li": 17,
      "id": "comp-start-on-arc",
      "sev": "error",
@@ -3966,6 +3972,12 @@
      "id": "dwell-no-time",
      "sev": "error",
      "msg": "G04 needs P or X for the dwell time."
+    },
+    {
+     "li": 16,
+     "id": "dwell-milliseconds",
+     "sev": "info",
+     "msg": "P500 has no decimal point, so this control reads it as 500 milliseconds (0.5 s). Write P500. if you mean 500 seconds."
     },
     {
      "li": 17,
