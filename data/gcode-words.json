@@ -118,6 +118,15 @@
     }
   },
   "machineOverrides": {
+    "mitsubishi.mill": {
+      "G12": { "long": "CIRCCW", "short": "CCW", "desc": "Circular cutting, clockwise (Mitsubishi)" },
+      "G13": { "long": "CIRCCCW", "short": "CCCW", "desc": "Circular cutting, counterclockwise (Mitsubishi)" },
+      "G75": { "long": "CIRCCYC", "short": "CCYC", "desc": "Circle cutting cycle (Mitsubishi)" },
+      "G34": { "long": "BOLTCIRC", "short": "BOLT", "desc": "Bolt hole circle pattern (Mitsubishi)" },
+      "G35": { "long": "LINEPAT", "short": "LPAT", "desc": "Holes on a line, pattern cycle (Mitsubishi)" },
+      "G36": { "long": "ARCPAT", "short": "APAT", "desc": "Holes on an arc, pattern cycle (Mitsubishi)" },
+      "G187": { "long": "THDMILL", "short": "THML", "desc": "Thread milling cycle (Mitsubishi)" }
+    },
     "hurco.mill": {
       "M05": { "long": "SPINOFF", "short": "SOFF", "desc": "Spindle stop; also turns the coolant off (Hurco)" },
       "M07": { "long": "MISTON", "short": "MON", "desc": "Mist coolant on" },
