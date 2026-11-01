@@ -29,6 +29,8 @@
     "g28-absolute":         { "severity": "warning", "title": "G28 in absolute mode",               "message": "G28 under G90 moves through work position {axes} on the way home. Use G28 G91 with {zeros} instead." },
     "css-no-clamp":         { "severity": "warning", "title": "Surface speed with no RPM limit",    "message": "G96 is on but no G50 S max RPM has been set. Small diameters can overspeed the spindle." },
     "dwell-no-time":        { "severity": "error",   "title": "Dwell with no time",                 "message": "G04 needs {words} for the dwell time." },
+    "dwell-milliseconds":   { "severity": "info",    "title": "Dwell in milliseconds",              "message": "{word} has no decimal point, so this control reads it as {ms} milliseconds ({sec} s). Write {word}. if you mean {ms} seconds." },
+    "m-per-block":          { "severity": "error",   "title": "Too many M-codes in a line",         "message": "This control allows {max} M-code per line, and this line has {count} ({words})." },
     "rapid-below-zero":     { "severity": "info",    "title": "Rapid below Z0",                     "message": "Rapid to Z{z}, below Z0. If Z0 is the top of the part, this rapids into it." },
     "no-program-end":       { "severity": "warning", "title": "No program end",                     "message": "The file has no {ends}." },
     "missing-decimal":      { "severity": "warning", "title": "Number with no decimal point",       "message": "{word} has no decimal point, so the control reads it as {letter}{value} {unit}. Write {letter}{intended} if you mean {amount} {unit}.", "why": "Fanuc-style controls read a whole number on a distance word as the smallest increment (0.0001 in or 0.001 mm)." },
@@ -161,6 +163,41 @@
           "G243": { "name": "Radial peck drill",   "requires": ["X", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["Z", "C", "Y", "F", "P"], "feed": true, "spindle": true, "needs": ["liveTooling"] }
         },
         "foreign": { "M97": null }
+      }
+    },
+
+    "haas1995": {
+      "label": "Haas VF (1995 control)",
+      "inherits": "haas",
+      "verified": true,
+      "source": { "manual": "Haas VF-Series Operator's Manual 96-8000", "revision": "June 1995", "section": "Programming: address codes, G codes, canned cycles, M codes, subroutines" },
+      "mill": {
+        "modalGroups": {
+          "work offset": ["G54", "G55", "G56", "G57", "G58", "G59", "G110", "G111", "G112", "G113", "G114", "G115", "G116", "G117", "G118", "G119", "G120", "G121", "G122", "G123", "G124", "G125", "G126", "G127", "G128", "G129"],
+          "scaling": ["G50", "G51"],
+          "exact stop": ["G61", "G64"],
+          "rotation": ["G68", "G69"]
+        },
+        "mPerBlock": 1,
+        "dwellNoDecimal": "ms",
+        "cycles": {
+          "G73": { "name": "High-speed peck", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
+          "G74": { "name": "Left-hand tap",   "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "speed": true, "startsSpindle": true },
+          "G83": { "name": "Peck drill",      "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
+          "G84": { "name": "Tap",             "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "speed": true, "startsSpindle": true },
+          "G87": { "name": "Bore, stop and jog out", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
+          "G88": { "name": "Bore, dwell and jog out", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true }
+        },
+        "foreign": {
+          "M88":  { "severity": "warning", "text": "M88 (through-spindle coolant) isn't in the 1995 VF manual. Check that this machine has it." },
+          "M89":  { "severity": "warning", "text": "M89 (through-spindle coolant off) isn't in the 1995 VF manual. Check that this machine has it." },
+          "G93":  { "severity": "error",   "text": "The 1995 VF control has no inverse-time feed. F is always per minute." },
+          "G94":  { "severity": "info",    "text": "The 1995 VF control has no G94. F is always per minute, so it can be left out." },
+          "G95":  { "severity": "error",   "text": "The 1995 VF control has no feed per revolution. F is always per minute." },
+          "G96":  { "severity": "error",   "text": "The 1995 VF control has no constant surface speed. S is always RPM." },
+          "G97":  { "severity": "info",    "text": "The 1995 VF control has no G97. S is always RPM, so it can be left out." },
+          "G154": { "severity": "error",   "text": "The 1995 VF control has no G154. Its extra work offsets are G110 to G129." }
+        }
       }
     },
 
