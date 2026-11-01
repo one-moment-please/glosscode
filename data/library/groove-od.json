@@ -1,0 +1,38 @@
+{
+  "glosscode": "subprogram/1",
+  "id": "groove-od-peck",
+  "name": "OD groove, pecked",
+  "word": { "long": "GROOVEOD", "short": "GRVOD" },
+  "program": 9201,
+  "category": "Grooves",
+  "tags": ["groove", "peck", "chip break", "OD"],
+  "machines": ["fanuc.lathe"],
+  "units": "inch",
+  "verified": false,
+  "author": "GlossCode",
+  "about": "Plunges one tool-width groove at Z, pecking in X to break the chip. Each peck feeds in by PECK and backs out by BACK, and the next peck feeds in from there. It feeds back to the bottom, dwells, then rapids back out to STRT. X values are diameters.",
+  "args": [
+    { "letter": "D", "name": "STRT",   "kind": "distance", "required": true,  "desc": "Diameter to start from, clear of the part" },
+    { "letter": "X", "name": "BOT",    "kind": "distance", "required": true,  "desc": "Diameter at the bottom of the groove" },
+    { "letter": "Z", "name": "ZPOS",   "kind": "distance", "required": true,  "desc": "Z position of the groove (the tool's reference edge)" },
+    { "letter": "Q", "name": "PECK",   "kind": "distance", "required": true,  "desc": "How far in X each peck goes (on diameter)", "default": { "inch": "0.04", "mm": "1." } },
+    { "letter": "R", "name": "BACK",   "kind": "distance", "required": false, "desc": "How far it backs out after each peck (on diameter)", "default": { "inch": "0.01", "mm": "0.25" } },
+    { "letter": "F", "name": "FEED",   "kind": "feed",     "required": true,  "desc": "Plunge feed" },
+    { "letter": "U", "name": "DWL",    "kind": "time",     "required": false, "desc": "Seconds to dwell at the bottom", "default": "0.2" }
+  ],
+  "body": [
+    "O9201 (OD GROOVE, PECKED)",
+    "G00 X#7 Z#26",
+    "#30=#7",
+    "WHILE [#30 GT #24] DO1",
+    "#30=#30-#17",
+    "IF [#30 LT #24] THEN #30=#24",
+    "G01 X#30 F#9",
+    "G00 X[#30+#18]",
+    "END1",
+    "G01 X#24 F#9",
+    "G04 X#21",
+    "G00 X#7",
+    "M99"
+  ]
+}

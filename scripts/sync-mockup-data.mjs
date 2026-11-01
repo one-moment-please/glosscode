@@ -1,7 +1,8 @@
-// Copies data/gcode-words.json and data/gcode-rules.json into the mockup,
-// which embeds them so it works as a single file. Run from the repo root:
+// Copies data/gcode-words.json, data/gcode-rules.json and the subprogram library into the mockup,
+// which embeds them so it works as a single file. The library is data/library/*.json (built in) plus
+// docs/subprogram-library/examples/*.json, which the mockup shows as a shop's library. Run from the repo root:
 //   node scripts/sync-mockup-data.mjs
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 
 const page = "docs/mockup/index.html";
 let html = readFileSync(page, "utf8");
@@ -13,5 +14,11 @@ const embed = (name, file) => {
 };
 embed("DICT", "data/gcode-words.json");
 embed("RULES", "data/gcode-rules.json");
+
+const library = [["data/library", "builtin"], ["docs/subprogram-library/examples", "shop"]].flatMap(([dir, source]) =>
+  readdirSync(dir).filter(f => f.endsWith(".json")).sort().map(f => ({ ...JSON.parse(readFileSync(`${dir}/${f}`, "utf8")), source })));
+const libRe = /^const LIBRARY = .*;$/m;
+if (!libRe.test(html)) throw new Error(`No "const LIBRARY = ...;" line in ${page}`);
+html = html.replace(libRe, () => `const LIBRARY = ${JSON.stringify(library)};`);
 writeFileSync(page, html);
 console.log("Updated", page);

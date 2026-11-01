@@ -405,6 +405,83 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
 .dlg .ifoot{display:flex}
 .menu .hidnote{font-size:11px;color:#999;padding:2px 10px 4px 30px}
 </style>
+<style>
+/* Subprogram library (Insert › Subprogram library…). Kept in its own block so it can move into the app as one piece. */
+.ln.lib{background:#effaf6;box-shadow:inset 3px 0 #0e8a6a;cursor:default}
+.ln.lib .gut{color:#0e8a6a;font-weight:700}
+.ln.lib .r.en{color:#2f7d62;background:transparent}
+.ln.lib .r.gc{background:transparent;color:#24413a}
+.ln.lib + .ln:not(.lib){border-top:1px dashed #9fd8c4}
+.lc{flex:none;height:19px;line-height:19px;overflow:hidden;text-overflow:ellipsis;border-left:1px dotted #d5ece3;padding-left:.5ch}
+.lc.cm{width:auto!important;color:#7d9a90;font-style:italic;border-left-color:transparent}
+.lc.err{width:auto!important;color:#a4262c;font-family:var(--w-ui);font-size:12px}
+.r.en .lc.cm{display:none}
+.lc small.u,.cex small.u{font-size:9.5px;font-weight:400;margin-left:1px}
+.xp.lib{border-color:#9fd8c4;background:#effaf6;color:#0b6b52}
+.xp.lib:hover{background:#dcf3ea}
+.ldlg,.sdlg{width:980px;height:690px}
+.ldlg .cbody{grid-template-columns:250px minmax(0,1fr)}
+.lside{display:flex;flex-direction:column;min-height:0;background:#f6f6f6;border-right:1px solid #e5e5e5}
+.lside .clist{border-right:0;flex:1}
+.lsearch{padding:8px 8px 4px;display:flex;flex-direction:column;gap:6px}
+.lsearch input{font:12.5px var(--w-ui);border:1px solid #d1d1d1;border-bottom-color:#9a9a9a;border-radius:4px;padding:4px 8px;background:#fff;min-width:0}
+.lsearch input:focus{outline:none;border-bottom:2px solid #0f6cbd}
+.lsearch .toggle{align-self:flex-start}
+.ldlg .cmain h4 code{color:#0b6b52}
+.clist .ci.lci{grid-template-columns:44px 1fr}
+.clist .ci.lci b{color:#0b6b52}
+.clist .ci.lci.other{opacity:.55}
+.clist .ci.lci span{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 0}
+.clist .ci.lci em{font-style:normal;font-size:10.5px;color:#888;flex-basis:100%}
+.src{display:inline-block;font-size:10px;line-height:14px;border-radius:99px;padding:0 6px;margin-left:6px;white-space:nowrap;font-weight:400;vertical-align:1px}
+.src.builtin{background:#eceff3;color:#4a5563}
+.src.shop{background:#fff1d6;color:#7a4b00}
+.src.mine{background:#e1efff;color:#0f5aa6}
+.src.priv{background:#f3e8ff;color:#6a2fd6}
+.src.unv{background:#fdecea;color:#a3271b}
+.lmeta{font-size:11.5px;color:#777;display:flex;flex-wrap:wrap;gap:4px 14px}
+.lmeta code{font:11.5px var(--w-mono);background:none;padding:0;color:#444}
+.lmode{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:#333}
+.lmode label{display:flex;gap:6px;align-items:baseline}
+.lmode label.off{color:#aaa}
+.lmode small{color:#888;font-size:11.5px}
+.cex.lprev{max-height:228px;overflow:auto}
+.cex.lprev .r{height:19px}
+.cex .lc{border-left-color:#eaeaea}
+.cex .r.en .lc.cm{display:none}
+.lfoot{display:flex;align-items:center;gap:8px}
+.lfoot .lmsg{flex:1;font-size:11.5px;color:#777}
+.lfoot .lmsg .warn{color:#a4262c}
+.lfoot .btn{min-width:84px}
+.lfoot .btn:disabled{opacity:.5;cursor:default}
+.dlg .lfoot{display:flex}
+.lempty{color:#888;font-size:12.5px;padding:20px}
+/* Library subprogram editor */
+.sbody{flex:1;display:grid;grid-template-columns:330px minmax(0,1fr);min-height:0;background:#fff}
+.sform{padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:auto;border-right:1px solid #e5e5e5}
+.sform .pgrid{grid-template-columns:92px 1fr;gap:6px 10px}
+.sform textarea{font:12.5px var(--w-ui);border:1px solid #d1d1d1;border-radius:4px;padding:4px 7px;resize:vertical;min-height:64px}
+.sform .pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sform .chks{display:flex;flex-direction:column;gap:3px;font-size:12px;color:#333}
+.sform .note2{font-size:11.5px;color:#777;line-height:1.4}
+.smain{padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto}
+.smain h5{margin:0;font:600 12.5px var(--w-ui);color:#333;display:flex;align-items:center;gap:8px}
+.smain h5 span{font-weight:400;color:#888}
+.smain h5 .btn{margin-left:auto;font-size:12px;padding:2px 9px}
+.smain h5 .btn+.btn{margin-left:0}
+.svars{border-collapse:collapse;width:100%;font-size:12px}
+.svars th{text-align:left;font-weight:400;color:#666;padding:3px 4px;border-bottom:1px solid #eee;background:#fafafa}
+.svars td{padding:2px 4px;border-bottom:1px solid #f3f3f3}
+.svars input,.svars select{font:12px var(--w-ui);border:1px solid #d1d1d1;border-radius:3px;padding:2px 5px;width:100%;min-width:0;background:#fff}
+.svars input.mono{font-family:var(--w-mono);text-transform:uppercase}
+.svars td.v{font:12px var(--w-mono);color:#888;white-space:nowrap}
+.svars button{border:0;background:none;color:#999;cursor:pointer;font-size:13px}
+.svars button:hover{color:#a4262c}
+.sbodytxt{font:12.5px/1.45 var(--w-mono);border:1px solid #d1d1d1;border-radius:4px;padding:6px 8px;min-height:200px;flex:1;resize:none;white-space:pre;color:#1b1b1b;text-transform:uppercase}
+.sbodytxt:read-only,.sform input:read-only,.sform textarea:read-only{background:#f7f7f7;color:#555}
+.schecks{font-size:11.5px;display:flex;flex-direction:column;gap:2px;max-height:70px;overflow:auto}
+.schecks .e{color:#a4262c}.schecks .w{color:#8a4b00}.schecks .i{color:#666}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -425,7 +502,7 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
       <span><b>View › Columns by word type</b> lines up X, Y, Z, F and M words</span>
       <span><b>▶</b> above the toolpath (or <kbd>F5</kbd>) plays the program move by move</span>
       <span><b>Problems</b> under the code lists every mistake; <kbd>F8</kbd> jumps to the next one</span>
-      <span>Open <b>CHECKS_DEMO.nc</b>, <b>LATHE_CHECKS.nc</b> or <b>OKUMA_PLATE.MIN</b> to see the checks, and <b>BRACKET_0MC.nc</b> for a control that needs <b>;</b> at the end of each line</span>
+      <span>Open <b>CHECKS_DEMO.nc</b>, <b>LATHE_CHECKS.nc</b> or <b>OKUMA_PLATE.MIN</b> to see the checks, and <b>BRACKET_0MC.nc</b> for a control that needs <b>;</b> at the end of each line. <b>SLOTS_PLATE.nc</b> calls subprograms from the library</span>
     </div>
   </header>
 
@@ -504,6 +581,7 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
                 <label for="pf-feed">Max feed</label><span class="unit"><input id="pf-feed" inputmode="decimal"><small>in/min</small></span>
                 <label for="pf-tools">Tool pockets</label><input id="pf-tools" inputmode="numeric">
                 <label for="pf-eob">End of block</label><label class="chk"><input type="checkbox" id="pf-eob"> Every line ends with <b>;</b> (most older controls need this)</label>
+                <label for="pf-macro">Macro option</label><label class="chk"><input type="checkbox" id="pf-macro"> Custom macro (G65 calls, #variables)</label>
                 <label id="pf-optl">Lathe options</label><span id="pf-opts" class="lopts"><label class="chk"><input type="checkbox" id="pf-live"> Live tooling (C axis)</label><label class="chk"><input type="checkbox" id="pf-yax"> Y axis</label></span>
               </div>
               <div class="ph">Brand-specific codes <span>(override the shared dictionary)</span></div>
@@ -564,6 +642,58 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
       </div>
       <datalist id="i-nlist"></datalist>
 
+      <div class="dim" id="ldlg" hidden>
+        <div class="dlg cdlg ldlg" role="dialog" aria-label="Subprogram library">
+          <div class="tbar"><span class="ttl" style="padding-left:2px" id="l-title">Subprogram library</span><span class="cap"><span id="l-x">&#x2715;</span></span></div>
+          <div class="cbody">
+            <div class="lside">
+              <div class="lsearch">
+                <input id="l-q" placeholder="Search name, tag, O number…" autocomplete="off" spellcheck="false">
+                <span class="toggle sm" role="group" aria-label="Which subprograms"><button id="l-mine" aria-pressed="true">This machine</button><button id="l-all" aria-pressed="false">All</button></span>
+              </div>
+              <div class="clist" id="llist"></div>
+            </div>
+            <div class="cmain" id="lmain"></div>
+          </div>
+          <div class="foot lfoot"><span class="lmsg" id="l-msg"></span><button class="btn" id="l-new">New…</button><button class="btn" id="l-edit">Edit…</button><button class="btn pri" id="l-ok">Insert</button><button class="btn" id="l-cancel">Cancel</button></div>
+        </div>
+      </div>
+
+      <div class="dim" id="sdlg" hidden>
+        <div class="dlg sdlg" role="dialog" aria-label="Library subprogram">
+          <div class="tbar"><span class="ttl" style="padding-left:2px" id="s-title">Library subprogram</span><span class="cap"><span id="s-x">&#x2715;</span></span></div>
+          <div class="sbody">
+            <div class="sform">
+              <div class="pgrid">
+                <label for="s-name">Name</label><input id="s-name">
+                <label>English word</label><span class="pair"><input id="s-long" placeholder="Long, 10 max" maxlength="10"><input id="s-short" placeholder="Short, 8 max" maxlength="8"></span>
+                <label for="s-prog">Program</label><span class="unit"><small>O</small><input id="s-prog" inputmode="numeric"></span>
+                <label for="s-cat">Category</label><input id="s-cat" list="s-cats">
+                <label for="s-tags">Tags</label><input id="s-tags" placeholder="comma, separated">
+                <label>Works on</label><span class="chks" id="s-machines"></span>
+                <label for="s-units">Units</label><select id="s-units"><option value="inch">Inch</option><option value="mm">Millimeter</option></select>
+                <label for="s-where">Save in</label><select id="s-where"><option value="mine">My library (only this computer)</option><option value="shop">Shop library (S:\CNC\GlossCode)</option></select>
+                <label>Privacy</label><label class="chk"><input type="checkbox" id="s-priv"> Private: Export asks first</label>
+              </div>
+              <label class="note2" for="s-about">What it does</label>
+              <textarea id="s-about" rows="4"></textarea>
+              <label class="note2" for="s-notes">Notes (left out when exported)</label>
+              <textarea id="s-notes" rows="2"></textarea>
+              <div class="note2" id="s-file"></div>
+            </div>
+            <div class="smain">
+              <h5>Variables <span>passed on the G65 line</span><button class="btn" id="s-scan" title="Adds a variable for each #1–#26 the body reads">Add from body</button><button class="btn" id="s-add">+ Add</button></h5>
+              <table class="svars"><thead><tr><th style="width:52px">Letter</th><th style="width:44px">Var</th><th style="width:92px">English</th><th style="width:88px">Kind</th><th style="width:38px">Req.</th><th style="width:70px">Default</th><th>What it is</th><th style="width:22px"></th></tr></thead><tbody id="s-vars"></tbody></table>
+              <h5>Body <span>the O program, as it runs on the control</span></h5>
+              <textarea class="sbodytxt" id="s-body" spellcheck="false"></textarea>
+              <div class="schecks" id="s-checks"></div>
+            </div>
+          </div>
+          <div class="foot lfoot"><span class="lmsg" id="s-msg"></span><button class="btn" id="s-del">Delete</button><button class="btn" id="s-export">Export…</button><button class="btn" id="s-copy">Make my own copy</button><button class="btn pri" id="s-save">Save</button><button class="btn" id="s-cancel">Cancel</button></div>
+        </div>
+      </div>
+      <datalist id="s-cats"></datalist>
+
       <div class="dim" id="hdlg" hidden>
         <div class="dlg hdlg" role="dialog" aria-label="Insert hole pattern">
           <div class="tbar"><span class="ttl" style="padding-left:2px">Insert hole pattern</span><span class="cap"><span id="h-x">&#x2715;</span></span></div>
@@ -615,6 +745,7 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
     <div class="note"><h3>Keyboard editing</h3><p><kbd>←</kbd> <kbd>→</kbd> move between words and <kbd>↑</kbd> <kbd>↓</kbd> between lines. <kbd>Enter</kbd> edits the selected word and <kbd>Enter</kbd> again finishes it, leaving it selected. While editing, <kbd>Space</kbd> starts a new word to the right; in G-code, typing the next letter does too (<code>G01X</code> becomes <code>G01</code> and <code>X</code>). <kbd>Shift</kbd>+<kbd>Enter</kbd> breaks the line after the selected word. <kbd>Caps Lock</kbd> switches between the G-code and English lines, since everything is in capitals anyway.</p></div>
     <div class="note"><h3>Words a code still needs</h3><p>After a code that needs more words, grey hint text shows them: <code>G02</code> gets <b>R## or I## J##</b>, <code>G83</code> gets <b>Z## R## Q##</b>. Click <b>R##</b> (or select it and press Enter) and the R is typed for you; the I and J hints go away. Pick <b>I##</b> instead and R goes away but J stays. The lists come from the same tables as the checks, per control.</p></div>
     <div class="note"><h3>Insert menu</h3><p><b>Hole pattern…</b> works out drilling positions for a grid or a bolt circle. The canned cycle entries are grouped the way you'd look for them: drilling, tapping and boring on a mill; roughing, finishing, turning and facing, grooving, threading and live tooling on a lathe. Each opens a window with a rough sketch, a box for each word, and the finished line with its English. A category the machine can't run, like live tooling on a lathe without it, isn't listed, and the menu says what's hidden.</p></div>
+    <div class="note"><h3>Subprogram library</h3><p><b>Insert › Subprogram library…</b> keeps routines you reuse across programs, like a slot where only the positions and depth change. Fill in the values and insert it as one <code>G65 P9101</code> line, or as plain lines worked out from the values for a control without the macro option. The call reads <b>SLOTMILL</b> with each value by name, and <b>▸ show</b> lists what it runs in green. Try <b>SLOTS_PLATE.nc</b>.</p></div>
     <div class="note"><h3>Canned cycle guide</h3><p><kbd>F1</kbd> on a cycle, or <b>How G76 works…</b> in the side panel, opens a page for that cycle: a rough sketch of how it moves, an example line using every word it takes with the English above it, and a table of what each word does and whether it's needed. <b>Start a new line with this cycle</b> adds the code and lets the hints walk you through the rest.</p></div>
     <div class="note"><h3>End of block</h3><p>Many older controls need <code>;</code> at the end of every line. Each machine profile has an <b>End of block</b> setting. When it's on, every line shows a <b>;</b> after an empty word space, and Save writes it. Files that already use <code>;</code> are read correctly on any machine. Try <b>BRACKET_0MC.nc</b>, set up for a Fanuc 0-MC.</p></div>
     <div class="note"><h3>Standard file dialogs</h3><p>Open and Save call the real system dialog from C: <code>IFileOpenDialog</code> on Windows, and the GTK or desktop-portal dialog on Linux. The <a href="https://github.com/btzy/nativefiledialog-extended">nativefiledialog-extended</a> library wraps both behind one call.</p></div>
@@ -640,15 +771,15 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
 </div>
 
 <script>
-const DICT = {"about":"Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry. machineOverrides keys are a brand ('haas') or a brand and machine type ('okuma.mill'); the more specific key wins.","version":1,"codes":{"G00":{"long":"RAPID","short":"RPD","desc":"Rapid move"},"G01":{"long":"LINEAR","short":"LIN","desc":"Straight move at feed rate"},"G02":{"long":"ARCCW","short":"ACW","desc":"Clockwise arc"},"G03":{"long":"ARCCCW","short":"ACCW","desc":"Counterclockwise arc"},"G04":{"long":"DWELL","short":"DWL","desc":"Pause for a set time"},"G17":{"long":"PLANEXY","short":"PXY","desc":"Arcs in the XY plane"},"G18":{"long":"PLANEXZ","short":"PXZ","desc":"Arcs in the XZ plane"},"G19":{"long":"PLANEYZ","short":"PYZ","desc":"Arcs in the YZ plane"},"G20":{"long":"INCH","short":"IN","desc":"Inch units"},"G21":{"long":"METRIC","short":"MM","desc":"Millimeter units"},"G28":{"long":"HOMEREF","short":"HOME","desc":"Return to machine home"},"G30":{"long":"HOME2","short":"HOM2","desc":"Return to a second reference point"},"G32":{"lathe":{"long":"THDCUT","short":"THC","desc":"Single thread cut"}},"G40":{"long":"COMPOFF","short":"CCOFF","desc":"Cutter compensation off"},"G41":{"long":"COMPLEFT","short":"CCL","desc":"Cutter compensation left"},"G42":{"long":"COMPRGHT","short":"CCR","desc":"Cutter compensation right"},"G43":{"long":"TLENON","short":"TLON","desc":"Tool length offset on"},"G49":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off"},"G50":{"mill":{"long":"SCALEOFF","short":"SCLOFF","desc":"Scaling off"},"lathe":{"long":"MAXRPM","short":"SMAX","desc":"Clamp spindle to a max RPM"}},"G53":{"long":"MACHCRD","short":"MCS","desc":"Move in machine coordinates"},"G54":{"long":"WORK1","short":"W1","desc":"Work offset 1"},"G55":{"long":"WORK2","short":"W2","desc":"Work offset 2"},"G56":{"long":"WORK3","short":"W3","desc":"Work offset 3"},"G57":{"long":"WORK4","short":"W4","desc":"Work offset 4"},"G58":{"long":"WORK5","short":"W5","desc":"Work offset 5"},"G59":{"long":"WORK6","short":"W6","desc":"Work offset 6"},"G70":{"lathe":{"long":"FINCYC","short":"FIN","desc":"Finishing cycle"}},"G71":{"lathe":{"long":"RUFCYC","short":"RUF","desc":"OD/ID roughing cycle"}},"G72":{"lathe":{"long":"FACERUF","short":"FRUF","desc":"Face roughing cycle"}},"G73":{"mill":{"long":"PECKHS","short":"PKHS","desc":"High-speed peck drilling cycle"},"lathe":{"long":"PATHRUF","short":"PRUF","desc":"Irregular-path roughing cycle"}},"G74":{"mill":{"long":"TAPLEFT","short":"LTAP","desc":"Left-hand (reverse) tapping cycle"},"lathe":{"long":"FACEGRV","short":"FGRV","desc":"Face grooving or peck drilling cycle"}},"G75":{"lathe":{"long":"GROOVE","short":"GRV","desc":"OD/ID grooving cycle"}},"G76":{"mill":{"long":"FINBORE","short":"FBOR","desc":"Fine boring cycle"},"lathe":{"long":"THREAD","short":"THD","desc":"Threading cycle"}},"G80":{"long":"CYCOFF","short":"CYOFF","desc":"Cancel canned cycle"},"G81":{"long":"DRILL","short":"DRL","desc":"Drilling cycle"},"G82":{"long":"SPOTDWL","short":"SPDW","desc":"Spot drill cycle with dwell"},"G83":{"long":"PECKDRL","short":"PCK","desc":"Peck drilling cycle"},"G84":{"long":"TAP","short":"TAP","desc":"Tapping cycle"},"G85":{"long":"BORE","short":"BOR","desc":"Boring cycle, feed out"},"G86":{"long":"BORESTOP","short":"BORS","desc":"Boring cycle, spindle stop and rapid out"},"G89":{"long":"BOREDWL","short":"BORD","desc":"Boring cycle with dwell"},"G90":{"mill":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"lathe":{"long":"TURNCYC","short":"TCY","desc":"OD/ID turning cycle"}},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G92":{"lathe":{"long":"THDCYC","short":"TCYC","desc":"Threading cycle"}},"G94":{"mill":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"lathe":{"long":"FACECYC","short":"FCY","desc":"End facing cycle"}},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G96":{"long":"MODESFM","short":"CSS","desc":"Constant surface speed"},"G97":{"long":"MODERPM","short":"RPM","desc":"Constant RPM"},"G98":{"mill":{"long":"RETINIT","short":"RINI","desc":"Cycle returns to initial Z"},"lathe":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"}},"G99":{"mill":{"long":"RETRPLN","short":"RRPL","desc":"Cycle returns to R plane"},"lathe":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"}},"M00":{"long":"STOP","short":"STP","desc":"Program stop"},"M01":{"long":"OPTSTOP","short":"OSTP","desc":"Optional stop"},"M02":{"long":"PRGEND","short":"PEND","desc":"End program"},"M03":{"long":"SPINFWD","short":"SFWD","desc":"Spindle on, forward (CW)"},"M04":{"long":"SPINREV","short":"SREV","desc":"Spindle on, reverse (CCW)"},"M05":{"long":"SPINOFF","short":"SOFF","desc":"Spindle off"},"M06":{"long":"TOOLCHG","short":"TCHG","desc":"Tool change"},"M08":{"long":"COOLON","short":"CON","desc":"Flood coolant on"},"M09":{"long":"COOLOFF","short":"COFF","desc":"Coolant off"},"M30":{"long":"ENDRESET","short":"END","desc":"End program and rewind"},"M98":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram"},"M99":{"long":"SUBRET","short":"RET","desc":"Return from subprogram"}},"address":{"N":{"long":"SEQ","short":"N","desc":"Sequence number"},"O":{"long":"PROG","short":"O","desc":"Program number"},"T":{"long":"TOOL","short":"T","desc":"Tool number"},"H":{"long":"LOFS","short":"H","desc":"Tool length offset number"},"D":{"long":"DOFS","short":"D","desc":"Tool diameter offset number"},"X":{"abs":{"long":"X","short":"X"},"inc":{"long":"INCX","short":"iX"}},"Y":{"abs":{"long":"Y","short":"Y"},"inc":{"long":"INCY","short":"iY"}},"Z":{"abs":{"long":"Z","short":"Z"},"inc":{"long":"INCZ","short":"iZ"}},"U":{"lathe":{"long":"INCX","short":"iX","desc":"Incremental X (lathe)"}},"W":{"lathe":{"long":"INCZ","short":"iZ","desc":"Incremental Z (lathe)"}},"I":{"long":"ARCI","short":"I","desc":"Arc center offset in X"},"J":{"long":"ARCJ","short":"J","desc":"Arc center offset in Y"},"K":{"long":"ARCK","short":"K","desc":"Arc center offset in Z"},"R":{"arc":{"long":"RAD","short":"R"},"cycle":{"long":"RPLN","short":"R"}},"Q":{"long":"PECK","short":"Q","desc":"Peck depth"},"P":{"dwell":{"long":"SEC","short":"P"},"sub":{"long":"PROG","short":"P"}},"F":{"perMin":{"inch":"IPM","mm":"MMPM"},"perRev":{"inch":"IPR","mm":"MMPR"}},"S":{"rpm":{"long":"RPM","short":"RPM"},"css":{"inch":"SFM","mm":"SMM"}}},"machineOverrides":{"haas":{"M88":{"long":"TSCON","short":"TSC","desc":"Through-spindle coolant on"},"M89":{"long":"TSCOFF","short":"TSCO","desc":"Through-spindle coolant off"},"M97":{"long":"LOCSUB","short":"LSUB","desc":"Local subprogram call"},"G77":{"long":"BACKBORE","short":"BKBR","desc":"Back boring cycle"}},"okuma":{"CALL":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram (Okuma)"},"RTS":{"long":"SUBRET","short":"RET","desc":"Return from subprogram (Okuma)"},"GOTO":{"long":"JUMP","short":"JMP","desc":"Jump to a sequence name (Okuma)"},"G30":{"long":"HOMEZP","short":"ZPT","desc":"Return to zero point P (Okuma)"}},"okuma.mill":{"G15":{"long":"WORKSEL","short":"WSEL","desc":"Select work offset by H number (Okuma)"},"G53":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off (Okuma)"},"G54":{"long":"TLENX","short":"TLX","desc":"Tool length offset on X (Okuma, not a work offset)"},"G55":{"long":"TLENY","short":"TLY","desc":"Tool length offset on Y (Okuma, not a work offset)"},"G56":{"long":"TLENON","short":"TLON","desc":"Tool length offset on Z (Okuma)"}},"okuma.lathe":{"G90":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G94":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G33":{"long":"THREAD","short":"THD","desc":"Single thread cut (Okuma)"},"G71":{"long":"THDLONG","short":"THL","desc":"Compound threading, longitudinal (Okuma)"},"G72":{"long":"THDFACE","short":"THF","desc":"Compound threading, face (Okuma)"},"G80":{"long":"CONTEND","short":"CEND","desc":"End of LAP contour definition (Okuma)"},"G81":{"long":"CONTZ","short":"CTZ","desc":"Start of longitudinal LAP contour (Okuma)"},"G82":{"long":"CONTX","short":"CTX","desc":"Start of face LAP contour (Okuma)"},"G85":{"long":"LAPRUF","short":"LRUF","desc":"LAP roughing, longitudinal (Okuma)"},"G86":{"long":"LAPCOPY","short":"LCPY","desc":"LAP copy roughing (Okuma)"},"G87":{"long":"LAPFIN","short":"LFIN","desc":"LAP finishing (Okuma)"}}}};
-const RULES = {"about":"Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, the words other codes need (wordHints, shown as hint text after the code), codes that mean something else on that control, and limits. 'cycleHelp' holds the text, sketch and word descriptions for the canned-cycle help dialog. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.","version":1,"rules":{"dup-address":{"severity":"error","title":"Word repeated in a line","message":"{letter} appears {count} on this line ({words}). The control uses one of them or alarms.","why":"Each address letter except G and M can appear once per block."},"empty-value":{"severity":"error","title":"Address with no value","message":"{letter} has no number after it."},"modal-group-clash":{"severity":"error","title":"Two codes from one group","message":"{codes} are both {group} codes. Only one can be active, so the control alarms or uses the last one.","why":"Codes in the same modal group cancel each other."},"m-conflict":{"severity":"error","title":"M-codes that contradict each other","message":"{codes} on the same line contradict each other."},"foreign-code":{"severity":"warning","title":"Code means something else here","message":"{text}"},"cycle-missing-word":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {word}: {meaning}."},"cycle-missing-choice":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {choices}."},"cycle-stray-word":{"severity":"info","title":"Word the cycle doesn't use","message":"{cycle} ({name}) doesn't use {word}, so it is ignored or alarms."},"missing-label":{"severity":"error","title":"Jump to a label that isn't there","message":"{word} points to {label}, which isn't in this file."},"no-feed-rate":{"severity":"error","title":"Feed move with no feed rate","message":"This {move} runs at feed rate, but no F has been set yet.","why":"Most controls alarm on the first feed move without F; some reuse a stale value."},"feed-mode-changed":{"severity":"warning","title":"Feed rate from the other feed mode","message":"F{f} was set under {old} but {new} is active now, so it reads as {reading}.","why":"F is not cleared when G94/G95 changes."},"feed-plausibility":{"severity":"info","title":"Feed rate looks like the wrong mode","message":"F{f} {unit} is unusually {size}. Check that {mode} is the mode you meant."},"spindle-off-feed":{"severity":"warning","title":"Cutting with the spindle stopped","message":"This {move} cuts while the spindle is stopped ({spin})."},"no-speed":{"severity":"warning","title":"Spindle started with no speed","message":"{code} starts the spindle but no S has been set."},"arc-no-center":{"severity":"error","title":"Arc with no center or radius","message":"{code} needs R or {centers} to define the arc."},"arc-r-and-ijk":{"severity":"warning","title":"Arc with both R and center","message":"This arc has both R and {centers}. Most controls use R and ignore the others."},"arc-full-circle-r":{"severity":"error","title":"Full circle written with R","message":"The arc starts and ends at the same point, which R can't describe. Use {centers}."},"arc-radius-mismatch":{"severity":"warning","title":"Arc end isn't on the circle","message":"Start is {r1} from the center but the end is {r2} from it (off by {diff})."},"comp-start-on-arc":{"severity":"error","title":"Cutter comp started on an arc","message":"{code} has to start on a G00 or G01 move, not an arc."},"comp-no-d":{"severity":"warning","title":"Cutter comp with no D offset","message":"{code} turns on cutter comp but no D offset has been given."},"tlo-missing":{"severity":"warning","title":"Z move with no tool length offset","message":"First Z move after the tool change on {line}, but {tlo} hasn't been called for this tool."},"tlo-h-mismatch":{"severity":"info","title":"Length offset doesn't match tool","message":"{h} is used with {t}. Usually the H number matches the tool number."},"cycle-left-on":{"severity":"warning","title":"Canned cycle still active","message":"{cycle} is still active at the {event}. Add G80 first."},"comp-left-on":{"severity":"warning","title":"Cutter comp still active","message":"{comp} is still active at the {event}. Add G40 first."},"g28-absolute":{"severity":"warning","title":"G28 in absolute mode","message":"G28 under G90 moves through work position {axes} on the way home. Use G28 G91 with {zeros} instead."},"css-no-clamp":{"severity":"warning","title":"Surface speed with no RPM limit","message":"G96 is on but no G50 S max RPM has been set. Small diameters can overspeed the spindle."},"dwell-no-time":{"severity":"error","title":"Dwell with no time","message":"G04 needs {words} for the dwell time."},"rapid-below-zero":{"severity":"info","title":"Rapid below Z0","message":"Rapid to Z{z}, below Z0. If Z0 is the top of the part, this rapids into it."},"no-program-end":{"severity":"warning","title":"No program end","message":"The file has no {ends}."},"missing-decimal":{"severity":"warning","title":"Number with no decimal point","message":"{word} has no decimal point, so the control reads it as {letter}{value} {unit}. Write {letter}{intended} if you mean {amount} {unit}.","why":"Fanuc-style controls read a whole number on a distance word as the smallest increment (0.0001 in or 0.001 mm)."},"unknown-word":{"severity":"info","title":"Word not in the dictionary","message":"{word} isn't in the dictionary or this machine's file."}},"dialects":{"fanuc":{"label":"Fanuc-style (0i, 30i and compatibles)","verified":true,"mill":{"modalGroups":{"motion":["G00","G01","G02","G03"],"plane":["G17","G18","G19"],"distance":["G90","G91"],"feed mode":["G93","G94","G95"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"tool length":["G43","G44","G49"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G88","G89"],"cycle return":["G98","G99"],"work offset":["G54","G55","G56","G57","G58","G59"],"speed mode":["G96","G97"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M07","M09"],["M08","M09"]],"programEnds":["M02","M30"],"toolLength":{"on":["G43","G44"],"word":"H","label":"G43 H"},"toolChange":"M06","dwellWords":["P","X"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G76":{"name":"Fine bore","requires":["Z","R","Q"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true,"speed":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true}},"wordMeaning":{"Z":"the hole bottom","R":"the retract plane","Q":"the peck depth or shift","P":"the dwell time","F":"the feed rate"},"wordHints":{"G02":{"arc":true},"G03":{"arc":true},"G41":{"requires":["D"]},"G42":{"requires":["D"]},"G43":{"requires":["H"]},"G44":{"requires":["H"]}},"foreign":{"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."},"M88":{"severity":"warning","text":"M88 is Haas through-spindle coolant. Check what your builder uses."},"M89":{"severity":"warning","text":"M89 is Haas through-spindle coolant off. Check what your builder uses."}}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G32","G90","G92","G94"],"plane":["G17","G18","G19"],"feed mode":["G98","G99"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"speed mode":["G96","G97"],"work offset":["G54","G55","G56","G57","G58","G59"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M08","M09"]],"programEnds":["M02","M30"],"speedClamp":{"code":"G50","word":"S"},"dwellWords":["P","X","U"],"subCalls":{"M98":{"word":"P","target":"program"}},"subReturn":["M99"],"diameterX":true,"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G70":{"name":"Finish contour","requires":["P","Q"],"optional":["F","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G71":{"name":"OD/ID roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Two-block format on most Fanuc controls; this table checks the second block."},"G72":{"name":"Face roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","P","Q","F"],"optional":["R","U","W"],"modal":false,"spindle":true,"leadF":true},"G90":{"name":"OD/ID turning cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true},"G92":{"name":"Thread cycle","requires":["X","Z","F"],"optional":["U","W","R"],"spindle":true,"leadF":true},"G94":{"name":"Facing cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true}},"wordMeaning":{"P":"the first line of the contour","Q":"the last line of the contour","U":"the X finish allowance","W":"the Z finish allowance","D":"the depth of each pass","K":"the thread height","F":"the feed rate or thread lead","X":"the end diameter","Z":"the end position"},"wordHints":{"G02":{"arc":true},"G03":{"arc":true},"G32":{"requires":["Z","F"]}},"foreign":{"G91":{"severity":"warning","text":"Fanuc-style lathes use U and W for incremental moves; G91 needs the optional G-code system B or C."},"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."}}}},"haas":{"label":"Haas NGC","inherits":"fanuc","verified":true,"mill":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G76":{"name":"Fine bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","P","L"],"feed":true,"spindle":true},"G77":{"name":"Back bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","L"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G87":null,"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true}},"foreign":{"M97":null,"M88":null,"M89":null}},"lathe":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G71":{"name":"OD/ID roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T","R"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Haas uses a one-block G71."},"G72":{"name":"Face roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G73":{"name":"Irregular-path roughing","requires":["P","Q","D","I","K"],"optional":["U","W","F","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G74":{"name":"Face groove / peck drill","requires":["Z"],"optional":["X","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G75":{"name":"OD/ID groove","requires":["X"],"optional":["Z","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","K","D","F"],"optional":["A","I","P","Q","U","W"],"modal":false,"spindle":true,"leadF":true,"note":"Haas uses a one-block G76: K thread height, D first pass depth, F lead."},"G81":{"name":"Drill on center","requires":["Z","R"],"optional":["X","Y","C","W","F"],"feed":true,"spindle":true},"G82":{"name":"Spot drill on center","requires":["Z","R","P"],"optional":["X","Y","C","W","F"],"feed":true,"spindle":true},"G83":{"name":"Peck drill on center","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","C","W","F","P"],"feed":true,"spindle":true},"G84":{"name":"Tap on center","requires":["Z","R","F"],"optional":["X","Y","C","W"],"feed":true,"spindle":true},"G241":{"name":"Radial drill","requires":["X","R"],"optional":["Z","C","Y","F"],"feed":true,"spindle":true,"needs":["liveTooling"]},"G243":{"name":"Radial peck drill","requires":["X","R"],"choices":[["Q"],["I","J","K"]],"optional":["Z","C","Y","F","P"],"feed":true,"spindle":true,"needs":["liveTooling"]}},"foreign":{"M97":null}}},"okuma":{"label":"Okuma OSP (P300 and later)","inherits":"fanuc","verified":false,"keywords":["CALL","RTS","GOTO","IF","NAT","MODIN","MODOUT"],"mill":{"modalGroups":{"work offset":["G15"],"tool length":["G53","G54","G55","G56","G57","G58","G59"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G89"]},"toolLength":{"on":["G56"],"word":"H","label":"G56 H"},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"cycles":{"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F"],"feed":true,"spindle":true}},"wordHints":{"G43":null,"G44":null,"G56":{"requires":["H"]},"G15":{"requires":["H"]}},"foreign":{"G43":{"severity":"warning","text":"Okuma calls the tool length offset with G56 H, not G43."},"G54":{"severity":"error","text":"On Okuma, G54 is the X-axis tool length offset, not work offset 1. Select work offsets with G15 H1."},"G55":{"severity":"error","text":"On Okuma, G55 is the Y-axis tool length offset, not work offset 2. Select work offsets with G15 H2."},"G57":{"severity":"error","text":"On Okuma, G57 is a 4th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G58":{"severity":"error","text":"On Okuma, G58 is a 5th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G59":{"severity":"error","text":"On Okuma, G59 is a 6th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G28":{"severity":"warning","text":"Okuma returns to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."},"M99":{"severity":"warning","text":"Okuma subprograms end with RTS. M99 is for repeating a main program."},"M88":null,"M89":null}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G33"],"feed mode":["G94","G95"],"distance":["G90","G91"]},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"dwellWords":["F"],"cycles":{"G70":null,"G71":null,"G72":null,"G76":null,"G90":null,"G92":null,"G94":null},"wordHints":{"G32":null,"G33":{"requires":["Z","F"]}},"referenceOnly":{"G85":"LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)","G86":"LAP copy roughing","G87":"LAP finishing","G81":"Start of longitudinal contour definition","G82":"Start of transverse contour definition","G80":"End of contour definition","G71":"Compound threading, longitudinal","G72":"Compound threading, transverse","G33":"Single thread cut"},"foreign":{"G98":{"severity":"warning","text":"Okuma lathes set feed per minute with G94, not G98."},"G99":{"severity":"warning","text":"Okuma lathes set feed per revolution with G95, not G99."},"G91":null,"G28":{"severity":"warning","text":"Okuma lathes return to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."}}}}},"cycleHelp":{"about":"Text for the canned-cycle help dialog. Each word entry is [example value, what it does] or [example value, what it does, English word]; the English word replaces the usual one while that cycle is active (Haas G76 A60 reads ANGLE60, not ?A60). 'common' words apply to every cycle of that machine type. Keys like 'haas.lathe' override the Fanuc-style base for that control. 'sketch' picks the drawing; 'labels' renames the letters on it. A cycle with 'needs' in the dialect table (such as liveTooling) is offered only on machine profiles that have that option.","mill":{"common":{"words":{"X":["1.","Hole position in X. After this line, every line with just X or Y drills another hole, until G80."],"Y":["0.5","Hole position in Y."],"Z":["-0.5","Bottom of the hole."],"R":["0.1","Retract plane. The tool rapids down to R, then feeds from there. G99 comes back up to R between holes, G98 to where it started."],"F":["6.","Feed rate for the cut."],"K":["1","How many times to run the hole. Under G91, each repeat steps over by X and Y.","REPT"],"L":["1","How many times to run the hole. L0 sets up the cycle without drilling here.","REPT"],"P":["0.5","Dwell at the bottom, in seconds on Haas (P0.5). Fanuc takes milliseconds with no decimal point (P500)."]}},"G73":{"sketch":"peck-hs","about":"Drills to Z in pecks of Q. After each peck the tool backs off a little to break the chip, without leaving the hole. Faster than G83, but it doesn't clear chips out of deep holes.","words":{"Q":["0.1","Depth of each peck."]}},"G74":{"sketch":"tap-lh","about":"Left-hand tapping. The spindle runs in reverse down to Z, then reverses at the bottom and feeds back out to R.","words":{"F":["31.25","Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."]}},"G76":{"sketch":"finebore","about":"Bores to Z, stops the spindle in a set orientation, moves the tool away from the wall by Q, then rapids out so the tip doesn't drag a line up the bore.","words":{"Q":["0.01","How far the tool moves off the wall before it pulls out.","SHIFT"]}},"G81":{"sketch":"drill","about":"The plain drilling cycle: rapid to R, feed to Z, rapid back out."},"G82":{"sketch":"dwell","about":"Like G81, but it pauses at the bottom for P so a spot drill or counterbore leaves a clean, flat bottom."},"G83":{"sketch":"peck","about":"Drills in pecks of Q and rapids all the way back up to R after each peck to clear the chips. Use it for deep holes.","words":{"Q":["0.15","Depth of each peck."]}},"G84":{"sketch":"tap","about":"Right-hand tapping. Feeds to Z, reverses the spindle at the bottom and feeds back out to R.","words":{"F":["31.25","Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."]}},"G85":{"sketch":"bore-feed","about":"Feeds to Z and feeds back out to R. For reaming and boring, where a rapid out would mark the wall."},"G86":{"sketch":"bore-stop","about":"Feeds to Z, stops the spindle and rapids out. The tip drags up the wall, so it's for rough boring."},"G87":{"sketch":"backbore","about":"Back boring. The tool goes down through the hole shifted off center, moves back to center by Q, starts the spindle and cuts upward to Z.","labels":{"shift":"Q"},"words":{"Z":["-0.75","Top of the back bore (where the upward cut stops)."],"R":["-1.1","Start of the cut, below the part."],"Q":["0.05","How far the tool is shifted to pass through the hole.","SHIFT"]}},"G89":{"sketch":"bore-dwell","about":"Like G85 with a dwell: feeds to Z, pauses for P, feeds back out."}},"haas.mill":{"common":{"words":{"I":["0.2","First peck depth (use I, J and K instead of Q).","PECK1"],"J":["0.02","How much shorter each peck gets.","PECKLESS"],"K":["0.05","Shortest peck allowed.","PECKMIN"]}},"G74":{"words":{"J":["2","Retract speed: J2 comes out twice as fast as it went in.","RETSPD"]}},"G84":{"words":{"J":["2","Retract speed: J2 comes out twice as fast as it went in.","RETSPD"]}},"G76":{"words":{"I":["0.01","Shift along X before pulling out (instead of Q).","SHIFTX"],"J":["0","Shift along Y before pulling out (instead of Q).","SHIFTY"],"Q":["0.01","How far the tool moves off the wall before it pulls out.","SHIFT"]}},"G77":{"sketch":"backbore","about":"Back boring. The tool goes down through the hole shifted off center, moves back to center, starts the spindle and cuts upward to Z.","labels":{"shift":"Q"},"words":{"Z":["-0.75","Top of the back bore (where the upward cut stops)."],"R":["-1.1","Start of the cut, below the part."],"Q":["0.05","How far the tool is shifted to pass through the hole.","SHIFT"],"I":["0.05","Shift along X (instead of Q).","SHIFTX"],"J":["0","Shift along Y (instead of Q).","SHIFTY"]}}},"lathe":{"common":{"words":{"S":["600","Spindle speed for this cycle."],"U":["-0.1","Incremental X distance (on the diameter), used instead of X."],"W":["-1.","Incremental Z distance, used instead of Z."]}},"G70":{"sketch":"finish","about":"Runs the finished contour once, from the line numbered P to the line numbered Q, taking off the stock the roughing cycle left.","words":{"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.004","Finish feed, if the contour lines don't give one."]}},"G71":{"sketch":"rough","about":"Roughs away the stock down to the contour between lines P and Q, in passes along Z, and leaves U and W for G70 to finish. On Fanuc it takes two lines: the first (G71 U R) sets the depth of cut and retract, the second names the contour.","labels":{"depth":"U"},"words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.012","Roughing feed."],"R":["0.05","Retract after each pass (first line).","RETRACT"]}},"G72":{"sketch":"face-rough","about":"Like G71, but the passes run along X, facing down from the end of the part. Good for parts wider than they are long.","labels":{"depth":"W"},"words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.012","Roughing feed."],"R":["0.05","Retract after each pass (first line).","RETRACT"]}},"G76":{"sketch":"thread","about":"Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. On Fanuc it takes two lines: the first (G76 P Q R) sets finishing passes, chamfer, tool angle and the smallest cut; the second, shown here, gives the size.","labels":{"height":"P","first":"Q"},"words":{"X":["0.6734","Minor diameter at the end of the thread (the last pass)."],"Z":["-1.","Where the thread ends."],"P":["383","Thread height (radius) in 0.0001 in with no decimal point. P383 is 0.0383.","THDHT"],"Q":["120","Depth of the first pass, same units. Q120 is 0.012.","CUT1"],"F":["0.0625","Lead: the distance between threads. 16 per inch is 0.0625."],"R":["0.","Taper: X difference from the end to the start, as a radius. 0 for a straight thread.","TAPER"]}},"G90":{"sketch":"turn","about":"One turning pass as a box: rapid to X, feed to Z, feed back out, rapid back to the start. Repeat the line with smaller X values for more passes.","words":{"X":["1.2","Diameter for this pass."],"Z":["-1.5","Where the pass ends in Z."],"R":["0.","Taper: X difference from start to end, as a radius.","TAPER"],"F":["0.01","Feed."]}},"G92":{"sketch":"thread-cycle","about":"One threading pass as a box: rapid to X, thread to Z at the lead F, rapid out and back. Write one line per pass, each a little deeper.","words":{"X":["0.72","Diameter for this pass."],"Z":["-1.","Where the thread ends."],"F":["0.0625","Lead: the distance between threads."],"R":["0.","Taper: X difference from start to end, as a radius.","TAPER"]}},"G94":{"sketch":"face","about":"One facing pass as a box: rapid to Z, feed down to X, feed back out, rapid back. Repeat with smaller Z values for more passes.","words":{"X":["0.","Diameter where the face pass stops."],"Z":["-0.05","Face position for this pass."],"R":["0.","Cone: Z difference across the face.","TAPER"],"F":["0.008","Feed."]}}},"haas.lathe":{"G71":{"about":"Roughs away the stock down to the contour between lines P and Q, in passes along Z of depth D, and leaves U and W for G70 to finish. Haas does it in one line.","labels":{"depth":"D"},"words":{"D":["0.1","Depth of each roughing pass, as a radius.","DEPTH"],"I":["0.01","Rough stock left on X, as a radius.","RUFX"],"K":["0.005","Rough stock left on Z.","RUFZ"],"T":["0101","Tool and offset for the cycle."],"R":["1","R1 turns on Type II roughing for pockets in the profile.","TYPE"]}},"G72":{"about":"Like G71, but the passes run along X, facing down from the end of the part. Haas does it in one line.","labels":{"depth":"D"},"words":{"D":["0.05","Depth of each roughing pass.","DEPTH"],"I":["0.01","Rough stock left on X, as a radius.","RUFX"],"K":["0.005","Rough stock left on Z.","RUFZ"],"T":["0101","Tool and offset for the cycle."]}},"G73":{"sketch":"path-rough","about":"Roughs by repeating the contour itself, shifted outward and stepping in each pass. Good for castings and forgings that already have roughly the right shape.","words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"I":["0.2","Stock to remove on X, as a radius.","STOCKX"],"K":["0.1","Stock to remove on Z.","STOCKZ"],"D":["3","Number of passes.","PASSES"],"F":["0.01","Roughing feed."],"T":["0101","Tool and offset for the cycle."]}},"G74":{"sketch":"face-groove","about":"Pecks along Z into the face, for face grooves or drilling on center. With X and I it steps outward and pecks again.","words":{"Z":["-0.25","Depth of the groove or hole."],"X":["1.5","Outer diameter to step out to."],"K":["0.05","Peck depth in Z.","PECK"],"I":["0.1","Step in X between pecking passes, as a radius.","STEPX"],"D":["0.","Clearance when stepping back out.","CLEAR"],"F":["0.004","Feed."]}},"G75":{"sketch":"groove","about":"Pecks in along X for an OD or ID groove. With Z and K it steps along and pecks again to make a wide groove.","words":{"X":["0.9","Diameter at the bottom of the groove."],"Z":["-0.75","Z where the last groove pass is."],"I":["0.05","Peck depth in X, as a radius.","PECK"],"K":["0.1","Step in Z between grooves.","STEPZ"],"D":["0.","Clearance when stepping back out.","CLEAR"],"F":["0.003","Feed."]}},"G76":{"about":"Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. Haas does it in one line.","labels":{"height":"K","first":"D"},"words":{"K":["0.0383","Thread height, as a radius.","THDHT"],"D":["0.012","Depth of the first pass. Later passes get shallower to keep the chip load even.","DEPTH"],"A":["60","Tool tip angle, 0 to 120 degrees, no decimal point. The tool feeds in along the flank at half this angle.","ANGLE"],"I":["0.","Taper, as a radius. 0 for a straight thread.","TAPER"],"P":["1","How each pass cuts: P1 one edge, even amount (default); P2 both edges, even amount; P3 one edge, even depth; P4 both edges, even depth.","METHOD"],"Q":["0","Start angle for multi-start threads, in 0.001 degree with no decimal point (Q180000 is 180 degrees).","START"]}},"G81":{"sketch":"drill","about":"Drills on the part's centerline while the spindle turns the part: rapid to R, feed to Z, rapid back out. Off-center holes need live tooling and C.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.004","Feed per rev."]}},"G82":{"sketch":"dwell","about":"Like G81, but it pauses at the bottom for P, for a spot drill or a flat-bottom hole.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.004","Feed per rev."],"P":["0.5","Dwell at the bottom, in seconds."]}},"G83":{"sketch":"peck","about":"Peck drills on center, coming back out to R after each peck of Q to clear the chips. I, J and K give shrinking pecks instead of Q.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.004","Feed per rev."],"Q":["0.1","Depth of each peck.","PECK"],"I":["0.15","First peck depth (use I, J and K instead of Q).","PECK1"],"J":["0.02","How much shorter each peck gets.","PECKLESS"],"K":["0.05","Shortest peck allowed.","PECKMIN"],"P":["0.","Dwell at the bottom, in seconds."]}},"G84":{"sketch":"tap","about":"Taps on center. Under G99 (feed per rev) F is the thread pitch: a 1/4-20 tap is F0.05.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.05","Feed per rev, equal to the thread pitch."]}},"G241":{"sketch":"drill","labels":{"axis":"X","Z":"X"},"about":"Drills in toward the centerline with a live tool, from diameter R down to diameter X. Z and C place the hole. Needs live tooling.","words":{"X":["0.75","Bottom of the radial hole, as a diameter."],"R":["2.1","Diameter where the feed starts. The tool rapids to R first."],"Z":["-0.5","Z position of the hole along the part."],"C":["0.","Spindle angle of the hole.","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"F":["3.","Feed per minute (live tools usually run under G98)."]}},"G243":{"sketch":"peck","labels":{"axis":"X","Z":"X"},"about":"Peck drills in toward the centerline with a live tool, backing out to R after each peck of Q. Needs live tooling.","words":{"X":["0.75","Bottom of the radial hole, as a diameter."],"R":["2.1","Diameter where the feed starts. The tool rapids to R first."],"Z":["-0.5","Z position of the hole along the part."],"C":["0.","Spindle angle of the hole.","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"F":["3.","Feed per minute (live tools usually run under G98)."],"Q":["0.1","Depth of each peck.","PECK"],"I":["0.15","First peck depth (use I, J and K instead of Q).","PECK1"],"J":["0.02","How much shorter each peck gets.","PECKLESS"],"K":["0.05","Shortest peck allowed.","PECKMIN"],"P":["0.","Dwell at the bottom, in seconds."]}}}}};
+const DICT = {"about":"Starter dictionary for the interleaved English line. Each G-code word gets one English word: subject first, then action (SPINFWD, COOLON). Values carry their unit as a prefix (RPM600, IPM25). 'long' is the default style; 'short' is the compact style. A code whose meaning differs between machine types has 'mill' and 'lathe' entries. Machine definition files can override any entry. machineOverrides keys are a brand ('haas') or a brand and machine type ('okuma.mill'); the more specific key wins.","version":1,"codes":{"G00":{"long":"RAPID","short":"RPD","desc":"Rapid move"},"G01":{"long":"LINEAR","short":"LIN","desc":"Straight move at feed rate"},"G02":{"long":"ARCCW","short":"ACW","desc":"Clockwise arc"},"G03":{"long":"ARCCCW","short":"ACCW","desc":"Counterclockwise arc"},"G04":{"long":"DWELL","short":"DWL","desc":"Pause for a set time"},"G17":{"long":"PLANEXY","short":"PXY","desc":"Arcs in the XY plane"},"G18":{"long":"PLANEXZ","short":"PXZ","desc":"Arcs in the XZ plane"},"G19":{"long":"PLANEYZ","short":"PYZ","desc":"Arcs in the YZ plane"},"G20":{"long":"INCH","short":"IN","desc":"Inch units"},"G21":{"long":"METRIC","short":"MM","desc":"Millimeter units"},"G28":{"long":"HOMEREF","short":"HOME","desc":"Return to machine home"},"G30":{"long":"HOME2","short":"HOM2","desc":"Return to a second reference point"},"G32":{"lathe":{"long":"THDCUT","short":"THC","desc":"Single thread cut"}},"G40":{"long":"COMPOFF","short":"CCOFF","desc":"Cutter compensation off"},"G41":{"long":"COMPLEFT","short":"CCL","desc":"Cutter compensation left"},"G42":{"long":"COMPRGHT","short":"CCR","desc":"Cutter compensation right"},"G43":{"long":"TLENON","short":"TLON","desc":"Tool length offset on"},"G49":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off"},"G50":{"mill":{"long":"SCALEOFF","short":"SCLOFF","desc":"Scaling off"},"lathe":{"long":"MAXRPM","short":"SMAX","desc":"Clamp spindle to a max RPM"}},"G53":{"long":"MACHCRD","short":"MCS","desc":"Move in machine coordinates"},"G54":{"long":"WORK1","short":"W1","desc":"Work offset 1"},"G55":{"long":"WORK2","short":"W2","desc":"Work offset 2"},"G56":{"long":"WORK3","short":"W3","desc":"Work offset 3"},"G57":{"long":"WORK4","short":"W4","desc":"Work offset 4"},"G58":{"long":"WORK5","short":"W5","desc":"Work offset 5"},"G59":{"long":"WORK6","short":"W6","desc":"Work offset 6"},"G65":{"long":"MACRO","short":"MAC","desc":"Call a macro subprogram, passing values to it"},"G70":{"lathe":{"long":"FINCYC","short":"FIN","desc":"Finishing cycle"}},"G71":{"lathe":{"long":"RUFCYC","short":"RUF","desc":"OD/ID roughing cycle"}},"G72":{"lathe":{"long":"FACERUF","short":"FRUF","desc":"Face roughing cycle"}},"G73":{"mill":{"long":"PECKHS","short":"PKHS","desc":"High-speed peck drilling cycle"},"lathe":{"long":"PATHRUF","short":"PRUF","desc":"Irregular-path roughing cycle"}},"G74":{"mill":{"long":"TAPLEFT","short":"LTAP","desc":"Left-hand (reverse) tapping cycle"},"lathe":{"long":"FACEGRV","short":"FGRV","desc":"Face grooving or peck drilling cycle"}},"G75":{"lathe":{"long":"GROOVE","short":"GRV","desc":"OD/ID grooving cycle"}},"G76":{"mill":{"long":"FINBORE","short":"FBOR","desc":"Fine boring cycle"},"lathe":{"long":"THREAD","short":"THD","desc":"Threading cycle"}},"G80":{"long":"CYCOFF","short":"CYOFF","desc":"Cancel canned cycle"},"G81":{"long":"DRILL","short":"DRL","desc":"Drilling cycle"},"G82":{"long":"SPOTDWL","short":"SPDW","desc":"Spot drill cycle with dwell"},"G83":{"long":"PECKDRL","short":"PCK","desc":"Peck drilling cycle"},"G84":{"long":"TAP","short":"TAP","desc":"Tapping cycle"},"G85":{"long":"BORE","short":"BOR","desc":"Boring cycle, feed out"},"G86":{"long":"BORESTOP","short":"BORS","desc":"Boring cycle, spindle stop and rapid out"},"G89":{"long":"BOREDWL","short":"BORD","desc":"Boring cycle with dwell"},"G90":{"mill":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"lathe":{"long":"TURNCYC","short":"TCY","desc":"OD/ID turning cycle"}},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G92":{"lathe":{"long":"THDCYC","short":"TCYC","desc":"Threading cycle"}},"G94":{"mill":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"lathe":{"long":"FACECYC","short":"FCY","desc":"End facing cycle"}},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G96":{"long":"MODESFM","short":"CSS","desc":"Constant surface speed"},"G97":{"long":"MODERPM","short":"RPM","desc":"Constant RPM"},"G98":{"mill":{"long":"RETINIT","short":"RINI","desc":"Cycle returns to initial Z"},"lathe":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"}},"G99":{"mill":{"long":"RETRPLN","short":"RRPL","desc":"Cycle returns to R plane"},"lathe":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"}},"M00":{"long":"STOP","short":"STP","desc":"Program stop"},"M01":{"long":"OPTSTOP","short":"OSTP","desc":"Optional stop"},"M02":{"long":"PRGEND","short":"PEND","desc":"End program"},"M03":{"long":"SPINFWD","short":"SFWD","desc":"Spindle on, forward (CW)"},"M04":{"long":"SPINREV","short":"SREV","desc":"Spindle on, reverse (CCW)"},"M05":{"long":"SPINOFF","short":"SOFF","desc":"Spindle off"},"M06":{"long":"TOOLCHG","short":"TCHG","desc":"Tool change"},"M08":{"long":"COOLON","short":"CON","desc":"Flood coolant on"},"M09":{"long":"COOLOFF","short":"COFF","desc":"Coolant off"},"M30":{"long":"ENDRESET","short":"END","desc":"End program and rewind"},"M98":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram"},"M99":{"long":"SUBRET","short":"RET","desc":"Return from subprogram"}},"address":{"N":{"long":"SEQ","short":"N","desc":"Sequence number"},"O":{"long":"PROG","short":"O","desc":"Program number"},"T":{"long":"TOOL","short":"T","desc":"Tool number"},"H":{"long":"LOFS","short":"H","desc":"Tool length offset number"},"D":{"long":"DOFS","short":"D","desc":"Tool diameter offset number"},"X":{"abs":{"long":"X","short":"X"},"inc":{"long":"INCX","short":"iX"}},"Y":{"abs":{"long":"Y","short":"Y"},"inc":{"long":"INCY","short":"iY"}},"Z":{"abs":{"long":"Z","short":"Z"},"inc":{"long":"INCZ","short":"iZ"}},"U":{"lathe":{"long":"INCX","short":"iX","desc":"Incremental X (lathe)"}},"W":{"lathe":{"long":"INCZ","short":"iZ","desc":"Incremental Z (lathe)"}},"I":{"long":"ARCI","short":"I","desc":"Arc center offset in X"},"J":{"long":"ARCJ","short":"J","desc":"Arc center offset in Y"},"K":{"long":"ARCK","short":"K","desc":"Arc center offset in Z"},"R":{"arc":{"long":"RAD","short":"R"},"cycle":{"long":"RPLN","short":"R"}},"Q":{"long":"PECK","short":"Q","desc":"Peck depth"},"P":{"dwell":{"long":"SEC","short":"P"},"sub":{"long":"PROG","short":"P"}},"F":{"perMin":{"inch":"IPM","mm":"MMPM"},"perRev":{"inch":"IPR","mm":"MMPR"}},"S":{"rpm":{"long":"RPM","short":"RPM"},"css":{"inch":"SFM","mm":"SMM"}}},"machineOverrides":{"haas":{"M88":{"long":"TSCON","short":"TSC","desc":"Through-spindle coolant on"},"M89":{"long":"TSCOFF","short":"TSCO","desc":"Through-spindle coolant off"},"M97":{"long":"LOCSUB","short":"LSUB","desc":"Local subprogram call"},"G77":{"long":"BACKBORE","short":"BKBR","desc":"Back boring cycle"}},"okuma":{"CALL":{"long":"SUBCALL","short":"SUB","desc":"Call subprogram (Okuma)"},"RTS":{"long":"SUBRET","short":"RET","desc":"Return from subprogram (Okuma)"},"GOTO":{"long":"JUMP","short":"JMP","desc":"Jump to a sequence name (Okuma)"},"G30":{"long":"HOMEZP","short":"ZPT","desc":"Return to zero point P (Okuma)"}},"okuma.mill":{"G15":{"long":"WORKSEL","short":"WSEL","desc":"Select work offset by H number (Okuma)"},"G53":{"long":"TLENOFF","short":"TLOFF","desc":"Tool length offset off (Okuma)"},"G54":{"long":"TLENX","short":"TLX","desc":"Tool length offset on X (Okuma, not a work offset)"},"G55":{"long":"TLENY","short":"TLY","desc":"Tool length offset on Y (Okuma, not a work offset)"},"G56":{"long":"TLENON","short":"TLON","desc":"Tool length offset on Z (Okuma)"}},"okuma.lathe":{"G90":{"long":"ABS","short":"ABS","desc":"Absolute positions"},"G91":{"long":"INCR","short":"INC","desc":"Incremental positions"},"G94":{"long":"FEEDMIN","short":"FPM","desc":"Feed per minute"},"G95":{"long":"FEEDREV","short":"FPR","desc":"Feed per revolution"},"G33":{"long":"THREAD","short":"THD","desc":"Single thread cut (Okuma)"},"G71":{"long":"THDLONG","short":"THL","desc":"Compound threading, longitudinal (Okuma)"},"G72":{"long":"THDFACE","short":"THF","desc":"Compound threading, face (Okuma)"},"G80":{"long":"CONTEND","short":"CEND","desc":"End of LAP contour definition (Okuma)"},"G81":{"long":"CONTZ","short":"CTZ","desc":"Start of longitudinal LAP contour (Okuma)"},"G82":{"long":"CONTX","short":"CTX","desc":"Start of face LAP contour (Okuma)"},"G85":{"long":"LAPRUF","short":"LRUF","desc":"LAP roughing, longitudinal (Okuma)"},"G86":{"long":"LAPCOPY","short":"LCPY","desc":"LAP copy roughing (Okuma)"},"G87":{"long":"LAPFIN","short":"LFIN","desc":"LAP finishing (Okuma)"}}}};
+const RULES = {"about":"Grammar and logic checks for the Problems panel. 'rules' holds the message, severity and explanation for each check; the logic for each rule id lives in the core (checks.c, and checkProgram() in the mockup). 'dialects' holds the per-control data the checks read: modal groups, canned cycle word lists, the words other codes need (wordHints, shown as hint text after the code), codes that mean something else on that control, and limits. 'cycleHelp' holds the text, sketch and word descriptions for the canned-cycle help dialog. A dialect can inherit from another and override any key; a machine definition file can override severities or turn rules off. Entries marked verified:false were written from general knowledge and still need checking against that control's programming manual.","version":1,"rules":{"dup-address":{"severity":"error","title":"Word repeated in a line","message":"{letter} appears {count} on this line ({words}). The control uses one of them or alarms.","why":"Each address letter except G and M can appear once per block."},"empty-value":{"severity":"error","title":"Address with no value","message":"{letter} has no number after it."},"modal-group-clash":{"severity":"error","title":"Two codes from one group","message":"{codes} are both {group} codes. Only one can be active, so the control alarms or uses the last one.","why":"Codes in the same modal group cancel each other."},"m-conflict":{"severity":"error","title":"M-codes that contradict each other","message":"{codes} on the same line contradict each other."},"foreign-code":{"severity":"warning","title":"Code means something else here","message":"{text}"},"cycle-missing-word":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {word}: {meaning}."},"cycle-missing-choice":{"severity":"error","title":"Canned cycle missing a word","message":"{cycle} ({name}) needs {choices}."},"cycle-stray-word":{"severity":"info","title":"Word the cycle doesn't use","message":"{cycle} ({name}) doesn't use {word}, so it is ignored or alarms."},"missing-label":{"severity":"error","title":"Jump to a label that isn't there","message":"{word} points to {label}, which isn't in this file."},"no-feed-rate":{"severity":"error","title":"Feed move with no feed rate","message":"This {move} runs at feed rate, but no F has been set yet.","why":"Most controls alarm on the first feed move without F; some reuse a stale value."},"feed-mode-changed":{"severity":"warning","title":"Feed rate from the other feed mode","message":"F{f} was set under {old} but {new} is active now, so it reads as {reading}.","why":"F is not cleared when G94/G95 changes."},"feed-plausibility":{"severity":"info","title":"Feed rate looks like the wrong mode","message":"F{f} {unit} is unusually {size}. Check that {mode} is the mode you meant."},"spindle-off-feed":{"severity":"warning","title":"Cutting with the spindle stopped","message":"This {move} cuts while the spindle is stopped ({spin})."},"no-speed":{"severity":"warning","title":"Spindle started with no speed","message":"{code} starts the spindle but no S has been set."},"arc-no-center":{"severity":"error","title":"Arc with no center or radius","message":"{code} needs R or {centers} to define the arc."},"arc-r-and-ijk":{"severity":"warning","title":"Arc with both R and center","message":"This arc has both R and {centers}. Most controls use R and ignore the others."},"arc-full-circle-r":{"severity":"error","title":"Full circle written with R","message":"The arc starts and ends at the same point, which R can't describe. Use {centers}."},"arc-radius-mismatch":{"severity":"warning","title":"Arc end isn't on the circle","message":"Start is {r1} from the center but the end is {r2} from it (off by {diff})."},"comp-start-on-arc":{"severity":"error","title":"Cutter comp started on an arc","message":"{code} has to start on a G00 or G01 move, not an arc."},"comp-no-d":{"severity":"warning","title":"Cutter comp with no D offset","message":"{code} turns on cutter comp but no D offset has been given."},"tlo-missing":{"severity":"warning","title":"Z move with no tool length offset","message":"First Z move after the tool change on {line}, but {tlo} hasn't been called for this tool."},"tlo-h-mismatch":{"severity":"info","title":"Length offset doesn't match tool","message":"{h} is used with {t}. Usually the H number matches the tool number."},"cycle-left-on":{"severity":"warning","title":"Canned cycle still active","message":"{cycle} is still active at the {event}. Add G80 first."},"comp-left-on":{"severity":"warning","title":"Cutter comp still active","message":"{comp} is still active at the {event}. Add G40 first."},"g28-absolute":{"severity":"warning","title":"G28 in absolute mode","message":"G28 under G90 moves through work position {axes} on the way home. Use G28 G91 with {zeros} instead."},"css-no-clamp":{"severity":"warning","title":"Surface speed with no RPM limit","message":"G96 is on but no G50 S max RPM has been set. Small diameters can overspeed the spindle."},"dwell-no-time":{"severity":"error","title":"Dwell with no time","message":"G04 needs {words} for the dwell time."},"rapid-below-zero":{"severity":"info","title":"Rapid below Z0","message":"Rapid to Z{z}, below Z0. If Z0 is the top of the part, this rapids into it."},"no-program-end":{"severity":"warning","title":"No program end","message":"The file has no {ends}."},"missing-decimal":{"severity":"warning","title":"Number with no decimal point","message":"{word} has no decimal point, so the control reads it as {letter}{value} {unit}. Write {letter}{intended} if you mean {amount} {unit}.","why":"Fanuc-style controls read a whole number on a distance word as the smallest increment (0.0001 in or 0.001 mm)."},"unknown-word":{"severity":"info","title":"Word not in the dictionary","message":"{word} isn't in the dictionary or this machine's file."}},"dialects":{"fanuc":{"label":"Fanuc-style (0i, 30i and compatibles)","verified":true,"mill":{"modalGroups":{"motion":["G00","G01","G02","G03"],"plane":["G17","G18","G19"],"distance":["G90","G91"],"feed mode":["G93","G94","G95"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"tool length":["G43","G44","G49"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G88","G89"],"cycle return":["G98","G99"],"work offset":["G54","G55","G56","G57","G58","G59"],"speed mode":["G96","G97"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M07","M09"],["M08","M09"]],"programEnds":["M02","M30"],"toolLength":{"on":["G43","G44"],"word":"H","label":"G43 H"},"toolChange":"M06","dwellWords":["P","X"],"subCalls":{"M98":{"word":"P","target":"program"},"G65":{"word":"P","target":"program"}},"subReturn":["M99"],"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G76":{"name":"Fine bore","requires":["Z","R","Q"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","P","K"],"feed":true,"spindle":true,"speed":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F","K"],"feed":true,"spindle":true},"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","K"],"feed":true,"spindle":true}},"wordMeaning":{"Z":"the hole bottom","R":"the retract plane","Q":"the peck depth or shift","P":"the dwell time","F":"the feed rate"},"wordHints":{"G02":{"arc":true},"G03":{"arc":true},"G41":{"requires":["D"]},"G42":{"requires":["D"]},"G43":{"requires":["H"]},"G44":{"requires":["H"]}},"foreign":{"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."},"M88":{"severity":"warning","text":"M88 is Haas through-spindle coolant. Check what your builder uses."},"M89":{"severity":"warning","text":"M89 is Haas through-spindle coolant off. Check what your builder uses."}}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G32","G90","G92","G94"],"plane":["G17","G18","G19"],"feed mode":["G98","G99"],"units":["G20","G21"],"cutter comp":["G40","G41","G42"],"speed mode":["G96","G97"],"work offset":["G54","G55","G56","G57","G58","G59"]},"numbers":{"noDecimal":"leastIncrement","increment":{"inch":0.0001,"mm":0.001},"words":["X","Y","Z","U","W","I","J","K","R","Q"]},"mConflicts":[["M03","M04","M05"],["M08","M09"]],"programEnds":["M02","M30"],"speedClamp":{"code":"G50","word":"S"},"dwellWords":["P","X","U"],"subCalls":{"M98":{"word":"P","target":"program"},"G65":{"word":"P","target":"program"}},"subReturn":["M99"],"diameterX":true,"arcTolerance":{"inch":0.001,"mm":0.025},"feedPlausible":{"perRev":{"inch":0.05,"mm":1.5},"perMin":{"inch":0.5,"mm":10}},"cycles":{"G70":{"name":"Finish contour","requires":["P","Q"],"optional":["F","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G71":{"name":"OD/ID roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Two-block format on most Fanuc controls; this table checks the second block."},"G72":{"name":"Face roughing","requires":["P","Q","U","W","F"],"optional":["R","S"],"labels":["P","Q"],"modal":false,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","P","Q","F"],"optional":["R","U","W"],"modal":false,"spindle":true,"leadF":true},"G90":{"name":"OD/ID turning cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true},"G92":{"name":"Thread cycle","requires":["X","Z","F"],"optional":["U","W","R"],"spindle":true,"leadF":true},"G94":{"name":"Facing cycle","requires":["X","Z"],"optional":["U","W","R","F"],"feed":true,"spindle":true}},"wordMeaning":{"P":"the first line of the contour","Q":"the last line of the contour","U":"the X finish allowance","W":"the Z finish allowance","D":"the depth of each pass","K":"the thread height","F":"the feed rate or thread lead","X":"the end diameter","Z":"the end position"},"wordHints":{"G02":{"arc":true},"G03":{"arc":true},"G32":{"requires":["Z","F"]}},"foreign":{"G91":{"severity":"warning","text":"Fanuc-style lathes use U and W for incremental moves; G91 needs the optional G-code system B or C."},"M97":{"severity":"error","text":"M97 (local subprogram) is a Haas code. On Fanuc, call a separate O program with M98 P."}}}},"haas":{"label":"Haas NGC","inherits":"fanuc","verified":true,"mill":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G73":{"name":"High-speed peck","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G74":{"name":"Left-hand tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G76":{"name":"Fine bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","P","L"],"feed":true,"spindle":true},"G77":{"name":"Back bore","requires":["Z","R"],"optional":["X","Y","F","I","J","Q","L"],"feed":true,"spindle":true},"G81":{"name":"Drill","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G82":{"name":"Spot drill with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G83":{"name":"Peck drill","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","F","L","P"],"feed":true,"spindle":true},"G84":{"name":"Tap","requires":["Z","R"],"optional":["X","Y","F","J","L"],"feed":true,"speed":true,"startsSpindle":true},"G85":{"name":"Bore, feed out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G86":{"name":"Bore, rapid out","requires":["Z","R"],"optional":["X","Y","F","L"],"feed":true,"spindle":true},"G87":null,"G89":{"name":"Bore with dwell","requires":["Z","R","P"],"optional":["X","Y","F","L"],"feed":true,"spindle":true}},"foreign":{"M97":null,"M88":null,"M89":null}},"lathe":{"subCalls":{"M97":{"word":"P","target":"label"},"M98":{"word":"P","target":"program"}},"cycles":{"G71":{"name":"OD/ID roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T","R"],"labels":["P","Q"],"modal":false,"spindle":true,"note":"Haas uses a one-block G71."},"G72":{"name":"Face roughing","requires":["P","Q","D"],"optional":["U","W","F","I","K","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G73":{"name":"Irregular-path roughing","requires":["P","Q","D","I","K"],"optional":["U","W","F","S","T"],"labels":["P","Q"],"modal":false,"spindle":true},"G74":{"name":"Face groove / peck drill","requires":["Z"],"optional":["X","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G75":{"name":"OD/ID groove","requires":["X"],"optional":["Z","U","W","I","K","D","F"],"modal":false,"feed":true,"spindle":true},"G76":{"name":"Threading","requires":["X","Z","K","D","F"],"optional":["A","I","P","Q","U","W"],"modal":false,"spindle":true,"leadF":true,"note":"Haas uses a one-block G76: K thread height, D first pass depth, F lead."},"G81":{"name":"Drill on center","requires":["Z","R"],"optional":["X","Y","C","W","F"],"feed":true,"spindle":true},"G82":{"name":"Spot drill on center","requires":["Z","R","P"],"optional":["X","Y","C","W","F"],"feed":true,"spindle":true},"G83":{"name":"Peck drill on center","requires":["Z","R"],"choices":[["Q"],["I","J","K"]],"optional":["X","Y","C","W","F","P"],"feed":true,"spindle":true},"G84":{"name":"Tap on center","requires":["Z","R","F"],"optional":["X","Y","C","W"],"feed":true,"spindle":true},"G241":{"name":"Radial drill","requires":["X","R"],"optional":["Z","C","Y","F"],"feed":true,"spindle":true,"needs":["liveTooling"]},"G243":{"name":"Radial peck drill","requires":["X","R"],"choices":[["Q"],["I","J","K"]],"optional":["Z","C","Y","F","P"],"feed":true,"spindle":true,"needs":["liveTooling"]}},"foreign":{"M97":null}}},"okuma":{"label":"Okuma OSP (P300 and later)","inherits":"fanuc","verified":false,"keywords":["CALL","RTS","GOTO","IF","NAT","MODIN","MODOUT"],"mill":{"modalGroups":{"work offset":["G15"],"tool length":["G53","G54","G55","G56","G57","G58","G59"],"canned cycle":["G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G89"]},"toolLength":{"on":["G56"],"word":"H","label":"G56 H"},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"cycles":{"G87":{"name":"Back bore","requires":["Z","R","Q"],"optional":["X","Y","F"],"feed":true,"spindle":true}},"wordHints":{"G43":null,"G44":null,"G56":{"requires":["H"]},"G15":{"requires":["H"]}},"foreign":{"G43":{"severity":"warning","text":"Okuma calls the tool length offset with G56 H, not G43."},"G54":{"severity":"error","text":"On Okuma, G54 is the X-axis tool length offset, not work offset 1. Select work offsets with G15 H1."},"G55":{"severity":"error","text":"On Okuma, G55 is the Y-axis tool length offset, not work offset 2. Select work offsets with G15 H2."},"G57":{"severity":"error","text":"On Okuma, G57 is a 4th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G58":{"severity":"error","text":"On Okuma, G58 is a 5th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G59":{"severity":"error","text":"On Okuma, G59 is a 6th-axis tool length offset, not a work offset. Select work offsets with G15 H."},"G28":{"severity":"warning","text":"Okuma returns to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."},"M99":{"severity":"warning","text":"Okuma subprograms end with RTS. M99 is for repeating a main program."},"M88":null,"M89":null}},"lathe":{"modalGroups":{"motion":["G00","G01","G02","G03","G33"],"feed mode":["G94","G95"],"distance":["G90","G91"]},"subCalls":{"CALL":{"word":"O","target":"program"}},"subReturn":["RTS"],"dwellWords":["F"],"cycles":{"G70":null,"G71":null,"G72":null,"G76":null,"G90":null,"G92":null,"G94":null},"wordHints":{"G32":null,"G33":{"requires":["Z","F"]}},"referenceOnly":{"G85":"LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)","G86":"LAP copy roughing","G87":"LAP finishing","G81":"Start of longitudinal contour definition","G82":"Start of transverse contour definition","G80":"End of contour definition","G71":"Compound threading, longitudinal","G72":"Compound threading, transverse","G33":"Single thread cut"},"foreign":{"G98":{"severity":"warning","text":"Okuma lathes set feed per minute with G94, not G98."},"G99":{"severity":"warning","text":"Okuma lathes set feed per revolution with G95, not G99."},"G91":null,"G28":{"severity":"warning","text":"Okuma lathes return to a zero point with G30 P_, not G28. Check your machine's manual."},"M97":{"severity":"error","text":"Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS."},"M98":{"severity":"warning","text":"Okuma calls subprograms with CALL O_ and returns with RTS."}}}}},"cycleHelp":{"about":"Text for the canned-cycle help dialog. Each word entry is [example value, what it does] or [example value, what it does, English word]; the English word replaces the usual one while that cycle is active (Haas G76 A60 reads ANGLE60, not ?A60). 'common' words apply to every cycle of that machine type. Keys like 'haas.lathe' override the Fanuc-style base for that control. 'sketch' picks the drawing; 'labels' renames the letters on it. A cycle with 'needs' in the dialect table (such as liveTooling) is offered only on machine profiles that have that option.","mill":{"common":{"words":{"X":["1.","Hole position in X. After this line, every line with just X or Y drills another hole, until G80."],"Y":["0.5","Hole position in Y."],"Z":["-0.5","Bottom of the hole."],"R":["0.1","Retract plane. The tool rapids down to R, then feeds from there. G99 comes back up to R between holes, G98 to where it started."],"F":["6.","Feed rate for the cut."],"K":["1","How many times to run the hole. Under G91, each repeat steps over by X and Y.","REPT"],"L":["1","How many times to run the hole. L0 sets up the cycle without drilling here.","REPT"],"P":["0.5","Dwell at the bottom, in seconds on Haas (P0.5). Fanuc takes milliseconds with no decimal point (P500)."]}},"G73":{"sketch":"peck-hs","about":"Drills to Z in pecks of Q. After each peck the tool backs off a little to break the chip, without leaving the hole. Faster than G83, but it doesn't clear chips out of deep holes.","words":{"Q":["0.1","Depth of each peck."]}},"G74":{"sketch":"tap-lh","about":"Left-hand tapping. The spindle runs in reverse down to Z, then reverses at the bottom and feeds back out to R.","words":{"F":["31.25","Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."]}},"G76":{"sketch":"finebore","about":"Bores to Z, stops the spindle in a set orientation, moves the tool away from the wall by Q, then rapids out so the tip doesn't drag a line up the bore.","words":{"Q":["0.01","How far the tool moves off the wall before it pulls out.","SHIFT"]}},"G81":{"sketch":"drill","about":"The plain drilling cycle: rapid to R, feed to Z, rapid back out."},"G82":{"sketch":"dwell","about":"Like G81, but it pauses at the bottom for P so a spot drill or counterbore leaves a clean, flat bottom."},"G83":{"sketch":"peck","about":"Drills in pecks of Q and rapids all the way back up to R after each peck to clear the chips. Use it for deep holes.","words":{"Q":["0.15","Depth of each peck."]}},"G84":{"sketch":"tap","about":"Right-hand tapping. Feeds to Z, reverses the spindle at the bottom and feeds back out to R.","words":{"F":["31.25","Feed. Must equal the thread pitch times the RPM (1/16 pitch at 500 rpm is 31.25 in/min), or the pitch itself under G95."]}},"G85":{"sketch":"bore-feed","about":"Feeds to Z and feeds back out to R. For reaming and boring, where a rapid out would mark the wall."},"G86":{"sketch":"bore-stop","about":"Feeds to Z, stops the spindle and rapids out. The tip drags up the wall, so it's for rough boring."},"G87":{"sketch":"backbore","about":"Back boring. The tool goes down through the hole shifted off center, moves back to center by Q, starts the spindle and cuts upward to Z.","labels":{"shift":"Q"},"words":{"Z":["-0.75","Top of the back bore (where the upward cut stops)."],"R":["-1.1","Start of the cut, below the part."],"Q":["0.05","How far the tool is shifted to pass through the hole.","SHIFT"]}},"G89":{"sketch":"bore-dwell","about":"Like G85 with a dwell: feeds to Z, pauses for P, feeds back out."}},"haas.mill":{"common":{"words":{"I":["0.2","First peck depth (use I, J and K instead of Q).","PECK1"],"J":["0.02","How much shorter each peck gets.","PECKLESS"],"K":["0.05","Shortest peck allowed.","PECKMIN"]}},"G74":{"words":{"J":["2","Retract speed: J2 comes out twice as fast as it went in.","RETSPD"]}},"G84":{"words":{"J":["2","Retract speed: J2 comes out twice as fast as it went in.","RETSPD"]}},"G76":{"words":{"I":["0.01","Shift along X before pulling out (instead of Q).","SHIFTX"],"J":["0","Shift along Y before pulling out (instead of Q).","SHIFTY"],"Q":["0.01","How far the tool moves off the wall before it pulls out.","SHIFT"]}},"G77":{"sketch":"backbore","about":"Back boring. The tool goes down through the hole shifted off center, moves back to center, starts the spindle and cuts upward to Z.","labels":{"shift":"Q"},"words":{"Z":["-0.75","Top of the back bore (where the upward cut stops)."],"R":["-1.1","Start of the cut, below the part."],"Q":["0.05","How far the tool is shifted to pass through the hole.","SHIFT"],"I":["0.05","Shift along X (instead of Q).","SHIFTX"],"J":["0","Shift along Y (instead of Q).","SHIFTY"]}}},"lathe":{"common":{"words":{"S":["600","Spindle speed for this cycle."],"U":["-0.1","Incremental X distance (on the diameter), used instead of X."],"W":["-1.","Incremental Z distance, used instead of Z."]}},"G70":{"sketch":"finish","about":"Runs the finished contour once, from the line numbered P to the line numbered Q, taking off the stock the roughing cycle left.","words":{"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.004","Finish feed, if the contour lines don't give one."]}},"G71":{"sketch":"rough","about":"Roughs away the stock down to the contour between lines P and Q, in passes along Z, and leaves U and W for G70 to finish. On Fanuc it takes two lines: the first (G71 U R) sets the depth of cut and retract, the second names the contour.","labels":{"depth":"U"},"words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.012","Roughing feed."],"R":["0.05","Retract after each pass (first line).","RETRACT"]}},"G72":{"sketch":"face-rough","about":"Like G71, but the passes run along X, facing down from the end of the part. Good for parts wider than they are long.","labels":{"depth":"W"},"words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"F":["0.012","Roughing feed."],"R":["0.05","Retract after each pass (first line).","RETRACT"]}},"G76":{"sketch":"thread","about":"Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. On Fanuc it takes two lines: the first (G76 P Q R) sets finishing passes, chamfer, tool angle and the smallest cut; the second, shown here, gives the size.","labels":{"height":"P","first":"Q"},"words":{"X":["0.6734","Minor diameter at the end of the thread (the last pass)."],"Z":["-1.","Where the thread ends."],"P":["383","Thread height (radius) in 0.0001 in with no decimal point. P383 is 0.0383.","THDHT"],"Q":["120","Depth of the first pass, same units. Q120 is 0.012.","CUT1"],"F":["0.0625","Lead: the distance between threads. 16 per inch is 0.0625."],"R":["0.","Taper: X difference from the end to the start, as a radius. 0 for a straight thread.","TAPER"]}},"G90":{"sketch":"turn","about":"One turning pass as a box: rapid to X, feed to Z, feed back out, rapid back to the start. Repeat the line with smaller X values for more passes.","words":{"X":["1.2","Diameter for this pass."],"Z":["-1.5","Where the pass ends in Z."],"R":["0.","Taper: X difference from start to end, as a radius.","TAPER"],"F":["0.01","Feed."]}},"G92":{"sketch":"thread-cycle","about":"One threading pass as a box: rapid to X, thread to Z at the lead F, rapid out and back. Write one line per pass, each a little deeper.","words":{"X":["0.72","Diameter for this pass."],"Z":["-1.","Where the thread ends."],"F":["0.0625","Lead: the distance between threads."],"R":["0.","Taper: X difference from start to end, as a radius.","TAPER"]}},"G94":{"sketch":"face","about":"One facing pass as a box: rapid to Z, feed down to X, feed back out, rapid back. Repeat with smaller Z values for more passes.","words":{"X":["0.","Diameter where the face pass stops."],"Z":["-0.05","Face position for this pass."],"R":["0.","Cone: Z difference across the face.","TAPER"],"F":["0.008","Feed."]}}},"haas.lathe":{"G71":{"about":"Roughs away the stock down to the contour between lines P and Q, in passes along Z of depth D, and leaves U and W for G70 to finish. Haas does it in one line.","labels":{"depth":"D"},"words":{"D":["0.1","Depth of each roughing pass, as a radius.","DEPTH"],"I":["0.01","Rough stock left on X, as a radius.","RUFX"],"K":["0.005","Rough stock left on Z.","RUFZ"],"T":["0101","Tool and offset for the cycle."],"R":["1","R1 turns on Type II roughing for pockets in the profile.","TYPE"]}},"G72":{"about":"Like G71, but the passes run along X, facing down from the end of the part. Haas does it in one line.","labels":{"depth":"D"},"words":{"D":["0.05","Depth of each roughing pass.","DEPTH"],"I":["0.01","Rough stock left on X, as a radius.","RUFX"],"K":["0.005","Rough stock left on Z.","RUFZ"],"T":["0101","Tool and offset for the cycle."]}},"G73":{"sketch":"path-rough","about":"Roughs by repeating the contour itself, shifted outward and stepping in each pass. Good for castings and forgings that already have roughly the right shape.","words":{"U":["0.02","Finish stock left on X for G70, as a diameter.","ALLOWX"],"W":["0.005","Finish stock left on Z for G70.","ALLOWZ"],"P":["100","N number of the first line of the contour."],"Q":["200","N number of the last line of the contour."],"I":["0.2","Stock to remove on X, as a radius.","STOCKX"],"K":["0.1","Stock to remove on Z.","STOCKZ"],"D":["3","Number of passes.","PASSES"],"F":["0.01","Roughing feed."],"T":["0101","Tool and offset for the cycle."]}},"G74":{"sketch":"face-groove","about":"Pecks along Z into the face, for face grooves or drilling on center. With X and I it steps outward and pecks again.","words":{"Z":["-0.25","Depth of the groove or hole."],"X":["1.5","Outer diameter to step out to."],"K":["0.05","Peck depth in Z.","PECK"],"I":["0.1","Step in X between pecking passes, as a radius.","STEPX"],"D":["0.","Clearance when stepping back out.","CLEAR"],"F":["0.004","Feed."]}},"G75":{"sketch":"groove","about":"Pecks in along X for an OD or ID groove. With Z and K it steps along and pecks again to make a wide groove.","words":{"X":["0.9","Diameter at the bottom of the groove."],"Z":["-0.75","Z where the last groove pass is."],"I":["0.05","Peck depth in X, as a radius.","PECK"],"K":["0.1","Step in Z between grooves.","STEPZ"],"D":["0.","Clearance when stepping back out.","CLEAR"],"F":["0.003","Feed."]}},"G76":{"about":"Cuts a whole thread in many passes. Each pass feeds in along the flank and takes a little less than the last, so the chip load stays even. Haas does it in one line.","labels":{"height":"K","first":"D"},"words":{"K":["0.0383","Thread height, as a radius.","THDHT"],"D":["0.012","Depth of the first pass. Later passes get shallower to keep the chip load even.","DEPTH"],"A":["60","Tool tip angle, 0 to 120 degrees, no decimal point. The tool feeds in along the flank at half this angle.","ANGLE"],"I":["0.","Taper, as a radius. 0 for a straight thread.","TAPER"],"P":["1","How each pass cuts: P1 one edge, even amount (default); P2 both edges, even amount; P3 one edge, even depth; P4 both edges, even depth.","METHOD"],"Q":["0","Start angle for multi-start threads, in 0.001 degree with no decimal point (Q180000 is 180 degrees).","START"]}},"G81":{"sketch":"drill","about":"Drills on the part's centerline while the spindle turns the part: rapid to R, feed to Z, rapid back out. Off-center holes need live tooling and C.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.004","Feed per rev."]}},"G82":{"sketch":"dwell","about":"Like G81, but it pauses at the bottom for P, for a spot drill or a flat-bottom hole.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.004","Feed per rev."],"P":["0.5","Dwell at the bottom, in seconds."]}},"G83":{"sketch":"peck","about":"Peck drills on center, coming back out to R after each peck of Q to clear the chips. I, J and K give shrinking pecks instead of Q.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.004","Feed per rev."],"Q":["0.1","Depth of each peck.","PECK"],"I":["0.15","First peck depth (use I, J and K instead of Q).","PECK1"],"J":["0.02","How much shorter each peck gets.","PECKLESS"],"K":["0.05","Shortest peck allowed.","PECKMIN"],"P":["0.","Dwell at the bottom, in seconds."]}},"G84":{"sketch":"tap","about":"Taps on center. Under G99 (feed per rev) F is the thread pitch: a 1/4-20 tap is F0.05.","words":{"Z":["-0.5","Bottom of the hole."],"R":["0.1","Z position where the feed starts. The tool rapids to R first."],"X":["0.","Hole position as a diameter. X0. is on center; off center needs live tooling and C."],"C":["90.","Spindle angle for an off-center hole (live tooling with a C axis).","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"W":["-0.6","Incremental Z distance to the bottom, used instead of Z."],"F":["0.05","Feed per rev, equal to the thread pitch."]}},"G241":{"sketch":"drill","labels":{"axis":"X","Z":"X"},"about":"Drills in toward the centerline with a live tool, from diameter R down to diameter X. Z and C place the hole. Needs live tooling.","words":{"X":["0.75","Bottom of the radial hole, as a diameter."],"R":["2.1","Diameter where the feed starts. The tool rapids to R first."],"Z":["-0.5","Z position of the hole along the part."],"C":["0.","Spindle angle of the hole.","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"F":["3.","Feed per minute (live tools usually run under G98)."]}},"G243":{"sketch":"peck","labels":{"axis":"X","Z":"X"},"about":"Peck drills in toward the centerline with a live tool, backing out to R after each peck of Q. Needs live tooling.","words":{"X":["0.75","Bottom of the radial hole, as a diameter."],"R":["2.1","Diameter where the feed starts. The tool rapids to R first."],"Z":["-0.5","Z position of the hole along the part."],"C":["0.","Spindle angle of the hole.","ANGLEC"],"Y":["0.","Y position, on lathes with a Y axis."],"F":["3.","Feed per minute (live tools usually run under G98)."],"Q":["0.1","Depth of each peck.","PECK"],"I":["0.15","First peck depth (use I, J and K instead of Q).","PECK1"],"J":["0.02","How much shorter each peck gets.","PECKLESS"],"K":["0.05","Shortest peck allowed.","PECKMIN"],"P":["0.","Dwell at the bottom, in seconds."]}}}}};
 
 const MACHINES = {
-  haas_vf2:     { name:"Haas VF-2",          control:"Haas NGC",      type:"mill",  brand:"haas",  travel:[30, 16, 20], rpm:8100, feed:650, tools:20, eob:false },
-  fanuc_0imf:   { name:"Fanuc 0i-MF mill",    control:"Fanuc 0i-MF",   type:"mill",  brand:"fanuc", travel:[24, 16, 18], rpm:10000, feed:800, tools:24, eob:false },
-  fanuc_0mc:    { name:"Fanuc 0-MC mill",     control:"Fanuc 0-MC (1990)", type:"mill", brand:"fanuc", travel:[20, 14, 16], rpm:6000, feed:400, tools:16, eob:true },
+  haas_vf2:     { name:"Haas VF-2",          control:"Haas NGC",      type:"mill",  brand:"haas",  travel:[30, 16, 20], rpm:8100, feed:650, tools:20, eob:false, macro:true },
+  fanuc_0imf:   { name:"Fanuc 0i-MF mill",    control:"Fanuc 0i-MF",   type:"mill",  brand:"fanuc", travel:[24, 16, 18], rpm:10000, feed:800, tools:24, eob:false, macro:true },
+  fanuc_0mc:    { name:"Fanuc 0-MC mill",     control:"Fanuc 0-MC (1990)", type:"mill", brand:"fanuc", travel:[20, 14, 16], rpm:6000, feed:400, tools:16, eob:true, macro:false },
   okuma_m560:   { name:"Okuma M560-V",        control:"Okuma OSP",     type:"mill",  brand:"okuma", travel:[41.3, 22, 18.1], rpm:15000, feed:1260, tools:32, eob:false },
-  haas_st10:    { name:"Haas ST-10",          control:"Haas NGC",      type:"lathe", brand:"haas",  travel:[7.5, 0, 14], rpm:6000, feed:400, tools:12, eob:false, liveTooling:false, yAxis:false },
+  haas_st10:    { name:"Haas ST-10",          control:"Haas NGC",      type:"lathe", brand:"haas",  travel:[7.5, 0, 14], rpm:6000, feed:400, tools:12, eob:false, liveTooling:false, yAxis:false, macro:true },
   okuma_lb3000: { name:"Okuma LB3000",        control:"Okuma OSP",     type:"lathe", brand:"okuma", travel:[10.2, 0, 25.6], rpm:5000, feed:780, tools:12, eob:false, liveTooling:false, yAxis:false }
 };
 let recentMachines = ["haas_vf2", "haas_st10", "okuma_m560"];
@@ -803,7 +934,22 @@ const FILES = {
     "N170 X1.5;",
     "N180 G80 G00 Z1. M09;",
     "N190 G91 G28 Z0.;",
-    "N200 M30;"]}
+    "N200 M30;"]},
+  "SLOTS_PLATE.nc": { machine:"haas_vf2", expand:"N60", src:[
+    "O1003 (SLOTS PLATE)",
+    "(SLOTS AND COUNTERBORE FROM THE SUBPROGRAM LIBRARY)",
+    "N10 G20 G90 G17 G40 G49 G80",
+    "N20 T6 M06 (1/4 END MILL)",
+    "N30 G54 G00 X0.5 Y0.5",
+    "N40 S6000 M03",
+    "N50 G43 H06 Z1. M08",
+    "N60 G65 P9101 X0.5 Y0.5 I2.5 J0.5 Z-0.15 Q0.05 R0.1 F15.",
+    "N70 G65 P9101 X0.5 Y1.5 I2.5 J1.5 Z-0.15 Q0.05 R0.1 F15.",
+    "N80 G65 P9110 X3.5 Y1. D0.75 C0.25 Z-0.2 Q0.03 R0.1 F12.",
+    "N90 G00 Z1. M09",
+    "N100 M05",
+    "N110 G28 G91 Z0.",
+    "N120 M30"]}
 };
 
 let fileName = "POCKET_2X1.nc", machineId = "haas_vf2";
@@ -874,7 +1020,7 @@ function newState(){
 // G-codes for feed per minute and per rev on this control (G94/G95, or G98/G99 on Fanuc-style lathes)
 function feedCodes(){ const g = DIALECT.modalGroups?.["feed mode"] || []; return { perMin: g.includes("G94") ? "G94" : "G98", perRev: g.includes("G95") ? "G95" : "G99" }; }
 function applyModes(toks, st){
-  st.dwell = false; st.sub = false; st.local = false; st.chg = [];
+  st.dwell = false; st.sub = false; st.local = false; st.lib = null; st.chg = [];
   if (st.oneShot){ st.cycle = false; st.cycleCode = null; st.oneShot = false; }
   const set = (f, v) => { st[f] = v; st.chg.push(f); };
   const D = DIALECT, groups = D.modalGroups || {}, fc = feedCodes();
@@ -901,6 +1047,7 @@ function applyModes(toks, st){
     if (k==="G04") st.dwell = true;
     if (k==="M98" || k==="M97" || k==="G65") st.sub = true;
     if (k==="M97") st.local = true;
+    if (k==="G65") st.lib = window.libFor?.(toks) || null;   // a library subprogram: its arguments read by name
   }
 }
 // Numbers in the English line always show their decimal point, so X1. reads X1.0.
@@ -938,6 +1085,8 @@ function word(t, st, ctx){
     if (!e) return { g:t, e:"?"+k, unk:true, d:`${k} isn't in the dictionary or this machine's file.` };
     return { g:t, e:e[style], d:e.desc, code:k, long:e.long };
   }
+  // On a G65 line that calls a library subprogram, each argument reads as the name the library gives it.
+  if (st.lib && L!=="N" && L!=="O"){ const lw = window.libWord?.(st.lib, L, raw, f, st); if (lw) return lw; }
   // Inside a canned cycle, a word can mean something special (Haas G76 A is the tool angle). cycleHelp says so.
   if (st.cycleCode && !"FSXYZ".includes(L)){ const cw = cycleWord(st.cycleCode, L); if (cw?.en) return { g:t, e:cw.en+v, ...(f.implied ? { imp:true } : {}), d:`${cw.what} (${st.cycleCode})` }; }
   const a = DICT.address[L];
@@ -962,7 +1111,7 @@ function word(t, st, ctx){
 function translateAll(){
   view = []; lineState = [];
   const seen = new Array(doc.length).fill(false);
-  const visit = (li, st) => { applyModes(doc[li], st); if (!seen[li]){ seen[li] = true; lineState[li] = {...st}; view[li] = doc[li].map(t => word(t, st)); } };
+  const visit = (li, st) => { applyModes(doc[li], st); if (!seen[li]){ seen[li] = true; lineState[li] = {...st, lib:null}; view[li] = doc[li].map(t => word(t, st)); } };
   const st = newState(), L = labels(), stack = []; let i = 0, guard = 0;
   while (i < doc.length && guard++ < 5000){
     const toks = doc[i]; visit(i, st);
@@ -977,7 +1126,7 @@ function translateAll(){
 }
 function lineKind(li){
   const st = lineState[li], toks = doc[li] || [];
-  if (!st || !toks.some(t => /^[XYZUW][-+]?[\d.]/.test(t))) return null;
+  if (!st || !toks.some(t => /^[XYZUW][-+]?[\d.]/.test(t)) || toks.some(t => isCode(t,"G65"))) return null;
   if (toks.some(t => isCode(t,"G28") || isCode(t,"G53"))) return "rapid";
   if (st.cycleCode) return "cyc";
   return st.motion==="G00" ? "rapid" : st.motion==="G01" ? "feed" : (st.motion==="G02"||st.motion==="G03") ? "arc" : null;
@@ -1394,7 +1543,7 @@ function checkProgram(){
       if (ax.length) emit(li, "g28-absolute", { axes:ax.map(w => w.t).join(" "), zeros:ax.map(w => w.L + "0.").join(" ") });
     }
 
-    const NONMOVE = ["G04","G10","G28","G30","G50","G52","G53","G92"].filter(c => !D.cycles?.[c] && !(groups["tool length"] || []).includes(c));
+    const NONMOVE = ["G04","G10","G28","G30","G50","G52","G53","G65","G92"].filter(c => !D.cycles?.[c] && !(groups["tool length"] || []).includes(c));
     const nonMove = codes.some(c => NONMOVE.includes(c));
     const axisWords = words.filter(w => (lathe ? "XZUW" : "XYZ").includes(w.L));
     const centerL = { G17:"IJ", G18:"IK", G19:"JK" }[st.plane];
@@ -1447,7 +1596,8 @@ function checkProgram(){
     }
     if (compNew && ["G02","G03"].includes(st.motion) && kind==="feed") emit(li, "comp-start-on-arc", { code:compNew });
     if (!lathe && kind==="rapid" && get("Z") && st.dist==="abs" && p1.Z!=null && p1.Z < 0 && st.tloOn) emit(li, "rapid-below-zero", { z:fmtNum("Z", get("Z").v, st).v });
-    if (nonMove){ if (has("G28") || has("G30") || has("G53") || has("G92") || has("G50")) axisWords.forEach(w => { st.pos[w.L==="U" ? "X" : w.L==="W" ? "Z" : w.L] = null; }); }
+    if (has("G65")) st.pos = { X:null, Y:null, Z:null };
+    else if (nonMove){ if (has("G28") || has("G30") || has("G53") || has("G92") || has("G50")) axisWords.forEach(w => { st.pos[w.L==="U" ? "X" : w.L==="W" ? "Z" : w.L] = null; }); }
     else if (kind==="cycle"){ if (!lathe){ st.pos.X = p1.X; st.pos.Y = p1.Y; } }
     else st.pos = p1;
   }
@@ -1489,9 +1639,11 @@ function render(){
     rows.push({ li, key:"m"+li });
     const tgt = callTarget(doc[li]), rg = tgt!=null && expanded.has(li) ? subRange(tgt) : null;
     if (rg) for (let j = rg[0]; j <= rg[1]; j++) rows.push({ li:j, key:`x${li}-${j}`, ins:true, from:doc[li][0] });
+    if (tgt==null && expanded.has(li)) window.libRows?.(li).forEach((r, j) => rows.push({ li, key:`l${li}-${j}`, lib:r }));
   });
   const fhits = findHits();
-  ed.innerHTML = rows.map(({li, key, ins, from}) => {
+  ed.innerHTML = rows.map(({li, key, ins, from, lib}) => {
+    if (lib) return window.libRowHTML(lib, li);
     const slots = slotsFor(li);
     const hit = s => findQ && (s.g.toUpperCase().includes(findQ) || s.e.toUpperCase().includes(findQ));
     const sel = s => !ins && li===curLine && s.ref===curRef && !editing;
@@ -1504,7 +1656,7 @@ function render(){
     const gc = slots.map(s => `<span class="${cls(s)}" data-k="${key}" data-l="${li}" data-r="${s.ref}" style="${wd(s)}" title="${esc(s.hint || s.hints ? hintTitle(s) : s.g)}">${s.hint ? or(s) + esc(s.g) : s.hints ? esc(s.hg) : s.add ? "" : esc(s.g)}</span>`).join("");
     const eob = eobOn() ? [`<span class="cell eob" title="End of block. ${esc(MACHINES[machineId].name)} needs ; at the end of every line, so GlossCode writes it for you.">EOB</span>`, `<span class="cell eob" title="End of block">;</span>`] : ["", ""];
     const tgt = ins ? null : callTarget(doc[li]);
-    const xp = tgt!=null ? (subRange(tgt) ? `<button class="xp" data-x="${li}">${expanded.has(li) ? "▾ hide" : "▸ show"} ${tgt}</button>` : `<span class="xp bad">${tgt} not found</span>`) : "";
+    const xp = tgt==null && !ins && window.libButton ? window.libButton(li) : tgt!=null ? (subRange(tgt) ? `<button class="xp" data-x="${li}">${expanded.has(li) ? "▾ hide" : "▸ show"} ${tgt}</button>` : `<span class="xp bad">${tgt} not found</span>`) : "";
     const kind = lineKind(li);
     const lp = ins ? null : PBYLINE[li], worst = lp ? lp.reduce((a, p) => SEV_RANK[p.sev] > SEV_RANK[a] ? p.sev : a, "info") : null;
     const pmark = lp ? `<span class="pm ${worst}" title="${esc(lp.map(p => p.msg).join("\n"))}">${SEV_ICON[worst]}</span>` : "";
@@ -2171,7 +2323,10 @@ function interpret(){
     i++;
   }
   return { segs, steps };
-  function step(toks, li){
+  function step(toks, li, inLib){
+    // A G65 call to a library subprogram runs its lines, worked out with the values on the call.
+    const lib = !inLib && window.libExpandCall?.(toks, li);
+    if (lib){ lib.forEach(t => step(t, li, true)); return; }
     const w = {};
     const tt = toks.find(t => /^T\d/.test(t));
     if (tt) pendingT = lathe ? "T" + parseInt(tt.slice(1, 3)) : "T" + parseInt(tt.slice(1));
@@ -2180,7 +2335,7 @@ function interpret(){
     for (const t of toks){
       if (t.startsWith("(")) continue;
       const k = t[0], v = parseFloat(t.slice(1));
-      if (k==="G"){ if ([0,1,2,3].includes(v)) mode = v; if (v===90) dist="abs"; if (v===91) dist="inc"; if (v===28||v===53||v===50||v===4) return; }
+      if (k==="G"){ if ([0,1,2,3].includes(v)) mode = v; if (v===90) dist="abs"; if (v===91) dist="inc"; if (v===28||v===53||v===50||v===4||v===65) return; }
       else if (k==="M" && (v===97 || v===98)) return;
       else if (!isNaN(v)) w[k] = v;
     }
@@ -2189,7 +2344,7 @@ function interpret(){
     const n = { x: "U" in w ? p.x + w.U : ("X" in w ? (inc ? p.x + w.X : w.X) : p.x),
                 y: "Y" in w ? (inc ? p.y + w.Y : w.Y) : p.y,
                 z: "W" in w ? p.z + w.W : ("Z" in w ? (inc ? p.z + w.Z : w.Z) : p.z) };
-    const kind = lineKind(li) || (mode===0 ? "rapid" : "feed");
+    const kind = (inLib ? null : lineKind(li)) || (mode===0 ? "rapid" : "feed");
     const T = tool || "T?";
     if (kind==="cyc" && !lathe){
       const r = "R" in w ? w.R : 0.1, z = n.z;
@@ -2426,7 +2581,7 @@ const MENUS = {
     { label:"Renumber", fn:renumber },
     R("Auto N on new lines", () => autoN, () => { autoN = !autoN; setMsg(autoN ? `New lines get the next free N number, counting by ${N_STEP}.` : "New lines get no N number."); }),
     "-",
-    { label:"Show all subprograms", fn:() => { doc.forEach((t, i) => { if (callTarget(t)!=null) expanded.add(i); }); render(); } },
+    { label:"Show all subprograms", fn:() => { doc.forEach((t, i) => { if (callTarget(t)!=null || window.libFor?.(t)) expanded.add(i); }); render(); } },
     { label:"Hide all subprograms", fn:() => { expanded.clear(); render(); } }
   ],
   Simulate: [
@@ -2588,6 +2743,7 @@ function drawProfiles(){
   document.getElementById("pf-feed").value = m.feed;
   document.getElementById("pf-tools").value = m.tools;
   document.getElementById("pf-eob").checked = !!m.eob;
+  document.getElementById("pf-macro").checked = !!m.macro;
   document.getElementById("pf-file").textContent = `machines\\${pSel}.json`;
   const ov = DICT.machineOverrides?.[m.brand] || {};
   const keys = Object.keys(ov);
@@ -2605,6 +2761,7 @@ function readProfileForm(){
     travel: [num("pf-x"), num("pf-y"), num("pf-z")],
     rpm: num("pf-rpm"), feed: num("pf-feed"), tools: num("pf-tools"),
     eob: document.getElementById("pf-eob").checked,
+    macro: document.getElementById("pf-macro").checked,
     liveTooling: document.getElementById("pf-live").checked,
     yAxis: document.getElementById("pf-yax").checked
   });
@@ -2639,7 +2796,8 @@ const LIST = [
   ["BRACKET_0MC.nc", "10/31/2026 11:02 PM", "NC File", "1 KB"],
   ["OKUMA_PLATE.MIN", "10/31/2026 7:48 AM", "MIN File", "1 KB"],
   ["POCKET_2X1.nc", "10/31/2026 6:20 AM", "NC File", "1 KB"],
-  ["SHAFT_OD.nc", "10/30/2026 11:15 AM", "NC File", "1 KB"]
+  ["SHAFT_OD.nc", "10/30/2026 11:15 AM", "NC File", "1 KB"],
+  ["SLOTS_PLATE.nc", "11/1/2026 1:40 AM", "NC File", "1 KB"]
 ];
 let dlgSel = null;
 function drawDlg(){
@@ -2672,6 +2830,7 @@ const FEATURES = [
   ["Reading", "Active modes panel for the selected line", 1],
   ["Reading", "Canned cycle guide (F1): sketch, example line and every word the cycle takes", 1],
   ["Reading", "Subprogram calls expanded inline", 1],
+  ["Editing", "Subprogram library: reusable subprograms with named variables, found and inserted from the Insert menu as a G65 call or written in as plain lines", 1],
   ["Reading", "Tool list: every tool, its offsets, and the lines that use it", 0],
   ["Reading", "Program stats: travel extents, cut distance and a rough run time", 0],
   ["Reading", "Macro variables (#100, IF, WHILE) shown with their values", 0],
@@ -2994,7 +3153,7 @@ function insertMenu(){
     { label:"Canned cycle guide…", sc:"F1", fn:() => openCycleHelp() }
   ];
 }
-Object.defineProperty(MENUS, "Insert", { get: insertMenu, enumerable:true });
+Object.defineProperty(MENUS, "Insert", { get: insertMenu, enumerable:true, configurable:true });
 
 const idlg = $("idlg");
 let iSel = null, vals = {}, pick = {}, iState = null;
@@ -3116,6 +3275,576 @@ idlg.addEventListener("keydown", e => {
   else if (e.key==="Enter" && e.target.tagName==="INPUT" && e.target.type!=="radio"){ e.preventDefault(); insertCycle(false); }
 });
 window.openInsertCycle = openInsertCycle;
+})();
+</script>
+<script>
+/* ---------- Subprogram library ----------
+   Reusable subprograms with named variables, like a slotting routine used on many parts where only the
+   positions and depths change. Each one is a file in a library folder: built in, the shop's folder, or the
+   user's own (the same three places as machine definition files; see docs/subprogram-library.md).
+   Insert › Subprogram library… finds one, takes its values, and puts it in the program either as a call
+   (G65 P9101 X.. Y..; the O program has to be on the control) or written in as plain lines worked out from
+   the values (any control, no macro option needed). A G65 line that calls a library subprogram reads its
+   arguments by name, shows the lines it runs inline in green, and the toolpath preview follows it.
+   Kept in its own script block so it can move into the app as one piece. */
+(() => {
+const $ = id => document.getElementById(id);
+// Replaced by scripts/sync-mockup-data.mjs from data/library/*.json (built in) and docs/subprogram-library/examples/*.json (a shop's).
+const LIBRARY = [{"glosscode":"subprogram/1","id":"groove-od-peck","name":"OD groove, pecked","word":{"long":"GROOVEOD","short":"GRVOD"},"program":9201,"category":"Grooves","tags":["groove","peck","chip break","OD"],"machines":["fanuc.lathe"],"units":"inch","verified":false,"author":"GlossCode","about":"Plunges one tool-width groove at Z, pecking in X to break the chip. Each peck feeds in by PECK and backs out by BACK, and the next peck feeds in from there. It feeds back to the bottom, dwells, then rapids back out to STRT. X values are diameters.","args":[{"letter":"D","name":"STRT","kind":"distance","required":true,"desc":"Diameter to start from, clear of the part"},{"letter":"X","name":"BOT","kind":"distance","required":true,"desc":"Diameter at the bottom of the groove"},{"letter":"Z","name":"ZPOS","kind":"distance","required":true,"desc":"Z position of the groove (the tool's reference edge)"},{"letter":"Q","name":"PECK","kind":"distance","required":true,"desc":"How far in X each peck goes (on diameter)","default":{"inch":"0.04","mm":"1."}},{"letter":"R","name":"BACK","kind":"distance","required":false,"desc":"How far it backs out after each peck (on diameter)","default":{"inch":"0.01","mm":"0.25"}},{"letter":"F","name":"FEED","kind":"feed","required":true,"desc":"Plunge feed"},{"letter":"U","name":"DWL","kind":"time","required":false,"desc":"Seconds to dwell at the bottom","default":"0.2"}],"body":["O9201 (OD GROOVE, PECKED)","G00 X#7 Z#26","#30=#7","WHILE [#30 GT #24] DO1","#30=#30-#17","IF [#30 LT #24] THEN #30=#24","G01 X#30 F#9","G00 X[#30+#18]","END1","G01 X#24 F#9","G04 X#21","G00 X#7","M99"],"source":"builtin"},{"glosscode":"subprogram/1","id":"slot-mill","name":"Straight slot, ramped","word":{"long":"SLOTMILL","short":"SLOT"},"program":9101,"category":"Slots and keyways","tags":["slot","keyway","ramp","step down"],"machines":["fanuc.mill"],"units":"inch","verified":false,"author":"GlossCode","about":"Mills a straight slot one tool wide from the start point to the end point. Each pass ramps down along the slot by STEP, then cuts back to the start at that depth. A last pass finishes at the end point. The top of the slot is Z0.","args":[{"letter":"X","name":"STX","kind":"distance","required":true,"desc":"X at the start of the slot"},{"letter":"Y","name":"STY","kind":"distance","required":true,"desc":"Y at the start of the slot"},{"letter":"I","name":"ENX","kind":"distance","required":true,"desc":"X at the end of the slot"},{"letter":"J","name":"ENY","kind":"distance","required":true,"desc":"Y at the end of the slot"},{"letter":"Z","name":"DEP","kind":"distance","required":true,"desc":"Final depth (negative, Z0 is the top)"},{"letter":"Q","name":"STEP","kind":"distance","required":true,"desc":"How much deeper each pass goes","default":{"inch":"0.05","mm":"1.25"}},{"letter":"R","name":"CLR","kind":"distance","required":false,"desc":"Rapid to this height before and after","default":{"inch":"0.1","mm":"2.5"}},{"letter":"F","name":"FEED","kind":"feed","required":true,"desc":"Cutting feed along the slot"},{"letter":"E","name":"RAMP","kind":"feed","required":false,"desc":"Feed for the ramp passes (defaults to half of FEED)"}],"body":["O9101 (STRAIGHT SLOT, RAMPED)","IF [#8 EQ #0] THEN #8=#9/2","G00 X#24 Y#25","G00 Z#18","G01 Z0. F#8","#30=0.","WHILE [#30 GT #26] DO1","#30=#30-#17","IF [#30 LT #26] THEN #30=#26","G01 X#4 Y#5 Z#30 F#8","G01 X#24 Y#25 F#9","END1","G01 X#4 Y#5 F#9","G00 Z#18","M99"],"source":"builtin"},{"glosscode":"subprogram/1","id":"acme.counterbore-helical","name":"Counterbore, helical","word":{"long":"HELIXBORE","short":"HXBOR"},"program":9110,"category":"Pockets and bores","tags":["counterbore","helix","circular pocket","bore"],"machines":["fanuc.mill"],"units":"inch","private":true,"verified":true,"author":"Acme Machine, programming group","about":"Helical counterbore with an end mill smaller than the bore. Goes down in counterclockwise turns of PTCH, takes one flat pass at depth, then moves to the center before retracting. Climb cut.","args":[{"letter":"X","name":"CX","kind":"distance","required":true,"desc":"X at the center of the bore"},{"letter":"Y","name":"CY","kind":"distance","required":true,"desc":"Y at the center of the bore"},{"letter":"D","name":"BORE","kind":"distance","required":true,"desc":"Bore diameter"},{"letter":"C","name":"TDIA","kind":"distance","required":true,"desc":"End mill diameter (must be smaller than BORE)"},{"letter":"Z","name":"DEP","kind":"distance","required":true,"desc":"Depth of the counterbore (negative)"},{"letter":"Q","name":"PTCH","kind":"distance","required":true,"desc":"How far down each turn goes","default":{"inch":"0.03","mm":"0.75"}},{"letter":"R","name":"CLR","kind":"distance","required":false,"desc":"Rapid to this height before and after","default":{"inch":"0.1","mm":"2.5"}},{"letter":"F","name":"FEED","kind":"feed","required":true,"desc":"Feed around the helix"}],"body":["O9110 (COUNTERBORE, HELICAL)","IF [#3 GE #7] THEN #3000=1 (TOOL TOO BIG FOR BORE)","#30=[#7-#3]/2","G00 X[#24+#30] Y#25","G00 Z#18","G01 Z0. F#9","#31=0.","WHILE [#31 GT #26] DO1","#31=#31-#17","IF [#31 LT #26] THEN #31=#26","G03 X[#24+#30] Y#25 Z#31 I-#30 J0. F#9","END1","G03 X[#24+#30] Y#25 I-#30 J0.","G01 X#24 Y#25","G00 Z#18","M99"],"notes":"Proven on the VF-2 in cell 3, March 2026. Use for the 4140 manifold blocks.","shop":{"owner":"Dana R.","approved":"2026-03-14"},"source":"shop"}];
+const LIB = LIBRARY.map(e => ({ ...e }));
+
+// Fanuc custom macro argument letters (G65 argument specification I). G, L, N, O and P can't be passed.
+const ARG_VAR = { A:1, B:2, C:3, I:4, J:5, K:6, D:7, E:8, F:9, H:11, M:13, Q:17, R:18, S:19, T:20, U:21, V:22, W:23, X:24, Y:25, Z:26 };
+const VAR_ARG = Object.fromEntries(Object.entries(ARG_VAR).map(([L, n]) => [n, L]));
+const SOURCES = {
+  builtin: { label:"Built-in", dir:"C:\\Program Files\\GlossCode\\library" },
+  shop:    { label:"Shop",     dir:"S:\\CNC\\GlossCode\\library" },
+  mine:    { label:"Mine",     dir:"%APPDATA%\\GlossCode\\library" }
+};
+const KINDS = { distance:"Distance", feed:"Feed", speed:"Speed", count:"Count", angle:"Angle", time:"Seconds" };
+// Which definition ids a mockup machine counts as. Haas mills extend Fanuc mills (docs/machine-definitions.md), so a
+// subprogram written for fanuc.mill also works on haas.mill. Okuma is its own family.
+const EXTENDS = { haas:["fanuc"] };
+const MACHINE_IDS = [["fanuc.mill", "Fanuc-style mill"], ["fanuc.lathe", "Fanuc-style lathe"], ["haas.mill", "Haas mill only"], ["haas.lathe", "Haas lathe only"], ["okuma.mill", "Okuma mill"], ["okuma.lathe", "Okuma lathe"]];
+const idsFor = m => [m.brand, ...(EXTENDS[m.brand] || [])].map(b => b + "." + m.type);
+const procOf = id => id.split(".")[1];
+// "yes": written for this machine. "process": same kind of machine, another control (can be written in, with a warning). "no": wrong kind of machine.
+function fits(e, m = MACHINES[machineId]){
+  if ((e.machines || []).some(id => idsFor(m).includes(id))) return "yes";
+  return (e.machines || []).some(id => procOf(id)===m.type) ? "process" : "no";
+}
+const canCall = (e, m = MACHINES[machineId]) => fits(e, m)==="yes" && !!m.macro;
+const progOf = toks => { const p = toks.find(t => /^P\d+$/.test(t)); return p ? parseInt(p.slice(1), 10) : null; };
+const isG65 = toks => toks.some(t => isCode(t, "G65"));
+function byProgram(n){
+  const hits = LIB.filter(e => e.program===n);
+  return hits.find(e => fits(e)==="yes") || hits[0] || null;
+}
+function libFor(toks){ if (!toks || !isG65(toks)) return null; const n = progOf(toks); return n==null ? null : byProgram(n); }
+const callsIn = e => doc.filter(t => isG65(t) && progOf(t)===e.program).length;
+const defaultFor = (a, units) => a.default==null ? "" : typeof a.default==="object" ? (a.default[units] ?? "") : String(a.default);
+
+/* ---------- English for a G65 line ---------- */
+function libWord(e, L, raw, f, st){
+  const t = L + raw;
+  if (L==="P") return { g:t, e:e.word?.[style] || "O" + e.program, d:`Library subprogram O${e.program}: ${e.name}` };
+  const a = e.args.find(x => x.letter===L);
+  if (!a) return { g:t, e:"?" + L, unk:true, d:`${e.name} has no ${L} variable.` };
+  const unit = a.kind==="feed" ? (FEED_UNIT[st.feed]?.[st.units] || "") : a.kind==="speed" ? SPEED_UNIT[st.spin][st.units] : "";
+  const imp = f.implied && a.kind==="distance" ? { imp:true } : {};
+  return { g:t, e:a.name + f.v, u:unit, ...imp, d:`${a.desc}: ${f.v}${unit ? " " + unit : ""} (#${ARG_VAR[L]} in O${e.program})` };
+}
+
+/* ---------- Working out the lines a call runs ----------
+   A small macro reader: #vars, arithmetic in [ ], ABS SQRT SIN COS TAN ATAN ROUND FIX FUP, EQ NE GT GE LT LE AND OR,
+   #n=..., IF [..] THEN #n=..., IF [..] GOTO n, GOTO n, WHILE [..] DOn / ENDn, and #3000=n (alarm). Anything else
+   is an error, and that subprogram can only be called, not written in. */
+const FN = { ABS:Math.abs, SQRT:Math.sqrt, SIN:d => Math.sin(d*Math.PI/180), COS:d => Math.cos(d*Math.PI/180), TAN:d => Math.tan(d*Math.PI/180),
+  ATAN:x => Math.atan(x)*180/Math.PI, ROUND:Math.round, FIX:Math.trunc, FUP:x => Math.sign(x)*Math.ceil(Math.abs(x)) };
+const near = (a, b) => Math.abs(a - b) < 1e-9;
+const CMP = { EQ:(a, b) => a===b || (a!=null && b!=null && near(a, b)), NE:(a, b) => !CMP.EQ(a, b),
+  GT:(a, b) => (a ?? 0) > (b ?? 0) && !near(a ?? 0, b ?? 0), GE:(a, b) => (a ?? 0) > (b ?? 0) || near(a ?? 0, b ?? 0),
+  LT:(a, b) => (a ?? 0) < (b ?? 0) && !near(a ?? 0, b ?? 0), LE:(a, b) => (a ?? 0) < (b ?? 0) || near(a ?? 0, b ?? 0) };
+function evalExpr(src, V){
+  const tk = src.replace(/\s+/g, "").match(/#\d+|\d*\.\d+|\d+\.?|[A-Z]+|[-+*\/\[\]]|./g) || [];
+  let i = 0;
+  const peek = () => tk[i], next = () => tk[i++];
+  const prim = () => {
+    const t = next();
+    if (t==="["){ const v = or(); if (next()!=="]") throw "a [ has no matching ]"; return v; }
+    if (t==="-"){ const v = prim(); return v==null ? null : -v; }
+    if (t==="+") return prim();
+    if (t && t[0]==="#"){ const n = +t.slice(1); return n===0 ? null : (V[n] ?? null); }
+    if (t && /^[\d.]/.test(t)) return parseFloat(t);
+    if (FN[t]){ if (next()!=="[") throw `${t} needs [ ]`; const v = or(); if (next()!=="]") throw "a [ has no matching ]"; return FN[t](v ?? 0); }
+    throw `can't read "${t ?? "the end of the line"}"`;
+  };
+  const mul = () => { let a = prim(); while (peek()==="*" || peek()==="/"){ const op = next(), b = prim() ?? 0; if (op==="/" && b===0) throw "division by zero"; a = op==="*" ? (a ?? 0)*b : (a ?? 0)/b; } return a; };
+  const add = () => { let a = mul(); while (peek()==="+" || peek()==="-"){ const op = next(), b = mul() ?? 0; a = op==="+" ? (a ?? 0)+b : (a ?? 0)-b; } return a; };
+  const cmp = () => { const a = add(); if (CMP[peek()]){ const op = next(); return CMP[op](a, add()) ? 1 : 0; } return a; };
+  const and = () => { let a = cmp(); while (peek()==="AND"){ next(); const b = cmp(); a = a && b ? 1 : 0; } return a; };
+  const or = () => { let a = and(); while (peek()==="OR"){ next(); const b = and(); a = a || b ? 1 : 0; } return a; };
+  const v = or(); if (i < tk.length) throw `can't read "${tk.slice(i).join("")}"`; return v;
+}
+// "[cond] rest" → ["cond", "rest"]
+function bracket(s){
+  if (s[0]!=="[") throw "expected [";
+  let d = 0; for (let i = 0; i < s.length; i++){ if (s[i]==="[") d++; if (s[i]==="]" && --d===0) return [s.slice(1, i), s.slice(i+1).trim()]; }
+  throw "a [ has no matching ]";
+}
+function fmtVal(L, n, units){
+  if ("GMNOLHDT".includes(L) && near(n, Math.round(n))) return L + Math.round(n);
+  const d = units==="mm" ? 3 : 4;
+  let x = (Math.round(n * 10**d) / 10**d).toFixed(d).replace(/0+$/, "");
+  if (/^-0\.$/.test(x)) x = "0.";
+  return L + x;
+}
+function splitWords(s){
+  const out = []; s = s.replace(/\s+/g, ""); let i = 0;
+  while (i < s.length){
+    const L = s[i]; if (!/[A-Z]/.test(L)) throw `can't read "${s.slice(i)}"`; i++;
+    let d = 0, v = "";
+    while (i < s.length){ const c = s[i]; if (c==="[") d++; if (c==="]") d--; if (!d && /[A-Z]/.test(c)) break; v += c; i++; }
+    out.push([L, v]);
+  }
+  return out;
+}
+// Runs the body with the values given. Returns { lines:[[tokens]...] } or { error }.
+function expand(e, vals, units){
+  const V = {};
+  for (const [L, v] of Object.entries(vals)) if (v!=="" && v!=null && ARG_VAR[L]) V[ARG_VAR[L]] = parseFloat(v);
+  const body = e.body.map(l => l.toUpperCase());
+  const labels = {}, loopEnd = {}, stack = [];
+  let unmatched = false;
+  body.forEach((l, i) => {
+    const s = l.replace(/\([^)]*\)/g, "").trim();
+    const n = s.match(/^N(\d+)/); if (n) labels[+n[1]] = i;
+    const w = s.replace(/^N\d+\s*/, "");
+    let m;
+    if ((m = w.match(/^WHILE\s*\[.*\]\s*DO(\d)$/))) stack.push([m[1], i]);
+    else if ((m = w.match(/^END(\d)$/))){ const top = stack.pop(); if (!top || top[0]!==m[1]) unmatched = true; else loopEnd[top[1]] = i; }
+  });
+  if (unmatched || stack.length) return { error:`O${e.program} has a WHILE and an END that don't match.` };
+  const lines = []; let pc = 0, steps = 0;
+  const err = (i, msg) => ({ error:`O${e.program} line ${i+1}: ${msg}.` });
+  {
+    while (pc < body.length){
+      if (++steps > 20000) return { error:`O${e.program} ran more than 20,000 lines. Is a loop missing its step?` };
+      const raw = body[pc], cm = (raw.match(/\([^)]*\)/g) || []).join(" ");
+      let s = raw.replace(/\([^)]*\)/g, "").trim().replace(/^N\d+\s*/, "");
+      const at = pc; pc++;
+      if (!s || s==="%" || /^O\d+/.test(s)) continue;
+      if (/^M0?99$/.test(s.replace(/\s+/g, ""))) break;
+      let m;
+      try {
+        if ((m = s.match(/^#(\d+)\s*=(.+)$/))){
+          const n = +m[1], v = evalExpr(m[2], V);
+          if (n===3000) return { error:`O${e.program} stopped with alarm ${v}${cm ? " " + cm : ""}.` , alarm:true };
+          V[n] = v; continue;
+        }
+        if (/^IF\s*\[/.test(s)){
+          const [cond, rest] = bracket(s.replace(/^IF\s*/, "")), ok = evalExpr(cond, V);
+          if ((m = rest.match(/^THEN\s*#(\d+)\s*=(.+)$/))){ if (ok){ const n = +m[1], v = evalExpr(m[2], V); if (n===3000) return { error:`O${e.program} stopped with alarm ${v}${cm ? " " + cm : ""}.`, alarm:true }; V[n] = v; } continue; }
+          if ((m = rest.match(/^GOTO\s*(\d+)$/))){ if (ok){ if (labels[+m[1]]===undefined) throw `GOTO ${m[1]} has no N${m[1]}`; pc = labels[+m[1]]; } continue; }
+          throw "after IF [..] only THEN #n=... or GOTO n can be written in";
+        }
+        if ((m = s.match(/^GOTO\s*(\d+)$/))){ if (labels[+m[1]]===undefined) throw `GOTO ${m[1]} has no N${m[1]}`; pc = labels[+m[1]]; continue; }
+        if (/^WHILE/.test(s)){ const [cond] = bracket(s.replace(/^WHILE\s*/, "")); if (!evalExpr(cond, V)) pc = loopEnd[at] + 1; continue; }
+        if (/^END\d$/.test(s)){ pc = +Object.keys(loopEnd).find(k => loopEnd[k]===at); continue; }
+        const toks = [];
+        for (const [L, v] of splitWords(s)){
+          if (/[#\[]/.test(v)){ const n = evalExpr(v, V); if (n==null) continue; toks.push(fmtVal(L, n, units)); }
+          else toks.push(L + v);
+        }
+        if (cm) toks.push(cm);
+        if (toks.length) lines.push(toks);
+        if (lines.length > 2000) return { error:`O${e.program} writes more than 2,000 lines. Call it instead.` };
+      } catch (x){ return err(at, typeof x==="string" ? x : "can't be read"); }
+    }
+  }
+  return { lines };
+}
+// The values a G65 line passes, by letter.
+function callVals(toks){ const v = {}; toks.forEach(t => { if (/^[A-Z][-+]?[\d.]+$/.test(t) && ARG_VAR[t[0]]) v[t[0]] = t.slice(1); }); return v; }
+const cache = new Map();
+function expandCall(toks, li){
+  const e = libFor(toks); if (!e) return null;
+  const units = lineState[li]?.units || "inch", key = e.id + "|" + toks.join(" ") + "|" + units + "|" + e.body.join("\n");
+  if (!cache.has(key)){ if (cache.size > 200) cache.clear(); cache.set(key, expand(e, callVals(toks), units)); }
+  return cache.get(key);
+}
+
+/* ---------- Showing a call's lines inline ---------- */
+function rowCells(toks, st){
+  const W = COLW();
+  return toks.map(t => { const c = word(t, st); return { g:t, e:c.e || "", u:c.u || "", cm:!!c.cm, w:Math.max(W, t.length + 1, (c.e || "").length + (c.u ? 3 : 1)) }; });
+}
+function rowsFor(lines, st0){
+  const st = { ...st0, chg:[] };
+  return lines.map(toks => {
+    applyModes(toks, st);
+    const cells = rowCells(toks, st);
+    const moves = toks.some(t => /^[XYZUW][-+]?[\d.]/.test(t));
+    const kind = !moves ? null : st.cycleCode ? "cyc" : st.motion==="G00" ? "rapid" : st.motion==="G01" ? "feed" : (st.motion==="G02" || st.motion==="G03") ? "arc" : null;
+    return { cells, kind };
+  });
+}
+const cellHTML = (c, en) => en ? `<span class="lc${c.cm ? " cm" : ""}" style="width:${c.w}ch">${esc(c.e)}${c.u ? `<small class="u">${esc(c.u)}</small>` : ""}</span>`
+                               : `<span class="lc${c.cm ? " cm" : ""}" style="width:${c.w}ch">${esc(c.g)}</span>`;
+function libRows(li){
+  const r = expandCall(doc[li], li); if (!r) return [];
+  if (r.error) return [{ error:r.error }];
+  return rowsFor(r.lines, lineState[li] || newState());
+}
+function libRowHTML(row, li){
+  const e = libFor(doc[li]), from = doc[li][0];
+  const title = `Run by the call on ${from}: ${e.name} (O${e.program}) with these values. Change the values on the call line, or the subprogram in Insert › Subprogram library.`;
+  if (row.error) return `<div class="ln lib" data-li="${li}" title="${esc(title)}"><div class="r gc"><span class="gut">⤷</span><span class="lc err">${esc(row.error)} The preview and checks skip it.</span></div></div>`;
+  return `<div class="ln lib${row.kind ? " k-" + row.kind : ""}" data-li="${li}" title="${esc(title)}"><div class="r en"><span class="gut"></span>${row.cells.map(c => cellHTML(c, true)).join("")}</div><div class="r gc"><span class="gut">⤷</span>${row.cells.map(c => cellHTML(c, false)).join("")}</div></div>`;
+}
+function libButton(li){
+  const toks = doc[li]; if (!isG65(toks)) return "";
+  const n = progOf(toks); if (n==null) return "";
+  const e = byProgram(n);
+  if (!e) return `<span class="xp bad" title="Not in any library folder. That's fine if O${n} is already on the control; GlossCode just can't show what it does.">O${n} isn't in the library</span>`;
+  return `<button class="xp lib" data-x="${li}" title="${esc(e.name)} · ${SOURCES[e.source].label} library">${expanded.has(li) ? "▾ hide" : "▸ show"} O${n} ${esc(e.word?.[style] || "")}</button>`;
+}
+Object.assign(window, { libFor, libWord, libRows, libRowHTML, libButton, libExpandCall:(toks, li) => { const r = expandCall(toks, li); return r && !r.error ? r.lines : null; } });
+
+/* ---------- Insert › Subprogram library… ---------- */
+const ldlg = $("ldlg");
+let lSel = null, lQ = "", lScope = "machine";
+const lVals = {}, lMode = {};
+function matches(e, q){
+  if (!q) return true;
+  const hay = [e.name, e.word?.long, e.word?.short, e.category, e.about, e.author, "O" + e.program, String(e.program), ...(e.tags || []), ...e.args.flatMap(a => [a.name, a.desc])].join(" ").toUpperCase();
+  return q.toUpperCase().split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+}
+function listed(){
+  return LIB.filter(e => (lScope==="all" || fits(e)==="yes") && matches(e, lQ))
+    .sort((a, b) => (a.category || "").localeCompare(b.category || "") || a.program - b.program);
+}
+function openLibrary(id){
+  if (editing && !commit()) return;
+  if (simIdx!=null) stopSim(true);
+  closeMenu();
+  lQ = ""; $("l-q").value = "";
+  const pick = id ? LIB.find(e => e.id===id) : null;
+  lScope = pick && fits(pick)!=="yes" ? "all" : "machine";
+  lSel = pick?.id || listed()[0]?.id || null;
+  drawLibrary(); ldlg.hidden = false;
+  $("l-q").focus();
+}
+function closeLibrary(){ ldlg.hidden = true; ed.focus({ preventScroll:true }); }
+const srcChip = e => `<i class="src ${e.source}">${SOURCES[e.source].label}</i>${e.private ? `<i class="src priv">Private</i>` : ""}`;
+function machinesText(e){ return (e.machines || []).map(id => MACHINE_IDS.find(x => x[0]===id)?.[1] || id).join(", "); }
+
+function drawLibrary(){
+  const m = MACHINES[machineId], list = listed();
+  setPressed($("l-mine"), $("l-all"), lScope==="machine");
+  $("l-mine").textContent = `For ${m.name}`;
+  $("l-title").textContent = `Subprogram library · ${m.name} (${m.type})`;
+  if (!list.some(e => e.id===lSel)) lSel = list[0]?.id || null;
+  let html = "", cat = null;
+  for (const e of list){
+    if (e.category!==cat){ cat = e.category; html += `<div class="cgrp">${esc(cat || "Other")}</div>`; }
+    const f = fits(e), n = callsIn(e);
+    html += `<div class="ci lci${e.id===lSel ? " sel" : ""}${f!=="yes" ? " other" : ""}" data-id="${esc(e.id)}"><b>O${e.program}</b><span>${esc(e.name)}${srcChip(e)}<em>${esc(e.word?.long || "")}${n ? ` · ${n} call${n > 1 ? "s" : ""} in this file` : ""}${f!=="yes" ? ` · ${esc(machinesText(e))}` : ""}</em></span></div>`;
+  }
+  const hidden = LIB.filter(e => fits(e)!=="yes" && matches(e, lQ)).length;
+  if (!list.length) html = `<div class="cgrp">${lQ ? `Nothing matches "${esc(lQ)}".` : `No subprograms for ${esc(m.name)} yet.`}${lScope==="machine" && hidden ? ` ${hidden} more for other machines under All.` : ""}</div>`;
+  else if (lScope==="machine" && hidden) html += `<div class="cgrp">${hidden} more for other machines under All.</div>`;
+  $("llist").innerHTML = html;
+  const e = LIB.find(x => x.id===lSel);
+  $("l-edit").disabled = !e;
+  $("l-edit").textContent = e?.source==="builtin" ? "View…" : "Edit…";
+  if (!e){ $("lmain").innerHTML = `<div class="lempty">Pick a subprogram, or make one with <b>New…</b>. A subprogram from this program (an M97 block like N1000…M99) can be saved with <b>Insert › Save N1000 to the library…</b> while the cursor is in it.</div>`; $("l-ok").disabled = true; $("l-msg").textContent = ""; return; }
+  const st = lineState[curLine] || newState(), units = st.units, v = lVals[e.id] ||= {};
+  const f = fits(e), call = canCall(e, m);
+  if (!lMode[e.id] || (lMode[e.id]==="call" && !call)) lMode[e.id] = call ? "call" : "inline";
+  const rows = e.args.map(a => {
+    const def = defaultFor(a, units), en = a.name;
+    const chip = a.required && !def ? `<span class="need req">Required</span>` : def ? `<span class="need opt">Default ${esc(def)}</span>` : `<span class="need opt">Optional</span>`;
+    return `<span class="w">${a.letter}</span><span class="e">${esc(en)}</span><input data-l="${a.letter}" value="${esc(v[a.letter] || "")}" placeholder="${esc(def)}" inputmode="decimal" autocomplete="off"><span>${chip}</span><span class="what">${esc(a.desc)}${a.kind==="feed" ? ` <small>(${FEED_UNIT[st.feed]?.[units] || ""})</small>` : ""}</span>`;
+  }).join("");
+  const n = callsIn(e), file = `${SOURCES[e.source].dir}\\${e.id}.json`;
+  const callWhy = f!=="yes" ? `Written for ${machinesText(e)}, not ${m.name}.` : !m.macro ? `${m.name} has no macro option (G65). Machine profiles… can turn it on.` : `O${e.program} has to be loaded on the control. Export… in Edit saves it as O${e.program}.nc.`;
+  $("lmain").innerHTML = `<h4><code>O${e.program}</code>${esc(e.name)}<small>${esc(e.word?.long || "")} ${srcChip(e)}${e.verified===false ? `<i class="src unv">Not proven on a machine</i>` : ""}</small></h4>`
+    + `<p class="about" style="margin:0">${esc(e.about || "")}</p>`
+    + `<div class="lmeta"><span>Works on ${esc(machinesText(e))}</span><span>Saved in <code>${esc(file)}</code></span>${e.author ? `<span>By ${esc(e.author)}</span>` : ""}${n ? `<span>Called ${n} time${n > 1 ? "s" : ""} in this file</span>` : ""}</div>`
+    + `<div class="iform">${rows}</div>`
+    + `<div class="lmode"><label class="${call ? "" : "off"}"><input type="radio" name="l-mode" value="call"${lMode[e.id]==="call" ? " checked" : ""}${call ? "" : " disabled"}> <span><b>Call it</b> with one G65 line. <small>${esc(callWhy)}</small></span></label>`
+    + `<label class="${f==="no" ? "off" : ""}"><input type="radio" name="l-mode" value="inline"${lMode[e.id]==="inline" ? " checked" : ""}${f==="no" ? " disabled" : ""}> <span><b>Write the lines in</b>, worked out from these values. <small>Works on any ${esc(m.type)}, even without the macro option. Changing a value later means inserting it again.</small></span></label></div>`
+    + `<div class="cex lprev" id="l-prev"></div>`;
+  $("lmain").querySelectorAll('input[name="l-mode"]').forEach(x => x.onchange = () => { lMode[e.id] = x.value; updateLibrary(); });
+  updateLibrary();
+}
+// The words for the call: typed values, or the default. A distance or feed typed without a decimal point gets one.
+function buildLib(e){
+  const st = lineState[curLine] || newState(), units = st.units, v = lVals[e.id] || {};
+  const words = [], vals = {}, bad = [], missing = [];
+  for (const a of e.args){
+    let t = (v[a.letter] || "").trim().toUpperCase() || defaultFor(a, units);
+    if (!t){ if (a.required) missing.push(a.letter); continue; }
+    const intOnly = a.kind==="count";
+    if (intOnly ? !/^\d+$/.test(t) : !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(t)){ bad.push(a.letter); continue; }
+    if (["distance", "feed", "angle"].includes(a.kind) && !t.includes(".")) t += ".";
+    t = t.replace(/^\+/, "").replace(/^(-?)\./, "$10.");
+    words.push(a.letter + t); vals[a.letter] = t;
+  }
+  return { words, vals, bad, missing, units };
+}
+function nNumbersFor(k){
+  if (!autoN || !k) return { ns:[] };
+  let cur = null, next = null;
+  for (let i = curLine; i >= 0 && cur===null; i--) cur = nOf(doc[i]);
+  for (let i = curLine+1; i < doc.length && next===null; i++) next = nOf(doc[i]);
+  const base = cur ?? 0; let step = N_STEP;
+  if (next!=null && base + k*step >= next){ step = Math.floor((next - base) / (k+1)); if (step < 1) return { ns:[], msg:`No room for ${k} N numbers before N${next}, so the new lines have none. Program › Renumber makes room.` }; }
+  return { ns:Array.from({ length:k }, (_, i) => base + (i+1)*step) };
+}
+function libLines(e){
+  const b = buildLib(e), notes = [];
+  if (b.bad.length || b.missing.length) return { ok:false, b };
+  if (lMode[e.id]==="call"){
+    const nn = nNumbersFor(1);
+    return { ok:true, b, lines:[[...(nn.ns.length ? ["N" + nn.ns[0]] : []), "G65", "P" + e.program, ...b.words]], note:nn.msg };
+  }
+  const r = expand(e, b.vals, b.units);
+  if (r.error) return { ok:false, b, error:r.error };
+  const nn = nNumbersFor(r.lines.length);
+  const head = [`(${e.word?.long || e.name} O${e.program} ${b.words.join(" ")})`];
+  return { ok:true, b, lines:[head, ...r.lines.map((t, i) => nn.ns.length ? ["N" + nn.ns[i], ...t] : t)], note:nn.msg };
+}
+function updateLibrary(){
+  const e = LIB.find(x => x.id===lSel); if (!e) return;
+  const r = libLines(e), notes = [];
+  ldlg.querySelectorAll(".iform input").forEach(x => x.classList.toggle("bad", r.b.bad.includes(x.dataset.l)));
+  const where = nOf(doc[curLine])!=null ? "N" + nOf(doc[curLine]) : "line " + (curLine+1);
+  if (r.ok){
+    const st = { ...(lineState[curLine] || newState()) };
+    const rows = rowsFor(r.lines, st);
+    $("l-prev").innerHTML = `<div class="lbl">Goes in below ${where}${r.lines.length > 1 ? ` · ${r.lines.length} lines` : ""}</div>`
+      + rows.map(row => (row.cells.every(c => c.cm) ? "" : `<div class="r en"><span class="gut"></span>${row.cells.map(c => cellHTML(c, true)).join("")}</div>`) + `<div class="r gc"><span class="gut"></span>${row.cells.map(c => cellHTML(c, false)).join("")}</div>`).join("");
+  } else $("l-prev").innerHTML = `<div class="lbl">Goes in below ${where}</div>`;
+  if (r.b.bad.length) notes.push(`<span class="warn">${r.b.bad.join(", ")} ${r.b.bad.length > 1 ? "need numbers" : "needs a number"}.</span>`);
+  else if (r.b.missing.length) notes.push(`Fill in ${r.b.missing.join(", ")} to insert.`);
+  if (r.error) notes.push(`<span class="warn">${esc(r.error)}</span>`);
+  if (fits(e)==="process") notes.push(`<span class="warn">Written for ${esc(machinesText(e))}. Check the lines suit this control.</span>`);
+  if (e.units && e.units!==r.b.units && e.args.some(a => a.default!=null && typeof a.default!=="object")) notes.push(`Defaults are in ${e.units==="mm" ? "mm" : "inches"}.`);
+  if (r.note) notes.push(`<span class="warn">${esc(r.note)}</span>`);
+  $("l-msg").innerHTML = notes.join(" ");
+  $("l-ok").disabled = !r.ok;
+}
+function insertLib(){
+  const e = LIB.find(x => x.id===lSel); if (!e) return;
+  const r = libLines(e); if (!r.ok) return;
+  const li = curLine;
+  pushUndo();
+  doc.splice(li+1, 0, ...r.lines.map(t => [...t]));
+  expanded = new Set([...expanded].map(i => i > li ? i + r.lines.length : i));
+  closeLibrary();
+  selectLine(li+1);
+  setMsg(lMode[e.id]==="call" ? `Added ${r.lines[0].join(" ")}. ▸ show on the line lists what it runs.` : `Wrote in ${r.lines.length - 1} lines of ${e.name}. Ctrl+Z takes them back out.`);
+}
+$("llist").addEventListener("click", ev => { const it = ev.target.closest(".lci"); if (!it) return; lSel = it.dataset.id; drawLibrary(); });
+$("llist").addEventListener("dblclick", ev => { if (ev.target.closest(".lci") && !$("l-ok").disabled) insertLib(); });
+$("l-q").addEventListener("input", () => { lQ = $("l-q").value.trim(); drawLibrary(); });
+$("l-mine").onclick = () => { lScope = "machine"; drawLibrary(); };
+$("l-all").onclick = () => { lScope = "all"; drawLibrary(); };
+ldlg.addEventListener("input", ev => { const L = ev.target.dataset?.l; if (!L || !lSel) return; (lVals[lSel] ||= {})[L] = ev.target.value; updateLibrary(); });
+$("l-ok").onclick = insertLib;
+$("l-cancel").onclick = $("l-x").onclick = closeLibrary;
+$("l-new").onclick = () => openEditor(null);
+$("l-edit").onclick = () => lSel && openEditor(lSel);
+ldlg.addEventListener("keydown", ev => {
+  ev.stopPropagation();
+  if (ev.key==="Escape"){ ev.preventDefault(); closeLibrary(); }
+  else if (ev.key==="Enter" && ev.target.tagName==="INPUT" && ev.target.type!=="radio" && !$("l-ok").disabled){ ev.preventDefault(); insertLib(); }
+});
+
+/* ---------- New / Edit a library subprogram ---------- */
+const sdlg = $("sdlg");
+let draft = null, editId = null, readOnly = false, delArmed = false;
+function freeProgram(from = 9100){ let n = from; while (LIB.some(e => e.program===n)) n++; return n; }
+function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "subprogram"; }
+function openEditor(id, seed){
+  const src = id ? LIB.find(e => e.id===id) : null, m = MACHINES[machineId];
+  draft = src ? JSON.parse(JSON.stringify(src)) : seed || {
+    glosscode:"subprogram/1", id:"", name:"", word:{ long:"", short:"" }, program:freeProgram(), category:"", tags:[],
+    machines:[m.brand==="okuma" ? "okuma." + m.type : "fanuc." + m.type], units:(lineState[curLine] || newState()).units,
+    source:"mine", args:[], body:[`O${freeProgram()}`, "", "M99"], about:""
+  };
+  editId = id; readOnly = src?.source==="builtin"; delArmed = false;
+  drawEditor(); sdlg.hidden = false;
+  (readOnly ? $("s-copy") : $("s-name")).focus();
+}
+function closeEditor(){ sdlg.hidden = true; if (!ldlg.hidden) drawLibrary(); else ed.focus({ preventScroll:true }); }
+function drawEditor(){
+  const d = draft, ro = readOnly;
+  $("s-title").textContent = editId ? (ro ? `${d.name} · built in, read-only` : `Edit ${d.name}`) : "New library subprogram";
+  $("s-name").value = d.name; $("s-long").value = d.word?.long || ""; $("s-short").value = d.word?.short || "";
+  $("s-prog").value = d.program || ""; $("s-cat").value = d.category || ""; $("s-tags").value = (d.tags || []).join(", ");
+  $("s-units").value = d.units || "inch"; $("s-about").value = d.about || ""; $("s-notes").value = d.notes || "";
+  $("s-where").value = d.source==="shop" ? "shop" : "mine"; $("s-priv").checked = !!d.private;
+  $("s-cats").innerHTML = [...new Set(LIB.map(e => e.category).filter(Boolean))].map(c => `<option value="${esc(c)}">`).join("");
+  $("s-machines").innerHTML = MACHINE_IDS.map(([id, label]) => `<label><input type="checkbox" value="${id}"${(d.machines || []).includes(id) ? " checked" : ""}${ro ? " disabled" : ""}> ${esc(label)} <small style="color:#999">${id}</small></label>`).join("");
+  ["s-name", "s-long", "s-short", "s-prog", "s-cat", "s-tags", "s-about", "s-notes", "s-body"].forEach(id => $(id).readOnly = ro);
+  ["s-units", "s-where", "s-priv", "s-scan", "s-add"].forEach(id => $(id).disabled = ro);
+  $("s-body").value = d.body.join("\n");
+  drawVars();
+  $("s-del").hidden = ro || !editId; $("s-del").textContent = "Delete";
+  $("s-copy").hidden = !ro; $("s-save").hidden = ro;
+  $("s-cancel").textContent = ro ? "Close" : "Cancel";
+  checkDraft();
+}
+function drawVars(){
+  const ro = readOnly, opts = sel => Object.keys(ARG_VAR).map(L => `<option${L===sel ? " selected" : ""}>${L}</option>`).join("");
+  $("s-vars").innerHTML = draft.args.map((a, i) => `<tr data-i="${i}">`
+    + `<td><select data-f="letter"${ro ? " disabled" : ""}>${opts(a.letter)}</select></td><td class="v">#${ARG_VAR[a.letter]}</td>`
+    + `<td><input class="mono" data-f="name" value="${esc(a.name)}" maxlength="5"${ro ? " readonly" : ""}></td>`
+    + `<td><select data-f="kind"${ro ? " disabled" : ""}>${Object.entries(KINDS).map(([k, l]) => `<option value="${k}"${k===a.kind ? " selected" : ""}>${l}</option>`).join("")}</select></td>`
+    + `<td style="text-align:center"><input type="checkbox" data-f="required"${a.required ? " checked" : ""}${ro ? " disabled" : ""} style="width:auto"></td>`
+    + `<td><input class="mono" data-f="default" value="${esc(defaultFor(a, draft.units || "inch"))}"${ro ? " readonly" : ""}></td>`
+    + `<td><input data-f="desc" value="${esc(a.desc || "")}"${ro ? " readonly" : ""}></td>`
+    + `<td>${ro ? "" : `<button data-del="${i}" title="Remove">✕</button>`}</td></tr>`).join("")
+    || `<tr><td colspan="8" style="color:#888;padding:8px 4px">No variables yet. Write #24 for X, #25 for Y and so on in the body, then <b>Add from body</b>.</td></tr>`;
+}
+function readEditor(){
+  if (readOnly) return;
+  const d = draft;
+  d.name = $("s-name").value.trim();
+  d.word = { long:$("s-long").value.trim().toUpperCase(), short:$("s-short").value.trim().toUpperCase() };
+  d.program = parseInt($("s-prog").value, 10) || null;
+  d.category = $("s-cat").value.trim();
+  d.tags = $("s-tags").value.split(",").map(s => s.trim()).filter(Boolean);
+  d.units = $("s-units").value; d.about = $("s-about").value.trim(); d.notes = $("s-notes").value.trim() || undefined;
+  d.source = $("s-where").value; d.private = $("s-priv").checked || undefined;
+  d.machines = [...$("s-machines").querySelectorAll("input:checked")].map(x => x.value);
+  d.body = $("s-body").value.toUpperCase().split("\n").map(s => s.replace(/\s+$/, ""));
+}
+// Problems with the draft, shown as you type: e = can't save, w = worth a look, i = for information.
+function problems(){
+  const d = draft, out = [], used = new Set();
+  if (!d.name) out.push(["e", "Give it a name."]);
+  if (!d.program) out.push(["e", "It needs a program number (the O number it has on the control)."]);
+  const clash = LIB.find(e => e.program===d.program && e.id!==editId);
+  if (d.program && clash) out.push(["w", `O${d.program} is also ${clash.name} (${SOURCES[clash.source].label}). A call would find whichever is on the control.`]);
+  if (!d.word.long) out.push(["e", "Give it a long English word (it's what P reads as on the call line)."]);
+  if (d.word.long.length > 10 || d.word.short.length > 8) out.push(["e", "English words are 10 letters (long) and 8 (short) at most."]);
+  if (!d.machines.length) out.push(["e", "Tick at least one kind of machine it works on."]);
+  d.args.forEach(a => {
+    if (used.has(a.letter)) out.push(["e", `${a.letter} is used for two variables.`]); used.add(a.letter);
+    if (!/^[A-Z][A-Z0-9]{0,4}$/.test(a.name || "")) out.push(["e", `${a.letter}'s English name should be 1–5 letters or digits, starting with a letter.`]);
+    else if (a.name.length > 4) out.push(["i", `${a.name} plus its value may not fit a column. Four letters or fewer (DEP, STEP, FEED) always do.`]);
+  });
+  const body = d.body.join("\n"), refs = new Set([...body.matchAll(/#(\d+)/g)].map(m => +m[1]));
+  const undeclared = [...refs].filter(n => VAR_ARG[n] && !d.args.some(a => ARG_VAR[a.letter]===n));
+  if (undeclared.length) out.push(["w", `The body reads ${undeclared.map(n => `#${n} (${VAR_ARG[n]})`).join(", ")} but ${undeclared.length > 1 ? "they aren't variables" : "it isn't a variable"}, so ${undeclared.length > 1 ? "they're" : "it's"} always empty.`]);
+  const unused = d.args.filter(a => !refs.has(ARG_VAR[a.letter]));
+  if (unused.length) out.push(["w", `${unused.map(a => a.name || a.letter).join(", ")} ${unused.length > 1 ? "aren't" : "isn't"} used in the body.`]);
+  if (!/^O\d+/.test((d.body.find(l => l.trim()) || "").trim())) out.push(["i", "The body usually starts with its O number."]);
+  else if (d.program && parseInt(d.body.find(l => l.trim()).trim().slice(1), 10)!==d.program) out.push(["w", `The body starts with a different O number from O${d.program}.`]);
+  if (!d.body.some(l => /^(N\d+\s*)?M0?99\b/.test(l.trim()))) out.push(["w", "The body doesn't end with M99, so the call would never return."]);
+  // Try writing it in with the defaults (or 1.) to catch loops and lines it can't read.
+  const vals = Object.fromEntries(d.args.map(a => [a.letter, defaultFor(a, d.units || "inch") || "1."]));
+  const r = expand(d, vals, d.units || "inch");
+  if (r.error && !r.alarm) out.push(["i", `${r.error.replace(/^O\d+ /, "")} It can still be called, but not written in.`]);
+  if (d.private) out.push(["i", "Private: Export asks first and leaves out the notes."]);
+  return out;
+}
+function checkDraft(){
+  readEditor();
+  const p = problems();
+  $("s-checks").innerHTML = p.map(([k, t]) => `<span class="${k}">${k==="e" ? "✕" : k==="w" ? "⚠" : "i"} ${esc(t)}</span>`).join("");
+  $("s-save").disabled = p.some(x => x[0]==="e");
+  const file = `${SOURCES[draft.source].dir}\\${draft.id || slug(draft.name)}.json`;
+  $("s-file").innerHTML = readOnly ? `Ships with GlossCode in <code>${esc(file)}</code>. <b>Make my own copy</b> to change it.`
+    : `Saved as <code>${esc(file)}</code>.${draft.source==="shop" ? " Everyone who points GlossCode at the shop folder sees it." : " Nobody else sees it unless you export it."}`;
+}
+$("s-vars").addEventListener("input", ev => {
+  const tr = ev.target.closest("tr[data-i]"); if (!tr) return;
+  const a = draft.args[+tr.dataset.i], f = ev.target.dataset.f;
+  if (f==="required") a.required = ev.target.checked;
+  else if (f==="default") a.default = ev.target.value.trim() || undefined;
+  else if (f==="name") a.name = ev.target.value.trim().toUpperCase();
+  else a[f] = ev.target.value;
+  if (f==="letter") drawVars();
+  checkDraft();
+});
+$("s-vars").addEventListener("click", ev => { const b = ev.target.closest("[data-del]"); if (!b) return; draft.args.splice(+b.dataset.del, 1); drawVars(); checkDraft(); });
+$("s-add").onclick = () => {
+  readEditor();
+  const L = Object.keys(ARG_VAR).find(l => !draft.args.some(a => a.letter===l));
+  draft.args.push({ letter:L, name:"", kind:"distance", required:true, desc:"" }); drawVars(); checkDraft();
+  $("s-vars").querySelector("tr:last-child input[data-f=name]")?.focus();
+};
+$("s-scan").onclick = () => {
+  readEditor();
+  const refs = [...new Set([...draft.body.join("\n").matchAll(/#(\d+)/g)].map(m => +m[1]))].filter(n => VAR_ARG[n] && !draft.args.some(a => ARG_VAR[a.letter]===n)).sort((a, b) => a - b);
+  refs.forEach(n => { const L = VAR_ARG[n]; draft.args.push({ letter:L, name:L==="F" ? "FEED" : "", kind:L==="F" ? "feed" : "distance", required:true, desc:"" }); });
+  drawVars(); checkDraft();
+  $("s-msg").textContent = refs.length ? `Added ${refs.map(n => VAR_ARG[n]).join(", ")}. Give each an English name and say what it is.` : "Every # the body reads is already a variable.";
+};
+sdlg.addEventListener("input", ev => { if (ev.target.closest("#s-vars")) return; delArmed = false; $("s-del").textContent = "Delete"; checkDraft(); });
+sdlg.addEventListener("change", ev => { if (ev.target.id==="s-units") drawVars(); if (!ev.target.closest("#s-vars")) checkDraft(); });
+$("s-save").onclick = () => {
+  readEditor(); if (problems().some(x => x[0]==="e")) return;
+  const d = draft;
+  if (!d.id) { let id = slug(d.name), n = 2; while (LIB.some(e => e.id===id)) id = slug(d.name) + "-" + n++; d.id = id; }
+  const i = LIB.findIndex(e => e.id===editId);
+  if (i >= 0) LIB[i] = d; else LIB.push(d);
+  cache.clear();
+  lSel = d.id;
+  sdlg.hidden = true;
+  if (!ldlg.hidden) drawLibrary(); else ed.focus({ preventScroll:true });
+  render();
+  setMsg(`Saved ${SOURCES[d.source].dir}\\${d.id}.json.`);
+};
+$("s-copy").onclick = () => {
+  const src = draft, copy = JSON.parse(JSON.stringify(src));
+  Object.assign(copy, { id:"", name:src.name + " (my copy)", source:"mine", program:freeProgram(src.program), author:"", verified:undefined });
+  copy.body = copy.body.map(l => l.replace(new RegExp(`^O${src.program}\\b`), "O" + copy.program));
+  draft = copy; editId = null; readOnly = false; drawEditor();
+  $("s-msg").textContent = `A copy in your library as O${copy.program}. The built-in one stays as it is.`;
+};
+$("s-del").onclick = () => {
+  if (!delArmed){ delArmed = true; $("s-del").textContent = "Click again to delete"; $("s-msg").textContent = callsIn(draft) ? `This file still calls O${draft.program} ${callsIn(draft)} time${callsIn(draft) > 1 ? "s" : ""}; the calls stay but can't be shown.` : ""; return; }
+  const i = LIB.findIndex(e => e.id===editId); if (i >= 0) LIB.splice(i, 1);
+  cache.clear(); sdlg.hidden = true; lSel = null; if (!ldlg.hidden) drawLibrary(); render();
+  setMsg(`Deleted ${draft.name}. It's in the Recycle Bin if you need it back.`);
+};
+$("s-export").onclick = () => {
+  readEditor();
+  const d = draft;
+  $("s-msg").innerHTML = (d.private ? `<b>${esc(d.name)} is marked private.</b> Export asks before writing it and leaves out the notes. ` : "")
+    + `Export writes <code>${esc(d.id || slug(d.name))}.json</code> for other GlossCode users, or <code>O${d.program}.nc</code> (just the body) to load on the control.`;
+};
+$("s-cancel").onclick = $("s-x").onclick = closeEditor;
+sdlg.addEventListener("keydown", ev => { ev.stopPropagation(); if (ev.key==="Escape"){ ev.preventDefault(); closeEditor(); } });
+
+// Insert › Save N1000 to the library…: the M97 block the cursor is in (or the one the selected line calls).
+function localSubAt(li){
+  const tgt = callTarget(doc[li]);
+  if (tgt && tgt[0]==="N"){ const r = subRange(tgt); if (r) return { label:tgt, range:r }; }
+  for (const [label, s] of Object.entries(labels())){
+    if (label[0]!=="N" || !doc.some(t => callTarget(t)===label)) continue;
+    const r = subRange(label); if (r && li >= r[0] && li <= r[1]) return { label, range:r };
+  }
+  return null;
+}
+function saveLocalSub(){
+  const ls = localSubAt(curLine); if (!ls) return;
+  if (editing && !commit()) return;
+  closeMenu();
+  const m = MACHINES[machineId], prog = freeProgram();
+  const lines = doc.slice(ls.range[0], ls.range[1] + 1).map(t => t.filter(w => !/^N\d/.test(w)).join(" ").replace(/\bM0?97\b/, "M98")).filter(Boolean);
+  const before = ls.range[0] > 0 && doc[ls.range[0]-1].every(w => w.startsWith("(")) ? doc[ls.range[0]-1].join(" ").replace(/[()]/g, "").trim() : "";
+  const name = before ? before.replace(/\s*SUBPROGRAM$/i, "").toLowerCase().replace(/^\w/, c => c.toUpperCase()) : `From ${fileName} ${ls.label}`;
+  openEditor(null, { glosscode:"subprogram/1", id:"", name, word:{ long:"", short:"" }, program:prog, category:"", tags:[],
+    machines:["fanuc." + m.type], units:(lineState[curLine] || newState()).units, source:"mine", args:[], about:"",
+    body:[`O${prog} (${name.toUpperCase()})`, ...lines.map(l => /^M0?99$/.test(l) ? "M99" : l)] });
+  $("s-msg").textContent = `Copied ${ls.label}. Swap the numbers that change for #24 (X), #25 (Y), #26 (Z)…, then Add from body.`;
+}
+
+// Add the library to the Insert menu, before the canned cycle guide.
+const baseInsert = Object.getOwnPropertyDescriptor(MENUS, "Insert").get;
+Object.defineProperty(MENUS, "Insert", { enumerable:true, configurable:true, get(){
+  const items = baseInsert(), m = MACHINES[machineId];
+  const mine = LIB.filter(e => fits(e)==="yes").sort((a, b) => callsIn(b) - callsIn(a) || a.program - b.program);
+  const ls = localSubAt(curLine);
+  const lib = ["-", { grp:`Subprogram library` },
+    { label:"Subprogram library…", sc:`${LIB.length} saved`, fn:() => openLibrary() },
+    ...mine.slice(0, 5).map(e => ({ label:e.name + "…", sc:"O" + e.program, fn:() => openLibrary(e.id) })),
+    ...(mine.length > 5 ? [{ grp:`${mine.length - 5} more in the library` }] : []),
+    ...(!mine.length ? [{ grp:`None for ${esc(m.name)} yet` }] : []),
+    { label:"New library subprogram…", fn:() => { closeMenu(); openEditor(null); } },
+    { label:ls ? `Save ${ls.label} to the library…` : "Save a subprogram to the library…", sc:ls ? "" : "Put the cursor in one", dis:() => !ls, fn:saveLocalSub }];
+  const at = items.lastIndexOf("-");
+  return [...items.slice(0, at), ...lib, ...items.slice(at)];
+}});
+window.openLibrary = openLibrary; window.openLibEditor = openEditor;
+render();
 })();
 </script>
 </body>

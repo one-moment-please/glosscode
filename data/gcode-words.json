@@ -31,6 +31,7 @@
     "G57": { "long": "WORK4",    "short": "W4",    "desc": "Work offset 4" },
     "G58": { "long": "WORK5",    "short": "W5",    "desc": "Work offset 5" },
     "G59": { "long": "WORK6",    "short": "W6",    "desc": "Work offset 6" },
+    "G65": { "long": "MACRO",    "short": "MAC",   "desc": "Call a macro subprogram, passing values to it" },
     "G70": { "lathe": { "long": "FINCYC", "short": "FIN", "desc": "Finishing cycle" } },
     "G71": { "lathe": { "long": "RUFCYC", "short": "RUF", "desc": "OD/ID roughing cycle" } },
     "G72": { "lathe": { "long": "FACERUF", "short": "FRUF", "desc": "Face roughing cycle" } },
