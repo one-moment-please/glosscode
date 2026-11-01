@@ -1,6 +1,6 @@
 # Architecture
 
-GlossCode targets Windows first. Everything is arranged so that a native Linux build is mostly a recompile, with no Wine involved.
+GlossCode targets Windows first. Everything is arranged so that a native Linux build is mostly a recompile.
 
 ## Layers
 
@@ -52,7 +52,6 @@ The UI is plain HTML, CSS and JavaScript loaded into the webview. It talks to th
 - MinGW-w64 or clang on Windows, gcc or clang on Linux.
 - Avoid .NET, MFC, the registry and MSVC-only features.
 - WebView2 ships with Windows 10 and 11, so the .exe stays small.
-- Wine is useful during development to test a cross-compiled .exe on Linux. It is not part of what ships.
 
 ## Data files
 

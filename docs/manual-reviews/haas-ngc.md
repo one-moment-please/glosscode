@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Manuals | Haas Mill Operator's Manual 96-8210 Rev V (Dec 2025) and Rev N (2020); Haas Lathe Operator's Manual 96-8910 Rev N (2020); Haas lathe programming workbook (ST/TL, classic control, © 2015) |
-| Copies reviewed | PDFs with a text layer, on Graham's laptop. Printed page = PDF page − 34 for the 2025 mill manual and − 22 for the 2020 one |
+| Copies reviewed | PDFs with a text layer. Printed page = PDF page − 34 for the 2025 mill manual and − 22 for the 2020 one |
 | Controls | Haas NGC mill and lathe (live tooling, C axis, Y axis and sub spindle are options on the lathe). The workbook is the classic control |
 | Reviewed | 2026-11-01, against the `haas` dialect in `data/gcode-rules.json` and the `haas` overrides in `data/gcode-words.json` |
 | Result | Work offsets, the M-code limit, dwell units and several mill-or-lathe codes were missing or wrong; fixed below |

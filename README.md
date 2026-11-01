@@ -88,7 +88,7 @@ See [`docs/features.md`](docs/features.md) for the full list and what is still u
 
 ## Platform plan
 
-Windows first, with a native Linux build later rather than shipping Wine.
+Windows first, with a native Linux build later.
 
 - **Core in portable C**: parser, translator, mode tracking, checks and dictionary loading. Only the C standard library, no `windows.h`, UTF-8 throughout.
 - **One small platform file per OS**: `platform_win32.c` now, `platform_linux.c` later, each with the same handful of functions (read and write files, watch for changes, find the settings folder, open the window).
