@@ -363,6 +363,55 @@
       }
     },
 
+    "centroid": {
+      "label": "Centroid CNC12",
+      "inherits": "fanuc",
+      "verified": true,
+      "source": { "manual": "Centroid CNC12 Mill, Lathe and Router Operator's Manuals", "revision": "v5.42 and later (lathe also checked against v3.16, v4.14 and v4.20)", "section": "Program codes, G codes and M codes chapters" },
+      "mill": {
+        "modalGroups": {
+          "feed mode":   ["G93", "G94"],
+          "canned cycle":["G73", "G74", "G76", "G80", "G81", "G82", "G83", "G84", "G85", "G89"],
+          "exact stop":  ["G61", "G64"],
+          "macro modal": null, "polar": null, "speed mode": null
+        },
+        "programEnds": ["M02", "M99"],
+        "cycles": {
+          "G73": { "name": "High-speed peck", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true },
+          "G74": { "name": "Left-hand tap",   "requires": ["Z", "R"], "optional": ["X", "Y", "F", "Q"], "meaning": { "Q": "the pitch, in rigid tapping" }, "feed": true, "spindle": true },
+          "G76": { "name": "Fine bore",       "requires": ["Z", "R"], "optional": ["X", "Y", "F", "Q"], "meaning": { "Q": "the pull-off distance" }, "feed": true, "spindle": true },
+          "G81": { "name": "Drill",           "requires": ["Z", "R"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true },
+          "G82": { "name": "Drill with dwell", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true },
+          "G83": { "name": "Peck drill",      "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true },
+          "G84": { "name": "Tap",             "requires": ["Z", "R"], "optional": ["X", "Y", "F", "Q"], "meaning": { "Q": "the pitch, in rigid tapping" }, "feed": true, "spindle": true },
+          "G85": { "name": "Bore, feed out",  "requires": ["Z", "R"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true },
+          "G86": null, "G87": null, "G88": null,
+          "G89": { "name": "Bore with dwell", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true }
+        },
+        "foreign": {
+          "G95": { "severity": "error",   "text": "Centroid mills have no feed per revolution. F is always per minute; G94 only turns inverse time (G93) off." },
+          "G86": { "severity": "error",   "text": "Centroid mills have no G86. The boring cycles are G76, G85 and G89." },
+          "G87": { "severity": "error",   "text": "Centroid mills have no G87." },
+          "G88": { "severity": "error",   "text": "Centroid mills have no G88." },
+          "G96": { "severity": "error",   "text": "Centroid mills have no constant surface speed." },
+          "G66": { "severity": "error",   "text": "Centroid has no modal macro call (G66). Use G65." },
+          "M30": { "severity": "info",    "text": "On Centroid, M30 is a custom M code that does nothing unless the machine defines it. M02 ends and restarts the program." }
+        }
+      },
+      "lathe": {
+        "programEnds": ["M02", "M99"],
+        "cycles": {
+          "G71": { "name": "OD/ID roughing", "requires": ["P", "Q"], "optional": ["D", "U", "W", "I", "K", "A", "F", "R", "S"], "labels": ["P", "Q"], "modal": false, "spindle": true, "note": "Centroid takes the Fanuc two-line form or a one-line form with D as the depth of cut." },
+          "G72": { "name": "Face roughing",  "requires": ["P", "Q"], "optional": ["D", "U", "W", "I", "K", "A", "F", "R", "S"], "labels": ["P", "Q"], "modal": false, "spindle": true },
+          "G76": { "name": "Threading", "requires": ["X", "Z"], "choices": [["P", "Q"], ["K", "D"]], "optional": ["R", "U", "W", "A", "I", "F", "E"], "modal": false, "spindle": true, "leadF": true, "note": "Centroid takes the Fanuc two-line form (P Q) or a one-line form (K D A)." },
+          "G90": { "name": "OD/ID turning cycle", "requires": ["X", "Z"], "optional": ["U", "W", "R", "F", "P", "L"], "feed": true, "spindle": true }
+        },
+        "foreign": {
+          "M30": { "severity": "info", "text": "On Centroid, M30 is a custom M code that does nothing unless the machine defines it. M02 ends and restarts the program." }
+        }
+      }
+    },
+
     "okuma": {
       "label": "Okuma OSP (P300 and later)",
       "inherits": "fanuc",
