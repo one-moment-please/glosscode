@@ -13,6 +13,7 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Keyboard editing by word: ← → move between words, ↑ ↓ between lines, Enter edits and Enter again finishes (the word stays selected), Delete removes the word, typing replaces it
 - [ ] While editing, Space starts a new word to the right; in G-code, typing a letter after a number does too (`G01X` becomes `G01` and `X`)
 - [ ] Shift+Enter breaks the line after the selected word, moving the rest to a new numbered line
+- [ ] Paste (Ctrl+V or Edit › Paste) splits the text the way opening a file does. One line goes into the current line with each word in its own cell (`G01X1.Y2.` becomes three words). Several lines, or a whole program, go in as their own lines below the current one, or replace it when it's blank
 - [ ] Caps Lock switches between editing the G-code line and the English line (View › Caps Lock switches between them)
 - [ ] Hint text after codes for the words they still need (`G02` shows `R## or I## J##`, `G83` shows `Z## R## Q##`). Clicking R## types the R and hides I and J; clicking I## hides R but keeps J
 - [ ] Mode-clash warnings in the status bar
