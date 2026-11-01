@@ -85,6 +85,7 @@ select.wsel{font:13px var(--w-ui);border:1px solid #d1d1d1;border-radius:4px;pad
 .ln.k-rapid:not(.ins){background:#fffaf0}
 .ln.k-rapid .r.gc .cell:not(.n):not(.cm){color:#9a5b00}
 .ln.cur:not(.ins){outline:1px solid #9cc3ec;outline-offset:-1px}
+.ln.lsel:not(.ins){background:#dbe9f8}.ln.lsel:not(.ins) .gut{background:#0f6cbd;color:#fff}
 .tl{position:relative;overflow:hidden;background:#fff;border:1px solid #e5e5e5;border-radius:4px;height:106px;cursor:pointer}
 .tl svg{position:absolute;left:0;top:0;transition:transform .25s ease}
 .tlmid{position:absolute;left:50%;top:0;bottom:0;width:0;border-left:1px dashed #d13438;pointer-events:none}
@@ -189,6 +190,7 @@ select.wsel{font:13px var(--w-ui);border:1px solid #d1d1d1;border-radius:4px;pad
 .menu .it.dis:hover{background:transparent}
 .menu .it .ck{color:#0f6cbd;text-align:center;font-size:11px}
 .menu .it .sc{color:#888;font-size:11.5px;padding-left:18px}
+.menu.ctx{position:fixed;top:auto;z-index:50}
 .menu .sep{height:1px;background:#e5e5e5;margin:4px 6px}
 .menu .grp{font-size:11px;color:#888;padding:5px 10px 1px 30px}
 .iconbtn{font:16px/1 var(--w-ui);min-width:30px;height:28px;border:1px solid transparent;background:transparent;border-radius:4px;cursor:pointer;color:#1b1b1b;padding:0 6px}
@@ -1118,7 +1120,7 @@ let doc = [], view = [], lineState = [], curLine = 0, editing = null;
 // Keyboard selection: curRef is the selected word slot on curLine ("0", "1"… in program order, "c3" in columns,
 // "h:R" for a hint). pendingIns is a new, still-empty word being typed in at index `at`.
 let curRef = "0", pendingIns = null, capsSwitch = true, fileEob = false;
-let expanded = new Set(), autoN = true;
+let expanded = new Set(), autoN = true, selAnchor = null;   // selAnchor: the other end of a selection of whole lines
 const N_STEP = 10;
 let undoStack = [], redoStack = [];
 let findQ = "";
@@ -1613,7 +1615,7 @@ function sortWords(scope){
 // docVer names the program's current state, so a tab knows whether it differs from what was last saved.
 function snap(){ return JSON.stringify({ doc, ex:[...expanded], cur:curLine, v:docVer }); }
 function pushUndo(){ undoStack.push(snap()); if (undoStack.length > 300) undoStack.shift(); redoStack = []; docVer = ++VER_SEQ; }
-function restore(s){ const o = JSON.parse(s); doc = o.doc; expanded = new Set(o.ex); curLine = Math.min(o.cur, doc.length-1); docVer = o.v; }
+function restore(s){ selAnchor = null; const o = JSON.parse(s); doc = o.doc; expanded = new Set(o.ex); curLine = Math.min(o.cur, doc.length-1); docVer = o.v; }
 function undo(){
   if (editing && !commit()) return;
   if (!undoStack.length){ setMsg("Nothing to undo"); return; }
@@ -1929,7 +1931,7 @@ function render(){
     const kind = lineKind(li);
     const lp = ins ? null : PBYLINE[li], worst = lp ? lp.reduce((a, p) => SEV_RANK[p.sev] > SEV_RANK[a] ? p.sev : a, "info") : null;
     const pmark = lp ? `<span class="pm ${worst}" title="${esc(lp.map(p => p.msg).join("\n"))}">${SEV_ICON[worst]}</span>` : "";
-    const c = `ln${worst?" p-"+worst:""}${li===curLine && !ins?" cur":""}${ins?" ins":""}${kind?" k-"+kind:""}${fhits.includes(li) && li===curLine?" fcur":""}${simIdx!=null && li===curLine && !ins?" simcur":""}${simBD && isBlockDel(doc[li])?" bdskip":""}`;
+    const c = `ln${worst?" p-"+worst:""}${li===curLine && !ins?" cur":""}${!ins && inSel(li)?" lsel":""}${ins?" ins":""}${kind?" k-"+kind:""}${fhits.includes(li) && li===curLine?" fcur":""}${simIdx!=null && li===curLine && !ins?" simcur":""}${simBD && isBlockDel(doc[li])?" bdskip":""}`;
     return `<div class="${c}" data-key="${key}" data-li="${li}"${ins?` title="Inserted from the subprogram called on ${from}. Edits here change the subprogram itself."`:""}><div class="r en${tall}"><span class="gut">${pmark}</span>${en}${eob[0]}</div><div class="r gc${tall}"><span class="gut">${ins?"↳":li+1}</span>${gc}${eob[1]}${xp}</div></div>`;
   }).join("");
   drawViews(); drawModes(); status(); updateFindCount(fhits); drawProblems();
@@ -2000,9 +2002,11 @@ ed.addEventListener("mouseover", e => {
 });
 ed.addEventListener("mouseleave", () => { if (!editing) showInfo(curLine, null); });
 ed.addEventListener("mousedown", e => {
+  if (e.button===2 && e.target.tagName!=="INPUT") return;   // right-click opens the line menu (below)
   const x = e.target.closest(".xp[data-x]");
   if (x){ e.preventDefault(); if (editing) commit(); const li = +x.dataset.x; expanded.has(li) ? expanded.delete(li) : expanded.add(li); render(); return; }
   const c = e.target.closest(".cell");
+  if (e.shiftKey && !x){ const ln = e.target.closest(".ln[data-li]:not(.ins)"); if (ln && !ln.classList.contains("lib")){ e.preventDefault(); extendSel(+ln.dataset.li); return; } }
   if (!c || c.classList.contains("eob")){ const ln = e.target.closest(".ln"); if (ln && !editing){ e.preventDefault(); selectLine(+ln.dataset.li); } return; }
   if (e.target.tagName==="INPUT") return;
   e.preventDefault();
@@ -2120,6 +2124,17 @@ function pasteText(text, fromMenu){
     return true;
   }
   if (editing && !commit()) return true;
+  const r = selRange();
+  if (r){
+    pushUndo(); selAnchor = null;
+    doc.splice(r[0], r[1] - r[0] + 1, ...lines);
+    const shift = lines.length - (r[1] - r[0] + 1);
+    expanded = new Set([...expanded].filter(i => i < r[0] || i > r[1]).map(i => i > r[1] ? i + shift : i));
+    curLine = r[0] + lines.length - 1; curRef = "0";
+    render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`)); ed.focus({preventScroll:true}); showSelInfo();
+    setMsg(`Pasted ${lines.length} lines in place of lines ${r[0]+1}–${r[1]+1}. Ctrl+Z puts them back.`);
+    return true;
+  }
   const li = curLine, t = doc[li];
   const blank = !t.length || (t.length===1 && /^N\d+$/.test(t[0]));   // empty, or only the N number a new line gets
   const wasEmpty = blank && doc.length===1;
@@ -2141,8 +2156,105 @@ ed.addEventListener("paste", e => {
   const t = e.clipboardData?.getData("text/plain");
   if (t && pasteText(t)) e.preventDefault();
 });
+/* ---------- Selecting whole lines ----------
+   Shift+↑↓ or Shift+click selects lines. Ctrl+C copies them as G-code text (what Save would write),
+   Ctrl+X cuts them, Ctrl+D puts a copy below, and Ctrl+V pastes over them. With no lines selected,
+   these act on the current line. */
+function selRange(){ if (selAnchor==null || selAnchor===curLine || !doc[selAnchor]) return null; return [Math.min(selAnchor, curLine), Math.max(selAnchor, curLine)]; }
+const inSel = li => { const r = selRange(); return !!r && li >= r[0] && li <= r[1]; };
+const linesToCopy = () => { const r = selRange() || [curLine, curLine]; return r; };
+function extendSel(to){
+  if (editing && !commit()) return;
+  if (selAnchor==null) selAnchor = curLine;
+  selectLine(to, false, true);
+  const r = selRange(); setMsg(r ? `${r[1]-r[0]+1} lines selected. Ctrl+C copies, Ctrl+X cuts, Ctrl+D duplicates, Delete removes them.` : "");
+}
+function selectAllLines(){ if (editing && !commit()) return; selAnchor = 0; selectLine(doc.length-1, false, true); setMsg(`All ${doc.length} lines selected.`); }
+function clearSel(){ if (selAnchor==null) return false; selAnchor = null; render(); setMsg(""); return true; }
+// The selected lines as G-code text, one block per line, the same as Save writes them.
+function copyText(){ const [a, b] = linesToCopy(); return doc.slice(a, b+1).map(t => t.join(" ").replace(/^(\/\d?) /, "$1") + (eobOn() ? ";" : "")).join("\r\n") + "\r\n"; }
+function copyMsg(verb){ const [a, b] = linesToCopy(); return b > a ? `${verb} lines ${a+1}–${b+1} (${b-a+1} lines).` : `${verb} line ${a+1}.`; }
+function removeLines(a, b){
+  const n = b - a + 1;
+  if (n >= doc.length){ doc = [[]]; expanded = new Set(); curLine = 0; }
+  else { doc.splice(a, n); expanded = new Set([...expanded].filter(i => i < a || i > b).map(i => i > b ? i - n : i)); curLine = Math.min(a, doc.length-1); }
+  selAnchor = null; curRef = "0";
+}
+function cutLines(){ const [a, b] = linesToCopy(), msg = copyMsg("Cut"); pushUndo(); removeLines(a, b); render(); setMsg(msg + ` Ctrl+V pastes ${b > a ? "them" : "it"}, Ctrl+Z puts ${b > a ? "them" : "it"} back.`); }
+function duplicateLines(){
+  if (editing && !commit()) return;
+  const [a, b] = linesToCopy(), copy = doc.slice(a, b+1).map(t => [...t]), n = copy.length;
+  pushUndo();
+  doc.splice(b+1, 0, ...copy);
+  expanded = new Set([...expanded].map(i => i > b ? i + n : i));
+  selAnchor = n > 1 ? b+1 : null; curLine = b + n; curRef = "0";
+  render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`)); ed.focus({preventScroll:true});
+  const hasN = copy.some(t => nOf(t)!=null);
+  setMsg(`Duplicated ${n===1 ? "line " + (a+1) : n + " lines"}. The copy is selected below the original.${hasN ? " Its N numbers repeat the original's: Program › Renumber gives it new ones." : ""}`);
+}
+function copyFromMenu(cut){
+  if (editing && !commit()) return;
+  const t = copyText(), msg = copyMsg(cut ? "Cut" : "Copied");
+  if (!navigator.clipboard?.writeText){ setMsg(`Press Ctrl+${cut ? "X" : "C"} instead.`, true); return; }
+  navigator.clipboard.writeText(t).then(() => { if (cut) cutLines(); else setMsg(msg); }).catch(() => setMsg(`GlossCode couldn't use the clipboard. Press Ctrl+${cut ? "X" : "C"} instead.`, true));
+}
+ed.addEventListener("copy", e => {
+  if (editing || activeTab < 0) return;
+  e.preventDefault(); e.clipboardData.setData("text/plain", copyText()); setMsg(copyMsg("Copied") + " Ctrl+V pastes them, or Ctrl+D duplicates without the clipboard.");
+});
+ed.addEventListener("cut", e => {
+  if (editing || activeTab < 0) return;
+  e.preventDefault(); e.clipboardData.setData("text/plain", copyText()); cutLines();
+});
+// Dragging the mouse from one line to another selects the lines in between. A drag that starts on a word
+// stops editing it (nothing typed is lost: the word was only just opened).
+let lineDrag = null;
+ed.addEventListener("mousedown", e => {
+  if (e.button!==0 || e.shiftKey || e.target.closest(".xp") || e.target.tagName==="INPUT") return;
+  const ln = e.target.closest(".ln[data-li]:not(.ins):not(.lib)"); lineDrag = ln ? { from:+ln.dataset.li } : null;
+});
+ed.addEventListener("mousemove", e => {
+  if (!lineDrag || !(e.buttons & 1)) return;
+  const ln = e.target.closest(".ln[data-li]:not(.ins):not(.lib)"); if (!ln) return;
+  const li = +ln.dataset.li; if (li===lineDrag.from && selAnchor==null) return;
+  if (editing){ editing = null; pendingIns = null; closeAC(); }
+  e.preventDefault(); window.getSelection()?.removeAllRanges();
+  selAnchor = lineDrag.from; if (li!==curLine){ curLine = li; render(); }
+});
+document.addEventListener("mouseup", () => {
+  if (!lineDrag) return; lineDrag = null;
+  const r = selRange(); if (r){ ed.focus({preventScroll:true}); setMsg(`${r[1]-r[0]+1} lines selected. Right-click or Ctrl+C to copy.`); }
+});
+// Right-click: Cut, Copy, Paste and Duplicate for the selected lines (or the line clicked).
+let ctxEl = null;
+function closeCtx(){ ctxEl?.remove(); ctxEl = null; }
+ed.addEventListener("contextmenu", e => {
+  if (e.target.tagName==="INPUT") return;   // a word being edited gets the normal text menu
+  const ln = e.target.closest(".ln[data-li]:not(.ins):not(.lib)"); if (!ln) return;
+  e.preventDefault(); closeMenu(); closeCtx();
+  if (editing && !commit()) return;
+  const li = +ln.dataset.li; if (!inSel(li)){ selAnchor = null; curLine = li; render(); }
+  const r = selRange(), n = r ? r[1]-r[0]+1 : 1, what = n > 1 ? `${n} lines` : "line";
+  const items = [
+    { label:`Cut ${what}`, sc:"Ctrl+X", fn:() => copyFromMenu(true) },
+    { label:`Copy ${what}`, sc:"Ctrl+C", fn:() => copyFromMenu(false) },
+    { label:n > 1 ? `Paste over ${what}` : "Paste below", sc:"Ctrl+V", fn:pasteFromMenu },
+    { label:`Duplicate ${what}`, sc:"Ctrl+D", fn:duplicateLines }, "-",
+    { label:`Delete ${what}`, sc:"Ctrl+Shift+K", fn:deleteLine },
+    { label:"Select all lines", sc:"Ctrl+A", fn:selectAllLines }];
+  ctxEl = document.createElement("div"); ctxEl.className = "menu ctx";
+  ctxEl.innerHTML = items.map((it, i) => it==="-" ? `<div class="sep"></div>` : `<div class="it" data-i="${i}"><span class="ck"></span><span>${esc(it.label)}</span><span class="sc">${it.sc}</span></div>`).join("");
+  document.body.appendChild(ctxEl);
+  const w = ctxEl.offsetWidth, h = ctxEl.offsetHeight;
+  ctxEl.style.left = Math.min(e.clientX, innerWidth - w - 4) + "px"; ctxEl.style.top = Math.min(e.clientY, innerHeight - h - 4) + "px";
+  ctxEl.addEventListener("mousedown", ev => { ev.preventDefault(); const it = ev.target.closest(".it"); if (!it) return; const item = items[+it.dataset.i]; closeCtx(); item.fn(); });
+});
+document.addEventListener("mousedown", e => { if (ctxEl && !ctxEl.contains(e.target)) closeCtx(); });
+document.addEventListener("keydown", e => { if (ctxEl && e.key==="Escape"){ e.stopPropagation(); closeCtx(); } }, true);
 function deleteLine(){
   if (editing) { editing = null; closeAC(); }
+  const r = selRange();
+  if (r){ pushUndo(); const n = r[1]-r[0]+1; removeLines(r[0], r[1]); render(); setMsg(`Deleted ${n} lines. Ctrl+Z brings them back.`); return; }
   if (doc.length < 2) return;
   pushUndo();
   const li = curLine; const gone = doc[li].join(" ");
@@ -2409,8 +2521,9 @@ function scrollToLn(el){
   if (t < ed.scrollTop + 8) ed.scrollTop = t - 8;
   else if (b > ed.scrollTop + ed.clientHeight - 8) ed.scrollTop = b - ed.clientHeight + 8;
 }
-function selectLine(li, keepSim){
+function selectLine(li, keepSim, keepSel){
   if (editing && !commit()) return;
+  if (!keepSel) selAnchor = null;
   if (simIdx!=null && !keepSim) stopSim(true);
   curLine = Math.max(0, Math.min(li, doc.length-1)); render(); showInfo(curLine, null);
   scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`));
@@ -2933,7 +3046,11 @@ const MENUS = {
     { label:"Undo", sc:"Ctrl+Z", fn:undo, dis:() => !undoStack.length },
     { label:"Redo", sc:"Ctrl+Y", fn:redo, dis:() => !redoStack.length },
     "-",
+    { label:"Cut lines", sc:"Ctrl+X", fn:() => copyFromMenu(true) },
+    { label:"Copy lines", sc:"Ctrl+C", fn:() => copyFromMenu(false) },
     { label:"Paste", sc:"Ctrl+V", fn:pasteFromMenu },
+    { label:"Duplicate lines", sc:"Ctrl+D", fn:duplicateLines },
+    { label:"Select all lines", sc:"Ctrl+A", fn:selectAllLines },
     "-",
     { label:"Find…", sc:"Ctrl+F", fn:openFind },
     { label:"Find next", sc:"F3", fn:() => findNext(1), dis:() => !findQ },
@@ -2941,7 +3058,7 @@ const MENUS = {
     { label:"New line below", sc:"Ctrl+Enter", fn:() => newLine(curLine) },
     { label:"Break line after the selected word", sc:"Shift+Enter", fn:() => { if (editing && !commit()) return; breakSel(); } },
     { label:"Delete selected word", sc:"Delete", fn:() => { if (editing && !commit()) return; deleteWord(); } },
-    { label:"Delete line", sc:"Ctrl+Shift+K", fn:deleteLine }
+    { label:"Delete line (or selected lines)", sc:"Ctrl+Shift+K", fn:deleteLine }
   ],
   View: [
     { grp:"Edit in" },
@@ -2997,7 +3114,7 @@ const MENUS = {
   ],
   Help: [
     { label:"Canned cycle guide…", sc:"F1", fn:() => openCycleHelp(), doc:true },
-    { label:"Keyboard shortcuts", fn:() => setMsg("↑↓ line · ←→ word · Enter edit/done · Space new word · Shift+Enter break line · Del delete word · Caps Lock G-code/English · F1 cycle guide · F5 play · Ctrl+→ step · Ctrl+Z undo · Ctrl+F find · F8 next problem") },
+    { label:"Keyboard shortcuts", fn:() => setMsg("↑↓ line · ←→ word · Enter edit/done · Space new word · Shift+Enter break line · Shift+↑↓ select lines · Ctrl+C/X/V copy, cut, paste · Ctrl+D duplicate · Del delete word · Caps Lock G-code/English · F1 cycle guide · F5 play · Ctrl+→ step · Ctrl+Z undo · Ctrl+F find · F8 next problem") },
     { label:"About the dictionary", fn:() => setMsg("Words come from gcode-words.json plus the selected machine's file.") }
   ]
 };
@@ -3045,10 +3162,14 @@ document.getElementById("app").addEventListener("keydown", e => {
   if (ctrl && k==="z" && !e.shiftKey){ e.preventDefault(); undo(); return; }
   if (ctrl && (k==="y" || (k==="z" && e.shiftKey))){ e.preventDefault(); redo(); return; }
   if (ctrl && e.shiftKey && k==="k"){ e.preventDefault(); deleteLine(); return; }
+  if (ctrl && k==="d"){ e.preventDefault(); duplicateLines(); return; }
   if (ctrl && e.key==="Enter"){ e.preventDefault(); newLine(curLine); return; }
   if (e.target!==ed) return;
   if (ctrl && e.key==="ArrowRight"){ e.preventDefault(); simStep(1); }
   else if (ctrl && e.key==="ArrowLeft"){ e.preventDefault(); simStep(-1); }
+  else if (ctrl && k==="a"){ e.preventDefault(); selectAllLines(); }
+  else if (e.shiftKey && e.key==="ArrowDown"){ e.preventDefault(); extendSel(Math.min(doc.length-1, curLine+1)); }
+  else if (e.shiftKey && e.key==="ArrowUp"){ e.preventDefault(); extendSel(Math.max(0, curLine-1)); }
   else if (e.key==="ArrowDown"){ e.preventDefault(); moveLine(1); }
   else if (e.key==="ArrowUp"){ e.preventDefault(); moveLine(-1); }
   else if (e.key==="ArrowRight"){ e.preventDefault(); moveWord(1); }
@@ -3058,8 +3179,9 @@ document.getElementById("app").addEventListener("keydown", e => {
   else if (e.key==="Enter" && e.shiftKey){ e.preventDefault(); breakSel(); }
   else if (e.key==="Enter"){ e.preventDefault(); editSel(); }
   else if (e.key===" "){ e.preventDefault(); spaceSel(); }
+  else if ((e.key==="Delete" || e.key==="Backspace") && selRange()){ e.preventDefault(); deleteLine(); }
   else if (e.key==="Delete" || e.key==="Backspace"){ e.preventDefault(); deleteWord(e.key==="Backspace"); }
-  else if (e.key==="Escape"){ if (openMenu) closeMenu(); else if (simIdx!=null) stopSim(); }
+  else if (e.key==="Escape"){ if (openMenu) closeMenu(); else if (simIdx!=null) stopSim(); else clearSel(); }
   else if (!ctrl && !e.altKey && e.key.length===1 && /[A-Za-z0-9.(#+-]/.test(e.key)){ e.preventDefault(); editSel(e.key.toUpperCase()); }
 });
 
@@ -3235,7 +3357,8 @@ const FEATURES = [
   ["Editing", "Hint text for the words a code still needs (G02 shows R## or I## J##); click one to fill it in", 1],
   ["Editing", "Insert menu: hole patterns (grid or bolt circle) and canned cycles by category, with a sketch and a box for each word", 1],
   ["Editing", "Paste a few lines or a whole program: each line gets its own row and each word its own cell", 1],
-  ["Editing", "Select several lines to copy, cut, paste, move or delete together", 0],
+  ["Editing", "Select several lines (drag with the mouse, Shift+↑↓ or Shift+click) and right-click to copy, cut, duplicate (Ctrl+D), paste over or delete together", 1],
+  ["Editing", "Move selected lines up or down", 0],
   ["Editing", "Comment out or block-delete (/) a line with one key", 0],
   ["Editing", "Go to line or N number (Ctrl+G), and bookmarks", 0],
   ["Lines", "Auto N numbers, Renumber, and sort words into one order", 1],
