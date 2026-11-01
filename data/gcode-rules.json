@@ -128,10 +128,14 @@
       "label": "Haas NGC",
       "inherits": "fanuc",
       "verified": true,
+      "source": { "manual": "Haas Mill and Lathe Operator's Manuals (NGC)", "revision": "Mill 96-8210 Rev V (2025) and Rev N (2020), Lathe 96-8910 Rev N (2020)", "section": "Programming: G codes, M codes, subprograms, settings" },
       "mill": {
+        "modalGroups": { "work offset": ["G54", "G55", "G56", "G57", "G58", "G59", "G110", "G111", "G112", "G113", "G114", "G115", "G116", "G117", "G118", "G119", "G120", "G121", "G122", "G123", "G124", "G125", "G126", "G127", "G128", "G129", "G154"] },
+        "mPerBlock": 1,
+        "dwellNoDecimal": "ms",
         "subCalls": { "M97": { "word": "P", "target": "label" }, "M98": { "word": "P", "target": "program" } },
         "cycles": {
-          "G73": { "name": "High-speed peck", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "L", "P"], "feed": true, "spindle": true },
+          "G73": { "name": "High-speed peck", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "K", "L", "P"], "feed": true, "spindle": true },
           "G74": { "name": "Left-hand tap",   "requires": ["Z", "R"], "optional": ["X", "Y", "F", "J", "L"], "feed": true, "speed": true, "startsSpindle": true },
           "G76": { "name": "Fine bore",       "requires": ["Z", "R"], "optional": ["X", "Y", "F", "I", "J", "Q", "P", "L"], "feed": true, "spindle": true },
           "G77": { "name": "Back bore",       "requires": ["Z", "R"], "optional": ["X", "Y", "F", "I", "J", "Q", "L"], "feed": true, "spindle": true },
@@ -147,6 +151,9 @@
         "foreign": { "M97": null, "M88": null, "M89": null }
       },
       "lathe": {
+        "modalGroups": { "work offset": ["G54", "G55", "G56", "G57", "G58", "G59", "G110", "G111", "G114", "G115", "G116", "G117", "G118", "G119", "G120", "G121", "G122", "G123", "G124", "G125", "G126", "G127", "G128", "G129", "G154"] },
+        "mPerBlock": 1,
+        "dwellNoDecimal": "ms",
         "subCalls": { "M97": { "word": "P", "target": "label" }, "M98": { "word": "P", "target": "program" } },
         "cycles": {
           "G71": { "name": "OD/ID roughing",       "requires": ["P", "Q", "D"], "optional": ["U", "W", "F", "I", "K", "S", "T", "R"], "labels": ["P", "Q"], "modal": false, "spindle": true, "note": "Haas uses a one-block G71." },
@@ -158,7 +165,7 @@
           "G81": { "name": "Drill on center",      "requires": ["Z", "R"], "optional": ["X", "Y", "C", "W", "F"], "feed": true, "spindle": true },
           "G82": { "name": "Spot drill on center", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "C", "W", "F"], "feed": true, "spindle": true },
           "G83": { "name": "Peck drill on center", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "C", "W", "F", "P"], "feed": true, "spindle": true },
-          "G84": { "name": "Tap on center",        "requires": ["Z", "R", "F"], "optional": ["X", "Y", "C", "W"], "feed": true, "spindle": true },
+          "G84": { "name": "Tap on center",        "requires": ["Z", "R", "F"], "optional": ["X", "Y", "C", "W"], "speed": true, "startsSpindle": true, "leadF": true },
           "G241": { "name": "Radial drill",        "requires": ["X", "R"], "optional": ["Z", "C", "Y", "F"], "feed": true, "spindle": true, "needs": ["liveTooling"] },
           "G243": { "name": "Radial peck drill",   "requires": ["X", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["Z", "C", "Y", "F", "P"], "feed": true, "spindle": true, "needs": ["liveTooling"] }
         },
@@ -178,8 +185,6 @@
           "exact stop": ["G61", "G64"],
           "rotation": ["G68", "G69"]
         },
-        "mPerBlock": 1,
-        "dwellNoDecimal": "ms",
         "cycles": {
           "G73": { "name": "High-speed peck", "requires": ["Z", "R"], "choices": [["Q"], ["I", "J", "K"]], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
           "G74": { "name": "Left-hand tap",   "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "speed": true, "startsSpindle": true },
@@ -234,34 +239,55 @@
         }
       },
       "lathe": {
+        "source": { "manual": "Okuma OSP-P200L Programming Manual 5238-E", "revision": "3rd edition, Aug. 2007", "section": "Sections 1, 2, 4, 5, 7, 12 and the G and M code tables" },
         "modalGroups": {
-          "motion":      ["G00", "G01", "G02", "G03", "G33"],
+          "motion":      ["G00", "G01", "G02", "G03", "G31", "G32", "G33", "G34", "G35"],
           "feed mode":   ["G94", "G95"],
-          "distance":    ["G90", "G91"]
+          "distance":    ["G90", "G91"],
+          "units":       null,
+          "work offset": null
         },
+        "unitCodes": null,
+        "mPerBlock": 8,
+        "leadCodes": ["G31", "G32", "G33", "G34", "G35"],
+        "mConflicts": [["M03", "M04", "M05"], ["M08", "M09"], ["M12", "M13", "M14"], ["M22", "M23"], ["M83", "M84"], ["M88", "M89"]],
         "subCalls": { "CALL": { "word": "O", "target": "program" } },
         "subReturn": ["RTS"],
         "dwellWords": ["F"],
         "cycles": {
-          "G70": null, "G71": null, "G72": null, "G76": null, "G90": null, "G92": null, "G94": null
+          "G70": null, "G76": null, "G90": null, "G92": null, "G94": null,
+          "G71": { "name": "Thread cutting, compound, along Z", "requires": ["X", "Z", "D", "H", "F"], "meaning": { "D": "the first depth of cut", "H": "the thread height", "F": "the thread lead" }, "optional": ["I", "A", "B", "U", "L", "E", "J", "M", "Q"], "modal": false, "leadF": true, "spindle": true },
+          "G72": { "name": "Thread cutting, compound, on a face", "requires": ["X", "Z", "D", "H", "F"], "meaning": { "D": "the first depth of cut", "H": "the thread height", "F": "the thread lead" }, "optional": ["K", "A", "B", "U", "L", "E", "J", "M", "Q"], "modal": false, "leadF": true, "spindle": true },
+          "G73": { "name": "Grooving along Z", "requires": ["X", "Z", "D"], "meaning": { "D": "the depth of each plunge" }, "optional": ["I", "K", "L", "F", "E", "T"], "modal": false, "feed": true, "spindle": true },
+          "G74": { "name": "Grooving or drilling on a face", "requires": ["X", "Z", "D"], "meaning": { "D": "the depth of each peck" }, "optional": ["I", "K", "L", "F", "E", "T"], "modal": false, "feed": true, "spindle": true },
+          "G77": { "name": "Tapping, right hand", "requires": ["X", "Z", "K", "F"], "meaning": { "K": "where the rapid approach stops" }, "modal": false, "feed": true, "speed": true, "startsSpindle": true },
+          "G78": { "name": "Tapping, left hand", "requires": ["X", "Z", "K", "F"], "meaning": { "K": "where the rapid approach stops" }, "modal": false, "feed": true, "speed": true, "startsSpindle": true }
         },
-        "wordHints": { "G32": null, "G33": { "requires": ["Z", "F"] } },
+        "wordHints": { "G31": { "requires": ["Z", "F"] }, "G32": { "requires": ["X", "F"] }, "G33": { "requires": ["Z", "F"] } },
         "referenceOnly": {
-          "G85": "LAP longitudinal roughing (contour between G81 and G80, uses D, U, W, F and a sequence name)",
-          "G86": "LAP copy roughing",
-          "G87": "LAP finishing",
-          "G81": "Start of longitudinal contour definition",
-          "G82": "Start of transverse contour definition",
-          "G80": "End of contour definition",
-          "G71": "Compound threading, longitudinal",
-          "G72": "Compound threading, transverse",
-          "G33": "Single thread cut"
+          "G80": "LAP: end of shape definition",
+          "G81": "LAP: start of longitudinal shape definition",
+          "G82": "LAP: start of transverse shape definition",
+          "G83": "LAP: start of blank shape definition",
+          "G84": "LAP: change cutting conditions in bar turning",
+          "G85": "LAP bar turning (rough), uses the shape between G81/G82 and G80",
+          "G86": "LAP copy turning (rough)",
+          "G87": "LAP finish turning",
+          "G88": "LAP continuous thread cutting",
+          "G34": "Variable lead thread cycle, lead increasing",
+          "G35": "Variable lead thread cycle, lead decreasing"
         },
         "foreign": {
           "G98": { "severity": "warning", "text": "Okuma lathes set feed per minute with G94, not G98." },
           "G99": { "severity": "warning", "text": "Okuma lathes set feed per revolution with G95, not G99." },
           "G91": null,
-          "G28": { "severity": "warning", "text": "Okuma lathes return to a zero point with G30 P_, not G28. Check your machine's manual." },
+          "G28": { "severity": "warning", "text": "On an Okuma OSP lathe G28 cancels the torque limit (G29 sets it). It isn't a return home; that's G20." },
+          "G54": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G55": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G56": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G57": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G58": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
+          "G59": { "severity": "info", "text": "Okuma OSP lathes have no G54 to G59, even with live tooling or a Y axis (P200L and OSP7000L manuals). Set the work zero with the zero offset or G50." },
           "M97": { "severity": "error",   "text": "Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS." },
           "M98": { "severity": "warning", "text": "Okuma calls subprograms with CALL O_ and returns with RTS." }
         }
@@ -374,6 +400,14 @@
         "words": { "X": ["0.75", "Bottom of the radial hole, as a diameter."], "R": ["2.1", "Diameter where the feed starts. The tool rapids to R first."], "Z": ["-0.5", "Z position of the hole along the part."], "C": ["0.", "Spindle angle of the hole.", "ANGLEC"], "Y": ["0.", "Y position, on lathes with a Y axis."], "F": ["3.", "Feed per minute (live tools usually run under G98)."] } },
       "G243": { "sketch": "peck", "labels": { "axis": "X", "Z": "X" }, "about": "Peck drills in toward the centerline with a live tool, backing out to R after each peck of Q. Needs live tooling.",
         "words": { "X": ["0.75", "Bottom of the radial hole, as a diameter."], "R": ["2.1", "Diameter where the feed starts. The tool rapids to R first."], "Z": ["-0.5", "Z position of the hole along the part."], "C": ["0.", "Spindle angle of the hole.", "ANGLEC"], "Y": ["0.", "Y position, on lathes with a Y axis."], "F": ["3.", "Feed per minute (live tools usually run under G98)."], "Q": ["0.1", "Depth of each peck.", "PECK"], "I": ["0.15", "First peck depth (use I, J and K instead of Q).", "PECK1"], "J": ["0.02", "How much shorter each peck gets.", "PECKLESS"], "K": ["0.05", "Shortest peck allowed.", "PECKMIN"], "P": ["0.", "Dwell at the bottom, in seconds."] } }
+    },
+    "okuma.lathe": {
+      "G71": { "sketch": "thread", "about": "Cuts a whole thread along Z in one block: passes get shallower until the thread height H is reached, then an optional finishing pass removes U.", "words": { "X": ["28.", "Final thread diameter."], "Z": ["5.", "Z where the thread ends."], "D": ["0.5", "Depth of the first pass, as a diameter.", "CUT1"], "H": ["1.8", "Thread height, as a diameter.", "THDHT"], "F": ["1.5", "Thread lead.", "LEAD"], "B": ["60", "Infeed angle, usually the insert's point angle (0 if left out).", "INFEED"], "A": ["30", "Taper angle (use A or the taper word, not both).", "TAPER"], "U": ["0.1", "Finishing allowance, as a diameter. No finishing pass without it.", "ALLOW"], "L": ["1.5", "Chamfer length on the last pass (with M23 on).", "CHAMF"], "E": ["0.2", "Lead change per lead, for a variable-lead thread.", "LEADCHG"], "J": ["1", "Number of threads within the F distance (1 if left out).", "THDS"], "M": ["32", "Picks the infeed mode and pattern (M32 to M34, M73 to M75)."], "Q": ["2", "Number of starts for a multi-start thread.", "STARTS"], "I": ["7.", "Taper as a difference in radius from start to end.", "TAPERR"] } },
+      "G72": { "sketch": "thread", "about": "Like G71, but the thread is cut on the face, along X.", "words": { "X": ["28.", "Final thread diameter."], "Z": ["5.", "Z where the thread ends."], "D": ["0.5", "Depth of the first pass, as a diameter.", "CUT1"], "H": ["1.8", "Thread height, as a diameter.", "THDHT"], "F": ["1.5", "Thread lead.", "LEAD"], "B": ["60", "Infeed angle, usually the insert's point angle (0 if left out).", "INFEED"], "A": ["30", "Taper angle (use A or the taper word, not both).", "TAPER"], "U": ["0.1", "Finishing allowance, as a diameter. No finishing pass without it.", "ALLOW"], "L": ["1.5", "Chamfer length on the last pass (with M23 on).", "CHAMF"], "E": ["0.2", "Lead change per lead, for a variable-lead thread.", "LEADCHG"], "J": ["1", "Number of threads within the F distance (1 if left out).", "THDS"], "M": ["32", "Picks the infeed mode and pattern (M32 to M34, M73 to M75)."], "Q": ["2", "Number of starts for a multi-start thread.", "STARTS"], "K": ["7.", "Taper as a difference from start to end along Z.", "TAPERZ"] } },
+      "G73": { "sketch": "groove", "about": "Grooves along Z: plunges in steps of D to X, shifting by I and K between plunges, with an optional dwell at the bottom.", "words": { "X": ["20.", "X of the groove bottom."], "Z": ["-10.", "Z of the target point."], "D": ["2.", "Depth of each plunge.", "PLUNGE"], "I": ["0", "Shift along X between plunges, as a diameter.", "SHIFTX"], "K": ["3.", "Shift along Z between plunges.", "SHIFTZ"], "L": ["4.", "Infeed after which the tool backs out to clear chips.", "CLEARAT"], "F": ["0.1", "Feed."], "E": ["0.5", "Dwell at the bottom, in the same units as a G04 F.", "DWELL"], "T": ["0303", "Tool offset to use at the target point.", "TOFS"] } },
+      "G74": { "sketch": "face-groove", "about": "Grooves or drills on the face: pecks in steps of D toward Z, shifting by I and K between pecks, with an optional dwell at the bottom.", "words": { "X": ["0", "X of the target point."], "Z": ["-20.", "Z of the bottom."], "D": ["3.", "Depth of each peck.", "PECK"], "I": ["0", "Shift along X between pecks, as a diameter.", "SHIFTX"], "K": ["0", "Shift along Z between pecks.", "SHIFTZ"], "L": ["10.", "Infeed after which the tool backs out to clear chips.", "CLEARAT"], "F": ["0.1", "Feed."], "E": ["0.5", "Dwell at the bottom, in the same units as a G04 F.", "DWELL"], "T": ["0303", "Tool offset to use at the target point.", "TOFS"] } },
+      "G77": { "sketch": "tap", "about": "Right-hand tapping on center: starts the spindle forward at the speed already set, rapids to K, taps to Z, reverses out. The spindle is left stopped afterwards.", "words": { "X": ["0", "X of the tap (on center)."], "Z": ["-20.", "Z of the tap bottom."], "K": ["5.", "Z where the rapid approach stops and tapping starts.", "APPRZ"], "F": ["1.25", "Feed, equal to the tap pitch under G95."] } },
+      "G78": { "sketch": "tap", "about": "Like G77 for a left-hand tap: the spindle runs in reverse going in. The spindle is left stopped afterwards.", "words": { "X": ["0", "X of the tap (on center)."], "Z": ["-20.", "Z of the tap bottom."], "K": ["5.", "Z where the rapid approach stops and tapping starts.", "APPRZ"], "F": ["1.25", "Feed, equal to the tap pitch under G95."] } }
     }
   }
 }
