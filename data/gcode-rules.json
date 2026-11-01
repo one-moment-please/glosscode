@@ -467,6 +467,40 @@
       }
     },
 
+    "hurco": {
+      "label": "Hurco WinMax NC (ISNC)",
+      "inherits": "fanuc",
+      "inheritWords": true,
+      "verified": true,
+      "source": { "manual": "Hurco WinMax Mill NC Programming 704-0116-310 Rev B and WinMax Mill Programming 704-0116-501 Rev D", "revision": "2010 (v8) and 2015 (v9.1/10.1)", "section": "NC programming: G code groups, canned cycles, subprograms, M codes (ISNC)" },
+      "mill": {
+        "numbers": { "noDecimal": "asWritten" },
+        "modalGroups": {
+          "feed mode":  ["G93", "G94"],
+          "speed mode": null
+        },
+        "cycles": {
+          "G73": { "name": "High-speed peck", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true },
+          "G74": { "name": "Left-hand tap", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "P", "K", "L"], "feed": true, "spindle": true },
+          "G76": { "name": "Fine bore", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F", "P", "K", "L"], "feed": true, "spindle": true },
+          "G81": { "name": "Drill", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true },
+          "G82": { "name": "Spot drill with dwell", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true },
+          "G83": { "name": "Peck drill", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true },
+          "G84": { "name": "Tap", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "P", "K", "L"], "feed": true, "spindle": true, "speed": true },
+          "G85": { "name": "Bore, feed out", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true },
+          "G86": { "name": "Bore, rapid out", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true },
+          "G87": { "name": "Back bore", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F", "P", "K", "L"], "feed": true, "spindle": true },
+          "G88": { "name": "Bore, dwell, stop, jog out", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true },
+          "G89": { "name": "Bore with dwell", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "K", "L"], "feed": true, "spindle": true }
+        },
+        "foreign": {
+          "G95": { "severity": "error", "text": "Hurco mills have no feed per revolution. F is per minute (or inverse time with G93)." },
+          "G96": { "severity": "error", "text": "Hurco mills have no constant surface speed." },
+          "G97": { "severity": "info",  "text": "Hurco mills have no G97. S is always RPM, so it can be left out." }
+        }
+      }
+    },
+
     "okuma": {
       "label": "Okuma OSP (P300 and later)",
       "inherits": "fanuc",

@@ -118,6 +118,15 @@
     }
   },
   "machineOverrides": {
+    "hurco.mill": {
+      "M05": { "long": "SPINOFF", "short": "SOFF", "desc": "Spindle stop; also turns the coolant off (Hurco)" },
+      "M07": { "long": "MISTON", "short": "MON", "desc": "Mist coolant on" },
+      "M10": { "long": "COOLBOTH", "short": "CBTH", "desc": "Mist and flood coolant on (Hurco)" },
+      "M12": { "long": "CCLAMP", "short": "CCLP", "desc": "Rotary axis clamp (Hurco)" },
+      "M13": { "long": "CUNCLAMP", "short": "CUNC", "desc": "Rotary axis unclamp (Hurco)" },
+      "M21": { "long": "LUBE", "short": "LUBE", "desc": "Lubrication cycle (Hurco)" },
+      "M25": { "long": "ZTCHT", "short": "ZTC", "desc": "Move Z to tool-change height (Hurco)" }
+    },
     "mazak.mill": {
       "G75": { "long": "BORECYC", "short": "BOR1", "desc": "Boring cycle (Mazak)" },
       "G77": { "long": "BACKSPOT", "short": "BKSF", "desc": "Back spot facing cycle (Mazak)" },
