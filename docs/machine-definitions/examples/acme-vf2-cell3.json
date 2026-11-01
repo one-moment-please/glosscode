@@ -1,0 +1,51 @@
+{
+  "glosscode": "machine/1",
+  "id": "acme.vf2-cell3",
+  "name": "Haas VF-2 (cell 3)",
+  "layer": "machine",
+  "extends": ["haas.vf2"],
+  "private": true,
+  "verified": true,
+  "author": "Acme Machine, programming group",
+  "about": "A made-up shop machine. Lives in the shop folder, so only Acme sees it. Export asks first because private is true, and leaves out notes and shop.",
+
+  "machine": {
+    "options": { "rotary": "A", "tsc": true, "probe": true }
+  },
+
+  "addresses": {
+    "A": { "role": "axis", "rotary": true, "long": "A", "short": "A", "desc": "Rotary table" }
+  },
+
+  "codes": {
+    "M51": { "long": "VISEOPEN", "short": "VOPN", "desc": "Open the hydraulic vise (cell 3 wiring)" },
+    "M52": { "long": "VISECLS",  "short": "VCLS", "desc": "Close the hydraulic vise" }
+  },
+
+  "mConflicts": [["M51", "M52"]],
+
+  "checks": {
+    "rapid-below-zero": "off",
+    "missing-decimal": "warning"
+  },
+
+  "lineRules": [
+    {
+      "id": "acme.vise-before-start",
+      "when": { "code": "M03" },
+      "requiresEarlier": ["M52"],
+      "severity": "warning",
+      "message": "Close the vise (M52) before starting the spindle."
+    },
+    {
+      "id": "acme.t-with-m06",
+      "when": { "code": "M06" },
+      "requiresOnLine": ["T"],
+      "severity": "error",
+      "message": "M06 needs a T word on the same line in this shop."
+    }
+  ],
+
+  "notes": "Vise valves on M51/M52 since the 2025 rewire.",
+  "shop": { "asset": "VF2-0331", "cell": "3" }
+}

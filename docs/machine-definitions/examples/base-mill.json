@@ -1,0 +1,43 @@
+{
+  "glosscode": "machine/1",
+  "id": "base.mill",
+  "name": "Generic mill",
+  "layer": "process",
+  "extends": ["base.common"],
+  "verified": true,
+  "about": "Excerpt. What every vertical or horizontal mill shares. Brand and control files build on this.",
+
+  "machine": { "process": "mill", "options": { "rotary": null, "tsc": false, "probe": false } },
+
+  "process": { "label": "spindle", "on": ["M03", "M04"], "off": ["M05"] },
+
+  "addresses": {
+    "G": { "role": "code", "write": "00" },
+    "M": { "role": "code", "write": "00" },
+    "X": { "role": "axis", "abs": { "long": "X", "short": "X" }, "inc": { "long": "INCX", "short": "iX" } },
+    "Y": { "role": "axis", "abs": { "long": "Y", "short": "Y" }, "inc": { "long": "INCY", "short": "iY" } },
+    "Z": { "role": "axis", "abs": { "long": "Z", "short": "Z" }, "inc": { "long": "INCZ", "short": "iZ" } },
+    "H": { "role": "offset", "long": "LOFS", "short": "H", "desc": "Tool length offset number" },
+    "D": { "role": "offset", "long": "DOFS", "short": "D", "desc": "Tool diameter offset number" }
+  },
+
+  "codes": {
+    "G43": { "long": "TLENON",   "short": "TLON",   "desc": "Tool length offset on" },
+    "G49": { "long": "TLENOFF",  "short": "TLOFF",  "desc": "Tool length offset off" },
+    "G50": { "long": "SCALEOFF", "short": "SCLOFF", "desc": "Scaling off" },
+    "M06": { "long": "TOOLCHG",  "short": "TCHG",   "desc": "Tool change" }
+  },
+
+  "modalGroups": {
+    "motion":      ["G00", "G01", "G02", "G03"],
+    "plane":       ["G17", "G18", "G19"],
+    "tool length": ["G43", "G44", "G49"]
+  },
+
+  "toolLength": { "on": ["G43", "G44"], "word": "H", "label": "G43 H" },
+  "toolChange": "M06",
+
+  "checks": {
+    "css-no-clamp": "off"
+  }
+}

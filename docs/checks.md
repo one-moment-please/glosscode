@@ -17,7 +17,7 @@ Adding a control or fixing a cycle's word list is a data change. Adding a new ki
 | warning | Very likely a mistake, but some shops do it on purpose. |
 | info | Worth a look. Often fine. |
 
-A machine definition file will be able to change any rule's severity or turn it off.
+A machine definition file will be able to change any rule's severity or turn it off; see [machine-definitions.md](machine-definitions.md).
 
 ## Rules
 
