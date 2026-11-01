@@ -2,7 +2,10 @@
 
 What changed in each GlossCode release. The newest release is at the top. Versions follow `MAJOR.MINOR.PATCH` (see [docs/releasing.md](docs/releasing.md)); while the version starts with `0.`, file formats may still change between releases.
 
-## [Unreleased]
+## [0.1.1] - 2026-11-01
+
+### Editor
+- Pasting a few lines or a whole program puts each line in its own row and each word in its own cell.
 
 ### Simulation
 - Playback pauses at M00. The new M01 button (optional stop) makes it pause at M01 too, and the / button (block delete) skips lines that start with /.
