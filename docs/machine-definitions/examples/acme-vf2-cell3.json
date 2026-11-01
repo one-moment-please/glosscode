@@ -3,7 +3,7 @@
   "id": "acme.vf2-cell3",
   "name": "Haas VF-2 (cell 3)",
   "layer": "machine",
-  "extends": ["haas.vf2"],
+  "extends": ["haas.mill", "haas.vf2"],
   "private": true,
   "verified": true,
   "author": "Acme Machine, programming group",

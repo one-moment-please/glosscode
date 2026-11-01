@@ -1,0 +1,15 @@
+{
+  "glosscode": "machine/1",
+  "id": "haas.vf",
+  "name": "Haas VF",
+  "brand": "Haas",
+  "layer": "family",
+  "extends": [],
+  "verified": false,
+  "about": "Example family file. Hardware shared by the VF line and the controls it was sold with, newest first. It never extends a control: a machine picks a control and a model separately.",
+
+  "machine": {
+    "process": "mill",
+    "controls": ["haas.mill", "haas.mill-classic", "haas1995.mill"]
+  }
+}
