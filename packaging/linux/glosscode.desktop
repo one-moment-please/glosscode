@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=GlossCode
+GenericName=G-code Editor
+Comment=Edit CNC G-code with a plain-English line above every line of code
+Exec=glosscode %f
+Icon=glosscode
+Terminal=false
+Categories=Utility;TextEditor;
+Keywords=G-code;CNC;NC;Haas;Fanuc;Okuma;mill;lathe;
+MimeType=text/plain;
+StartupWMClass=glosscode
+StartupNotify=true

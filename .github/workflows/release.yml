@@ -1,0 +1,69 @@
+# Makes a draft GitHub release when a version tag (v0.1.0) is pushed:
+# checks that the tag matches VERSION, builds and packages everything with build.yml, writes
+# SHA256SUMS.txt and creates a draft release with the files and the CHANGELOG.md section as its notes.
+# Publishing the draft is done by hand after testing the files (docs/releasing.md); only a published
+# release is seen by the About window's update check.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Tag matches VERSION
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compare
+        run: |
+          version=$(tr -d ' \r\n' < VERSION)
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "Tag $GITHUB_REF_NAME doesn't match VERSION ($version)"; exit 1
+          fi
+          scripts/release-notes.sh "$version" > /dev/null
+
+  build:
+    needs: check
+    uses: ./.github/workflows/build.yml
+
+  release:
+    name: Draft release
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        working-directory: dist
+        run: |
+          ls -l
+          sha256sum -- * | tee SHA256SUMS.txt
+      - name: Check the file names
+        run: |
+          v=$(tr -d ' \r\n' < VERSION)
+          for f in "GlossCode-$v-windows-x64-setup.exe" "GlossCode-$v-windows-x64-portable.zip" \
+                   "GlossCode-$v-linux-amd64.deb" "GlossCode-$v-linux-x86_64.rpm" \
+                   "GlossCode-$v-linux-x86_64-portable.tar.gz" "GlossCode-$v-examples.zip" SHA256SUMS.txt; do
+            test -f "dist/$f" || { echo "missing dist/$f"; exit 1; }
+          done
+          test "$(ls dist | wc -l)" -eq 7 || { echo "unexpected files in dist"; ls dist; exit 1; }
+      - name: Create the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v=$(tr -d ' \r\n' < VERSION)
+          scripts/release-notes.sh "$v" > notes.md
+          pre=""
+          case "$v" in *-*) pre="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" dist/* --draft $pre --verify-tag \
+            --title "GlossCode $v" --notes-file notes.md

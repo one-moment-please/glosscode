@@ -59,11 +59,11 @@ The UI, data, icons, the packaging plan, the core and the program exist. Before 
 | – | **Webview shell**: window, bindings between the UI and the core, embedded UI and data | Done for Open, Save, Save As and About; plus the home page, recent files and default machines (`settings.json`); the UI still draws with its own copy of the logic |
 | ✓ | **Build script** (CMake) for MinGW-w64 on Windows and gcc on Linux, with webview and nativefiledialog-extended added as pinned dependencies | Done, with CI on Windows and Linux ([building.md](building.md)) |
 | ✓ | **Windows resource file**: icon, version info shown in the file's Properties | Done (`src/app/glosscode.rc.in`) |
-| ✗ | **Windows installer script** (Inno Setup): per-user install, Start menu entry, uninstaller, optional `.nc` file association | Not started |
-| ✗ | **Linux packages**: `.desktop` file and icon, `.deb` and `.rpm` (nFPM builds both from one file) | Not started |
-| ✗ | **Release workflow** (GitHub Actions): on a `v*` tag, build on Windows and Linux, package, write `SHA256SUMS.txt`, and create a draft release | Not started |
-| – | **Third-party notices** for webview (MIT) and nativefiledialog-extended (zlib), shipped with every release | Written (`THIRD_PARTY_NOTICES.md`); not packaged yet |
-| ✗ | `CHANGELOG.md` | Not started |
+| ✓ | **Windows installer script** (Inno Setup): per-user install, Start menu entry, uninstaller, optional `.nc` file association | Done (`packaging/windows/glosscode.iss`, `scripts/package-windows.ps1`) |
+| ✓ | **Linux packages**: `.desktop` file and icon, `.deb` and `.rpm` (nFPM builds both from one file) | Done (`packaging/linux/`, `scripts/package-linux.sh`) |
+| ✓ | **Release workflow** (GitHub Actions): on a `v*` tag, build on Windows and Linux, package, write `SHA256SUMS.txt`, and create a draft release | Done (`.github/workflows/release.yml`) |
+| ✓ | **Third-party notices** for webview (MIT) and nativefiledialog-extended (zlib), shipped with every release | In every package and archive |
+| ✓ | `CHANGELOG.md` | Done |
 | – | **Code signing** for the Windows .exe and installer | Optional for a first release; see below |
 
 ### Code signing
@@ -74,9 +74,9 @@ Linux packages are not usually signed for direct downloads; `SHA256SUMS.txt` cov
 
 ## Making a release
 
-Once the workflow exists:
+1. Update `VERSION` and add the version's section to `CHANGELOG.md` (`## [0.2.0] - <date>`), run `node scripts/sync-mockup-data.mjs`, and merge.
+2. Tag the merge commit: `git tag v0.2.0 && git push origin v0.2.0`.
+3. The release workflow (`.github/workflows/release.yml`) checks that the tag matches `VERSION`, builds and packages everything, writes `SHA256SUMS.txt`, and creates a **draft** release with the files attached and the changelog section as its notes (`scripts/release-notes.sh`). A version with a suffix (`0.2.0-beta.1`) is marked as a pre-release.
+4. Install and run each file on a clean Windows and Linux computer, then publish the draft. Publishing is what makes the update check see it.
 
-1. Update `VERSION` and `CHANGELOG.md`, run `node scripts/sync-mockup-data.mjs`, and merge.
-2. Tag the merge commit: `git tag v0.1.0 && git push origin v0.1.0`.
-3. The release workflow builds everything and creates a **draft** release with the files attached.
-4. Install and run each file on a clean Windows and Linux computer, paste the changelog section into the release notes, and publish. Publishing is what makes the update check see it.
+If the workflow fails, fix it on `main`, delete the tag (`git push origin :v0.2.0`, and any draft it made), and tag again.

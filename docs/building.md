@@ -85,4 +85,19 @@ Saving keeps every line that wasn't changed exactly as it was read (spacing, `%`
 
 The UI still draws its English words and problems with its own JavaScript, which `test_golden` keeps identical to the core. Moving the drawing over to `GlossCodeNative.core("analyze", …)` is the next step.
 
-The sample programs aren't built into the program. In `docs/mockup/index.html` they sit between `/* samples */` and `/* end samples */` markers, and `cmake/strip-samples.cmake` replaces everything between them with `null` in the copy that gets embedded, so the program starts on its home page with no samples. CI uploads `examples/` (and the example library files) as their own download, `GlossCode-examples`.
+The sample programs aren't built into the program. In `docs/mockup/index.html` they sit between `/* samples */` and `/* end samples */` markers, and `cmake/strip-samples.cmake` replaces everything between them with `null` in the copy that gets embedded, so the program starts on its home page with no samples. `scripts/package-examples.sh` puts `examples/` and the example library files in their own download, `GlossCode-<version>-examples.zip`.
+
+## Packages
+
+The release files ([releasing.md](releasing.md#release-files)) are made from a finished build by three scripts. CI runs them on every push, so each build's artifacts are the files a release would have, and the release workflow attaches them to a draft release.
+
+| Script | Makes | Needs |
+|---|---|---|
+| `scripts/package-linux.sh [build] [dist]` | `.deb`, `.rpm` and the portable `.tar.gz` | [nFPM](https://nfpm.goreleaser.com): `go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0` |
+| `scripts/package-windows.ps1 [-Build build] [-Out dist]` | The installer and the portable `.zip` | [Inno Setup](https://jrsoftware.org/isinfo.php) 6.3 or later |
+| `scripts/package-examples.sh [dist]` | `GlossCode-<version>-examples.zip` | `zip` |
+
+- On Linux, `cmake --install` puts the program in `bin/`, `glosscode.desktop` in `share/applications/`, the icons in `share/icons/hicolor/` and the license notices in `share/doc/glosscode/`; `packaging/linux/nfpm.yaml` makes both packages from those files. They depend on the distribution's GTK 3 and WebKitGTK 4.1, and the program needs glibc 2.35 or later (Ubuntu 22.04, Debian 12, Fedora 36 and newer).
+- On Windows, `packaging/windows/glosscode.iss` installs `GlossCode.exe` for the current user into `%LOCALAPPDATA%\Programs\GlossCode`, with a Start menu entry, an optional desktop shortcut, an optional **Open with** entry for `.nc` files, and an uninstaller that leaves the settings folder alone.
+- Both portable archives hold one folder with the program, an empty `portable` file, the license notices, the changelog and `packaging/portable-readme.txt`.
+- `scripts/release-notes.sh` prints a version's section of `CHANGELOG.md` with the download table, for the release description.

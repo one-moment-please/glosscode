@@ -1,9 +1,13 @@
-# Builds and tests GlossCode on every push and pull request:
+# Builds, tests and packages GlossCode on every push and pull request:
 # - core: the portable C core and its tests with gcc and clang (sanitizers on), plus a check that the
 #   golden files still match the mockup's JavaScript
-# - linux: the whole program with GTK 3 and WebKitGTK, including a smoke test in a virtual display
-# - windows: the whole program with MinGW-w64 as one static GlossCode.exe, uploaded as an artifact
-# - examples: the sample programs, which aren't built into the program, as their own download
+# - linux: the whole program with GTK 3 and WebKitGTK, including a smoke test in a virtual display,
+#   packaged as .deb, .rpm and a portable .tar.gz
+# - windows: the whole program with MinGW-w64 as one static GlossCode.exe, packaged as an installer
+#   and a portable .zip
+# - examples: the sample programs, which aren't built into the program, as their own .zip
+# Each packaging job uploads the release files (docs/releasing.md) as an artifact; release.yml calls
+# this workflow on a version tag and attaches them to a draft release.
 name: Build
 
 on:
@@ -11,6 +15,7 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -53,17 +58,31 @@ jobs:
       - name: Install GTK and WebKitGTK
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ninja-build libgtk-3-dev libwebkit2gtk-4.1-dev xvfb
+          sudo apt-get install -y --no-install-recommends ninja-build libgtk-3-dev libwebkit2gtk-4.1-dev xvfb desktop-file-utils
+      - name: Install nFPM (builds the .deb and .rpm)
+        run: |
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build
       - name: Test (core and smoke test)
         run: ctest --test-dir build --output-on-failure
+      - name: Package
+        run: scripts/package-linux.sh build dist
+      - name: Check the packages
+        run: |
+          dpkg-deb --info dist/*.deb
+          dpkg-deb --contents dist/*.deb
+          sudo apt-get install -y ./dist/*.deb
+          test -x /usr/bin/glosscode
+          desktop-file-validate /usr/share/applications/glosscode.desktop
+          tar -tzf dist/*-portable.tar.gz
       - uses: actions/upload-artifact@v6
         with:
-          name: glosscode-linux-x86_64
-          path: build/glosscode
+          name: release-linux
+          path: dist/*
           if-no-files-found: error
 
   windows:
@@ -95,10 +114,33 @@ jobs:
           fi
       - name: Test (core and smoke test)
         run: ctest --test-dir build --output-on-failure --timeout 180
+      - name: Install Inno Setup if the runner lacks it
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+      - name: Package
+        shell: pwsh
+        run: ./scripts/package-windows.ps1 -Build build -Out dist
+      - name: Check the installer
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem dist\*-setup.exe | Select-Object -First 1
+          $p = Start-Process $setup.FullName -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "installer exited with $($p.ExitCode)" }
+          $exe = "$env:LOCALAPPDATA\Programs\GlossCode\GlossCode.exe"
+          if (-not (Test-Path $exe)) { throw "$exe wasn't installed" }
+          if (Test-Path "$env:LOCALAPPDATA\Programs\GlossCode\portable") { throw "the installed copy looks portable" }
+          $u = Start-Process "$env:LOCALAPPDATA\Programs\GlossCode\unins000.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -Wait -PassThru
+          if ($u.ExitCode -ne 0) { throw "uninstaller exited with $($u.ExitCode)" }
+          # The uninstaller hands over to a copy of itself in %TEMP%, so wait for the file to go.
+          for ($i = 0; $i -lt 30 -and (Test-Path $exe); $i++) { Start-Sleep -Seconds 1 }
+          if (Test-Path $exe) { throw "the uninstaller left GlossCode.exe behind" }
+          Expand-Archive dist\*-portable.zip -DestinationPath portable-check
+          Get-ChildItem -Recurse portable-check | Format-Table FullName, Length
       - uses: actions/upload-artifact@v6
         with:
-          name: GlossCode-windows-x64
-          path: build/GlossCode.exe
+          name: release-windows
+          path: dist/*
           if-no-files-found: error
 
   examples:
@@ -106,10 +148,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+      - name: Package
+        run: scripts/package-examples.sh dist
       - uses: actions/upload-artifact@v6
         with:
-          name: GlossCode-examples
-          path: |
-            examples/
-            docs/subprogram-library/examples/
+          name: release-examples
+          path: dist/*
           if-no-files-found: error
