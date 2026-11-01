@@ -23,6 +23,7 @@ Every release has the same files, so the update check can pick the right one by 
 | `GlossCode-<version>-linux-amd64.deb` | Debian and Ubuntu package. Depends on the distribution's GTK 3 and WebKitGTK packages. |
 | `GlossCode-<version>-linux-x86_64.rpm` | Fedora and openSUSE package, with the same dependencies. |
 | `GlossCode-<version>-linux-x86_64-portable.tar.gz` | Linux portable copy, same layout as the Windows zip. Needs GTK 3 and WebKitGTK installed. |
+| `GlossCode-<version>-examples.zip` | Sample programs for Haas, Fanuc and Okuma mills and lathes (`examples/`) and example subprogram library files (`docs/subprogram-library/examples/`). They aren't part of the program, so they're a download of their own; the home page links to them. |
 | `SHA256SUMS.txt` | SHA-256 checksum of every file above. |
 
 The release notes are the release's description on GitHub, and the About window shows them.
@@ -44,24 +45,24 @@ The platform file gets one more function for this: download a URL to a file (Win
 
 ## What a first release needs
 
-The UI, data, icons and the packaging plan exist. The program itself does not yet: there is no C code in the repository. Before binaries can be published, these are needed, roughly in this order:
+The UI, data, icons, the packaging plan, the core and the program exist. Before binaries can be published, these are still needed, roughly in this order:
 
 | | Item | Status |
 |---|---|---|
-| ✓ | UI design (the mockup), dictionary, rules, built-in library, sample programs | Done; the mockup's UI still has to be separated from its built-in sample data |
+| ✓ | UI design (the mockup), dictionary, rules, built-in library, sample programs | Done. The program's build leaves the sample programs out (`cmake/strip-samples.cmake`); they're `GlossCode-<version>-examples.zip` |
 | ✓ | App icon (`assets/logo/glosscode.ico`, PNGs) | Done |
 | ✓ | License (MIT) | Done |
 | ✓ | Where user files go, portable mode, single executable plan ([architecture.md](architecture.md#packaging)) | Written down |
 | ✓ | Version number and release file names | This page |
-| ✗ | **Core in C**: parser, mode tracker, translator, checks, dictionary loader | Not started |
-| ✗ | **Platform files** `platform_win32.c` and `platform_linux.c`, including the download function | Not started |
-| ✗ | **Webview shell**: window, bindings between the UI and the core, embedded UI and data | Not started |
-| ✗ | **Build script** (CMake) for MinGW-w64 on Windows and gcc on Linux, with webview and nativefiledialog-extended added as pinned dependencies | Not started |
-| ✗ | **Windows resource file**: icon, version info shown in the file's Properties | Not started |
+| ✓ | **Core in C**: parser, mode tracker, translator, checks, dictionary loader | Done (`src/core/`), checked against the mockup by `test_golden` |
+| – | **Platform files** `platform_win32.c` and `platform_posix.c` | Done except the download function and file watching |
+| – | **Webview shell**: window, bindings between the UI and the core, embedded UI and data | Done for Open, Save, Save As and About; plus the home page, recent files and default machines (`settings.json`); the UI still draws with its own copy of the logic |
+| ✓ | **Build script** (CMake) for MinGW-w64 on Windows and gcc on Linux, with webview and nativefiledialog-extended added as pinned dependencies | Done, with CI on Windows and Linux ([building.md](building.md)) |
+| ✓ | **Windows resource file**: icon, version info shown in the file's Properties | Done (`src/app/glosscode.rc.in`) |
 | ✗ | **Windows installer script** (Inno Setup): per-user install, Start menu entry, uninstaller, optional `.nc` file association | Not started |
 | ✗ | **Linux packages**: `.desktop` file and icon, `.deb` and `.rpm` (nFPM builds both from one file) | Not started |
 | ✗ | **Release workflow** (GitHub Actions): on a `v*` tag, build on Windows and Linux, package, write `SHA256SUMS.txt`, and create a draft release | Not started |
-| ✗ | **Third-party notices** for webview (MIT) and nativefiledialog-extended (zlib), shipped with every release | Not started |
+| – | **Third-party notices** for webview (MIT) and nativefiledialog-extended (zlib), shipped with every release | Written (`THIRD_PARTY_NOTICES.md`); not packaged yet |
 | ✗ | `CHANGELOG.md` | Not started |
 | – | **Code signing** for the Windows .exe and installer | Optional for a first release; see below |
 
