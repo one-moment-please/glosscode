@@ -77,8 +77,12 @@ In the program, `window.GlossCodeNative` is set before the page loads (`src/app/
 | `GlossCodeNative.save({ path, name, latin1, doc })` | Writes the file (with the Save dialog when `path` is `null`); resolves with `{ path, name, bytes }` |
 | `GlossCodeNative.core(method, params)` | Runs a core method: `parse`, `serialize`, `analyze` or `tokenize` (see `src/core/gc_api.c`) |
 | `GlossCodeNative.startup()` | The file named on the command line, read like `open()` |
+| `GlossCodeNative.openPath(path)` | Reads a file from the recent list, like `open()` without the dialog |
+| `GlossCodeNative.settings()`, `saveSettings(obj)` | Reads and writes `settings.json` in the settings folder (recent files, default machines by file type) |
 | `GlossCodeNative.openUrl(url)`, `setTitle(text)`, `quit()` | Open a link in the browser, set the window title, close the window |
 
 Saving keeps every line that wasn't changed exactly as it was read (spacing, `%`, block delete `/`, macro text), writes changed lines from their words, keeps the file's line endings, and writes a Latin-1 file back as Latin-1. The file is written to a temporary file first and then swapped in, so a failed save never leaves half a file.
 
-The UI still draws its English words and problems with its own JavaScript, which `test_golden` keeps identical to the core. Moving the drawing over to `GlossCodeNative.core("analyze", …)` is the next step, together with separating the UI from the mockup's sample data.
+The UI still draws its English words and problems with its own JavaScript, which `test_golden` keeps identical to the core. Moving the drawing over to `GlossCodeNative.core("analyze", …)` is the next step.
+
+The sample programs aren't built into the program. In `docs/mockup/index.html` they sit between `/* samples */` and `/* end samples */` markers, and `cmake/strip-samples.cmake` replaces everything between them with `null` in the copy that gets embedded, so the program starts on its home page with no samples. CI uploads `examples/` (and the example library files) as their own download, `GlossCode-examples`.

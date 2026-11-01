@@ -3,6 +3,7 @@
 #   golden files still match the mockup's JavaScript
 # - linux: the whole program with GTK 3 and WebKitGTK, including a smoke test in a virtual display
 # - windows: the whole program with MinGW-w64 as one static GlossCode.exe, uploaded as an artifact
+# - examples: the sample programs, which aren't built into the program, as their own download
 name: Build
 
 on:
@@ -98,4 +99,17 @@ jobs:
         with:
           name: GlossCode-windows-x64
           path: build/GlossCode.exe
+          if-no-files-found: error
+
+  examples:
+    name: Example programs
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GlossCode-examples
+          path: |
+            examples/
+            docs/subprogram-library/examples/
           if-no-files-found: error

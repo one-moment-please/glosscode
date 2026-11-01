@@ -7,7 +7,7 @@ GlossCode targets Windows first. Everything is arranged so that a native Linux b
 ```
 +--------------------------------------------------------------+
 |  UI (HTML/CSS/JS in a native webview)                        |
-|  editor grid, toggles, autocomplete, previews, modes panel   |
+|  editor grid, tabs, autocomplete, previews, modes panel   |
 +------------------------------^-------------------------------+
                                |  JSON messages (webview bind)
 +------------------------------v-------------------------------+
@@ -71,7 +71,7 @@ The program never writes beside itself. Everything the user or shop creates goes
 
 | What | Windows | Linux |
 |---|---|---|
-| Settings, personal machine definitions, personal library | `%APPDATA%\GlossCode\` (`machines\`, `library\`) | `$XDG_CONFIG_HOME/glosscode/` (usually `~/.config/glosscode/`) |
+| Settings (`settings.json`: recent files with the machine each was opened for, default machines by file type), personal machine definitions, personal library | `%APPDATA%\GlossCode\` (`machines\`, `library\`) | `$XDG_CONFIG_HOME/glosscode/` (usually `~/.config/glosscode/`) |
 | WebView data and caches (safe to delete) | `%LOCALAPPDATA%\GlossCode\` | `$XDG_CACHE_HOME/glosscode/` (usually `~/.cache/glosscode/`) |
 | Shop folder | Wherever Settings points (often a network path) | Same |
 

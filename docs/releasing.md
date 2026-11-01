@@ -23,6 +23,7 @@ Every release has the same files, so the update check can pick the right one by 
 | `GlossCode-<version>-linux-amd64.deb` | Debian and Ubuntu package. Depends on the distribution's GTK 3 and WebKitGTK packages. |
 | `GlossCode-<version>-linux-x86_64.rpm` | Fedora and openSUSE package, with the same dependencies. |
 | `GlossCode-<version>-linux-x86_64-portable.tar.gz` | Linux portable copy, same layout as the Windows zip. Needs GTK 3 and WebKitGTK installed. |
+| `GlossCode-<version>-examples.zip` | Sample programs for Haas, Fanuc and Okuma mills and lathes (`examples/`) and example subprogram library files (`docs/subprogram-library/examples/`). They aren't part of the program, so they're a download of their own; the home page links to them. |
 | `SHA256SUMS.txt` | SHA-256 checksum of every file above. |
 
 The release notes are the release's description on GitHub, and the About window shows them.
@@ -48,14 +49,14 @@ The UI, data, icons, the packaging plan, the core and the program exist. Before 
 
 | | Item | Status |
 |---|---|---|
-| ✓ | UI design (the mockup), dictionary, rules, built-in library, sample programs | Done; the mockup's UI still has to be separated from its built-in sample data |
+| ✓ | UI design (the mockup), dictionary, rules, built-in library, sample programs | Done. The program's build leaves the sample programs out (`cmake/strip-samples.cmake`); they're `GlossCode-<version>-examples.zip` |
 | ✓ | App icon (`assets/logo/glosscode.ico`, PNGs) | Done |
 | ✓ | License (MIT) | Done |
 | ✓ | Where user files go, portable mode, single executable plan ([architecture.md](architecture.md#packaging)) | Written down |
 | ✓ | Version number and release file names | This page |
 | ✓ | **Core in C**: parser, mode tracker, translator, checks, dictionary loader | Done (`src/core/`), checked against the mockup by `test_golden` |
 | – | **Platform files** `platform_win32.c` and `platform_posix.c` | Done except the download function and file watching |
-| – | **Webview shell**: window, bindings between the UI and the core, embedded UI and data | Done for Open, Save, Save As and About; the UI still draws with its own copy of the logic and the mockup's sample data |
+| – | **Webview shell**: window, bindings between the UI and the core, embedded UI and data | Done for Open, Save, Save As and About; plus the home page, recent files and default machines (`settings.json`); the UI still draws with its own copy of the logic |
 | ✓ | **Build script** (CMake) for MinGW-w64 on Windows and gcc on Linux, with webview and nativefiledialog-extended added as pinned dependencies | Done, with CI on Windows and Linux ([building.md](building.md)) |
 | ✓ | **Windows resource file**: icon, version info shown in the file's Properties | Done (`src/app/glosscode.rc.in`) |
 | ✗ | **Windows installer script** (Inno Setup): per-user install, Start menu entry, uninstaller, optional `.nc` file association | Not started |

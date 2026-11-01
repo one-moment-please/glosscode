@@ -38,6 +38,10 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 |---|---|---|
 | ![Word hints](docs/images/word-hints.png) | ![Canned cycle guide](docs/images/cycle-guide.png) | ![End of block](docs/images/end-of-block.png) |
 
+| Home page | New program: pick a machine |
+|---|---|
+| ![Home page with recent programs](docs/images/home-page.png) | ![Choosing the machine for a new program](docs/images/machine-picker.png) |
+
 | Machine picker | Machine profiles | Open dialog |
 |---|---|---|
 | ![Machine picker](docs/images/machine-menu.png) | ![Machine profiles](docs/images/machine-profiles.png) | ![Open dialog](docs/images/native-open-dialog.png) |
@@ -54,7 +58,9 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 
 **Editing**
 - Menu bar (File, Edit, View, Insert, Program, Simulate), undo and redo, and Find that matches both G-code and English.
-- Edit either line. A toggle (or Caps Lock) switches between typing G-code and typing English, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
+- Starts on a home page with recent programs, New program and Open. Each open program gets a tab, and each tab remembers its machine and the selected line and word.
+- A new program asks which machine it's for. A file opened before reopens with the same machine; any other file uses the default machine for its extension (.nc, .MIN…) if one is set, and otherwise asks.
+- Edit either line. View › Edit in (or Caps Lock) switches between typing G-code and typing English, and clicking a word on the other line switches to it, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
 - Keyboard editing by word: arrows move between words and lines, Enter edits and Enter again finishes, Space starts the next word, Shift+Enter breaks the line.
 - Grey hint text after a code shows the words it still needs (`G02` shows `R## or I## J##`). Click one to fill it in; picking R hides I and J.
 - A canned cycle guide (F1) with a sketch of each cycle, an example line, and what every word does.
@@ -67,7 +73,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 - Opens and saves through the standard system file dialog, and keeps each file's original line endings.
 
 **Reading**
-- Show both lines, English only, or G-code only.
+- Show both lines, English only, or G-code only (View menu).
 - Two layouts: words in program order, or columns by word type (motion and cycle codes first, then X, Y, Z, F, S and the spindle M-codes, with rare words at the end). In columns, modal values still in effect from earlier lines show in grey in the empty cells, and lines that don't move the machine (program number, safety line, M30, subprogram calls) keep their words in program order. A Sort command puts the words on each line in a consistent order.
 - Subprogram and canned-cycle calls (for example Haas `M97 P1000`) expand inline below the call, marked with purple N numbers. Editing an expanded row edits the subprogram itself.
 - An active-modes panel for the selected line: motion, units, absolute or incremental, plane, feed mode and rate, spindle, coolant, tool and offsets. A dot marks modes set on that line.
@@ -120,12 +126,12 @@ docs/subprogram-library.md  Subprogram library: file format, variables, call or 
 docs/images/            Mockup screenshots
 docs/mockup/index.html  Clickable mockup; open it in a browser
 VERSION                 Current version number
-examples/               Sample programs used by the mockup (Haas, Fanuc and Okuma; BRACKET_0MC.nc ends lines with ;)
+examples/               Sample programs used by the mockup (Haas, Fanuc and Okuma; BRACKET_0MC.nc ends lines with ;). Not built into the program; a separate download
 ```
 
 ## Try the mockup
 
-Open [`docs/mockup/index.html`](docs/mockup/index.html) in any browser. Click a word to edit it (or use the arrow keys and Enter), switch the Edit, Words and Show toggles, and use **▸ show N1000** to expand the subprogram. Press F1 on a canned cycle to see how it works. It loads its fonts from Google Fonts, so it looks best online.
+Open [`docs/mockup/index.html`](docs/mockup/index.html) in any browser. Click a word to edit it (or use the arrow keys and Enter), open a sample program from the home page, try the View menu (edit in English or G-code, show one or both lines, columns), and use **▸ show N1000** to expand the subprogram. Press F1 on a canned cycle to see how it works. It loads its fonts from Google Fonts, so it looks best online.
 
 ## License
 

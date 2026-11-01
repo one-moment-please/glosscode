@@ -97,14 +97,21 @@ FetchContent_Declare(nfd
     GIT_SUBMODULES "") # only needed for Wayland parent windows, which are off
 FetchContent_MakeAvailable(webview nfd)
 
-# The UI, built-in data and bridge script, compiled in.
-set(GC_EMBED "ui/index.html=${CMAKE_CURRENT_SOURCE_DIR}/docs/mockup/index.html")
+# The UI without the sample programs (a separate download), built-in data and bridge script, compiled in.
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/ui/index.html"
+    COMMAND ${CMAKE_COMMAND} "-DIN=${CMAKE_CURRENT_SOURCE_DIR}/docs/mockup/index.html"
+            "-DOUT=${CMAKE_CURRENT_BINARY_DIR}/ui/index.html" -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/strip-samples.cmake"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/docs/mockup/index.html" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/strip-samples.cmake"
+    COMMENT "Leaving the sample programs out of the UI"
+    VERBATIM)
+set(GC_EMBED "ui/index.html=${CMAKE_CURRENT_BINARY_DIR}/ui/index.html")
 list(APPEND GC_EMBED "app/bridge.js=${CMAKE_CURRENT_SOURCE_DIR}/src/app/bridge.js")
 list(APPEND GC_EMBED "data/gcode-words.json=${CMAKE_CURRENT_SOURCE_DIR}/data/gcode-words.json")
 list(APPEND GC_EMBED "data/gcode-rules.json=${CMAKE_CURRENT_SOURCE_DIR}/data/gcode-rules.json")
 file(GLOB GC_LIBRARY CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/library/*.json")
 list(SORT GC_LIBRARY)
-set(GC_EMBED_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/docs/mockup/index.html" "${CMAKE_CURRENT_SOURCE_DIR}/src/app/bridge.js"
+set(GC_EMBED_DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/ui/index.html" "${CMAKE_CURRENT_SOURCE_DIR}/src/app/bridge.js"
     "${CMAKE_CURRENT_SOURCE_DIR}/data/gcode-words.json" "${CMAKE_CURRENT_SOURCE_DIR}/data/gcode-rules.json" "${CMAKE_CURRENT_SOURCE_DIR}/VERSION")
 foreach(f IN LISTS GC_LIBRARY)
     get_filename_component(n "${f}" NAME)

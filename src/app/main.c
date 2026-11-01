@@ -308,6 +308,82 @@ static void bind_startup(const char *id, const char *req, void *arg)
     free(json);
 }
 
+/* gcOpenPath(path): opens a file from the recent list without a dialog. */
+static void bind_open_path(const char *id, const char *req, void *arg)
+{
+    (void)arg;
+    gc_json *a = args_of(req);
+    const char *path = gc_json_str(gc_json_at(a, 0));
+    char err[600];
+    char *json = NULL;
+    if (!path || !*path) snprintf(err, sizeof err, "gcOpenPath(path) needs a path");
+    else json = open_json(path, err, sizeof err);
+    gc_json_free(a);
+    if (json) reply(id, 1, json);
+    else reply_error(id, err);
+    free(json);
+}
+
+/* Settings (recent files, default machines by file type) live in settings.json in the settings folder.
+   The UI owns the contents; this only checks that it's JSON. */
+static char *settings_path(void)
+{
+    return path_join(plat_get_dirs()->config, "settings.json");
+}
+
+/* gcSettings(): the saved settings, or null. */
+static void bind_settings(const char *id, const char *req, void *arg)
+{
+    (void)req;
+    (void)arg;
+    char *path = settings_path();
+    size_t n = 0;
+    char *text = plat_read_file(path, &n);
+    char err[200];
+    gc_json *j = text ? gc_json_parse(text, n, err, sizeof err) : NULL;
+    if (text && !j) fprintf(stderr, "Ignoring %s: %s\n", path, err);
+    gc_buf b;
+    gc_buf_init(&b);
+    if (j && gc_json_is_obj(j)) gc_json_write(&b, j);
+    else gc_buf_puts(&b, "null");
+    reply(id, 1, gc_buf_str(&b));
+    gc_buf_free(&b);
+    gc_json_free(j);
+    free(text);
+    free(path);
+}
+
+/* gcSaveSettings(settings) */
+static void bind_save_settings(const char *id, const char *req, void *arg)
+{
+    (void)arg;
+    gc_json *a = args_of(req);
+    const gc_json *o = gc_json_at(a, 0);
+    if (!o || !gc_json_is_obj(o)) {
+        gc_json_free(a);
+        reply_error(id, "gcSaveSettings(settings) needs an object");
+        return;
+    }
+    gc_buf b;
+    gc_buf_init(&b);
+    gc_json_write(&b, o);
+    gc_buf_putc(&b, '\n');
+    gc_json_free(a);
+    const plat_dirs *dirs = plat_get_dirs();
+    char *path = settings_path();
+    char err[600];
+    if (plat_make_dirs(dirs->config) != 0) {
+        snprintf(err, sizeof err, "Couldn't create the settings folder %s.", dirs->config);
+        reply_error(id, err);
+    } else if (plat_write_file(path, gc_buf_str(&b), b.len, err, sizeof err) != 0) {
+        reply_error(id, err);
+    } else {
+        reply(id, 1, "null");
+    }
+    gc_buf_free(&b);
+    free(path);
+}
+
 /* gcOpenUrl(url) */
 static void bind_open_url(const char *id, const char *req, void *arg)
 {
@@ -430,6 +506,9 @@ int gc_main(int argc, char **argv)
     webview_bind(W, "gcOpen", bind_open, NULL);
     webview_bind(W, "gcSave", bind_save, NULL);
     webview_bind(W, "gcStartup", bind_startup, NULL);
+    webview_bind(W, "gcOpenPath", bind_open_path, NULL);
+    webview_bind(W, "gcSettings", bind_settings, NULL);
+    webview_bind(W, "gcSaveSettings", bind_save_settings, NULL);
     webview_bind(W, "gcOpenUrl", bind_open_url, NULL);
     webview_bind(W, "gcSetTitle", bind_set_title, NULL);
     webview_bind(W, "gcQuit", bind_quit, NULL);
