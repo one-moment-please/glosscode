@@ -2661,6 +2661,8 @@ function cycleSketch(kind, labels, def){
 function interpret(){
   const lathe = mtype()==="lathe";
   let p = {x: lathe ? 2 : 0, y:0, z:1}, mode = 0, dist = "abs", tool = null, pendingT = null;
+  // Canned cycles: Z and R carry over to the next holes; G98 returns to the Z the cycle started at, G99 to R.
+  let ret = "G98", cycZ = null, cycR = null, cycD = null;
   const segs = [], steps = [], L = labels(), stack = []; let i = 0, guard = 0;
   while (i < doc.length && guard++ < 5000){
     const li = i, toks = doc[i];
@@ -2680,6 +2682,7 @@ function interpret(){
     const lib = !inLib && window.libExpandCall?.(toks, li);
     if (lib){ lib.forEach(t => step(t, li, true)); return; }
     const w = {};
+    if (!inLib && !lineState[li]?.cycleCode) cycZ = cycR = cycD = null;
     const tt = toks.find(t => /^T\d/.test(t));
     if (tt) pendingT = lathe ? "T" + parseInt(tt.slice(1, 3)) : "T" + parseInt(tt.slice(1));
     if (lathe && tt) tool = pendingT;
@@ -2687,7 +2690,7 @@ function interpret(){
     for (const t of toks){
       if (t.startsWith("(")) continue;
       const k = t[0], v = parseFloat(t.slice(1));
-      if (k==="G"){ if ([0,1,2,3].includes(v)) mode = v; if (v===90) dist="abs"; if (v===91) dist="inc"; if (v===28||v===53||v===50||v===4||v===65) return; }
+      if (k==="G"){ if ([0,1,2,3].includes(v)) mode = v; if (v===90) dist="abs"; if (v===91) dist="inc"; if (!lathe && (v===98 || v===99)) ret = "G"+v; if (v===28||v===53||v===50||v===4||v===65) return; }
       else if (k==="M" && (v===97 || v===98)) return;
       else if (!isNaN(v)) w[k] = v;
     }
@@ -2699,10 +2702,13 @@ function interpret(){
     const kind = (inLib ? null : lineKind(li)) || (mode===0 ? "rapid" : "feed");
     const T = tool || "T?";
     if (kind==="cyc" && !lathe){
-      const r = "R" in w ? w.R : 0.1, z = n.z;
+      if (cycZ==null) cycZ = p.z;
+      if ("R" in w) cycR = w.R;
+      if ("Z" in w) cycD = n.z;
+      const r = cycR ?? 0.1, z = cycD ?? n.z;
       segs.push({a:{...p}, b:{x:n.x, y:n.y, z:p.z}, rapid:true, kind:"rapid", li, tool:T});
       segs.push({a:{x:n.x, y:n.y, z:r}, b:{x:n.x, y:n.y, z}, rapid:false, kind:"cyc", li, tool:T});
-      p = {x:n.x, y:n.y, z:p.z}; return;
+      p = {x:n.x, y:n.y, z: ret==="G99" ? r : Math.max(cycZ, r)}; return;
     }
     if (!lathe && (mode===2 || mode===3)){
       const cx = p.x + (w.I||0), cy = p.y + (w.J||0), rr = Math.hypot(p.x-cx, p.y-cy);
@@ -2833,9 +2839,18 @@ function nextStop(from, to){
   const k = EXEC.steps.findIndex((s, k) => (s.stop==="M00" || (s.stop==="M01" && simOpt)) && !simStops.has(k) && s.s0 >= from && s.s0 <= to);
   return k < 0 ? null : k;
 }
+// After the last move the simulation still reads the lines up to the program end (M05, G28, M30…), so it
+// finishes on the M30 line, not on the last line that moves.
+function simFinish(){
+  clearInterval(simTimer); simTimer = null;
+  const end = EXEC.steps[EXEC.steps.length-1];
+  if (end && end.li!==curLine){ curLine = end.li; render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`)); } else drawViews();
+  const at = end ? (nWordOf(end.li) || "line " + (end.li+1)) : "";
+  setMsg(end && isEnd(doc[end.li]) ? `Simulation finished at ${at}. ⏮ restarts it.` : "Simulation finished. ⏮ restarts it.");
+}
 function playSim(){
   if (editing && !commit()) return;
-  if (simIdx==null || simIdx >= EXEC.segs.length){ simIdx = 0; simStops = new Set(); }
+  if (simIdx==null || (simIdx >= EXEC.segs.length && nextStop(simIdx, simIdx)==null)){ simIdx = 0; simStops = new Set(); }
   simStopAt = null;
   clearInterval(simTimer);
   simTimer = setInterval(() => {
@@ -2848,8 +2863,8 @@ function playSim(){
       return;
     }
     simIdx = to;
+    if (simIdx >= EXEC.segs.length) return simFinish();
     simLineFollow();
-    if (simIdx >= EXEC.segs.length){ clearInterval(simTimer); simTimer = null; drawViews(); setMsg("Simulation finished. ⏮ restarts it."); }
   }, 60);
   render(); setMsg("Playing. Space pauses, → steps one line.");
 }
@@ -2863,9 +2878,10 @@ function simStep(dir){
   if (simTimer) pauseSim();
   const st = EXEC.steps;
   if (simIdx==null) simIdx = st[stepIndexFor(curLine)]?.s1 ?? 0;
-  if (dir > 0){ const n = st.find(s => s.s1 > s.s0 && s.s0 >= simIdx); if (n) simIdx = n.s1; }
+  let last = false;   // stepping past the last move goes to the program end
+  if (dir > 0){ const n = st.find(s => s.s1 > s.s0 && s.s0 >= simIdx); if (n) simIdx = n.s1; else last = st.length > 0; }
   else { const ps = st.filter(s => s.s1 > s.s0 && s.s1 < simIdx); simIdx = ps.length ? ps[ps.length-1].s1 : 0; }
-  const s = EXEC.segs[simIdx-1]; if (s) curLine = s.li; else curLine = 0;
+  const s = EXEC.segs[simIdx-1]; curLine = last ? st[st.length-1].li : s ? s.li : 0;
   resetStops(); render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`));
 }
 function simReset(){ if (simTimer) pauseSim(); simIdx = 0; curLine = 0; simStops = new Set(); simStopAt = null; render(); ed.scrollTop = 0; setMsg("Back to the start. ▶ plays."); }
