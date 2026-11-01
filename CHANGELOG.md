@@ -6,6 +6,7 @@ What changed in each GlossCode release. The newest release is at the top. Versio
 
 ### Linux
 - The menu entry is now under Development (Programming in the Linux Mint and Cinnamon menus) and Engineering, instead of Utility (Accessories).
+- The menu entry shows its icon right after installing, instead of a blank icon until you log out and back in (seen on Linux Mint).
 - GlossCode is offered in Open With for `.gcode` files (the standard G-code file type), as well as plain text files.
 
 ## [0.1.2] - 2026-11-01
