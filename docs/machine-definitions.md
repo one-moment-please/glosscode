@@ -197,6 +197,25 @@ A machine can add a cycle (a builder's own G-code), remove one with `null`, or c
 
 Help text is plain English and is the same in every layer unless a layer overrides it. Translations, later, would be separate files keyed by cycle and word, not more fields here.
 
+### Column order
+
+The **Columns by word type** layout reads its columns from `columns`, in order from left to right. The built-in order puts the most used words first: motion and canned cycle codes, X, Y, Z, the arc and cycle words, F, S, the spindle M-codes, the tool, coolant, then setup G-codes, other M-codes, rare words and the comment. A word goes in the first column that matches it, so a code listed in an earlier column (M03 under Spindle) never reaches a later catch-all (M).
+
+```jsonc
+"columns": [
+  { "id": "MOT",  "label": "Motion",  "groups": ["motion", "canned cycle"], "cycles": true, "codes": ["G04"], "carry": "motion" },
+  { "id": "X",    "label": "X",       "letters": ["X", "U"], "carry": "position" },
+  { "id": "SPIN", "label": "Spindle", "codes": ["M03", "M04", "M05"], "carry": "spindle" },
+  { "id": "G",    "label": "G setup", "letters": ["G"] },
+  { "id": "OTHER","label": "Other",   "other": true },
+  { "id": "NOTE", "label": "Comment", "comments": true }
+]
+```
+
+- `letters`: any word starting with these letters. `codes`: these exact codes. `groups`: every code in these modal groups. `cycles`: every canned cycle the machine has.
+- `carry`: what an empty cell shows, greyed out, when the value is still active from an earlier line: `motion` (the motion code or active cycle), `position` (where the axis was last sent), `cycle` (R and Q kept by an active canned cycle), `value` (the last F or S), `spindle`, `coolant` and `tool`. Columns with no `carry` stay empty.
+- Like other arrays, a layer that sets `columns` replaces the whole list. Only columns a program uses are shown, so extra columns cost nothing.
+
 ## Checks: how much is machine-specific
 
 There are 31 checks today. None of their logic needs to change per machine, and almost all of the data they read does.
