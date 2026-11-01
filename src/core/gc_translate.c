@@ -323,6 +323,18 @@ static void word(const gc_ctx *c, const char *t, const tstate *st, gc_cell *cell
         return;
     }
     const char *sk = style_key(c);
+    if (t[0] == '/') { /* block delete */
+        const gc_json *en = gc_entry(c, "/");
+        if (!en) {
+            cell_set(cell, "?/", NULL, "Block delete isn't in the dictionary.", GC_CELL_UNKNOWN);
+            return;
+        }
+        snprintf(e, sizeof e, "%s%s", js_str(gc_json_get(en, sk)), t + 1);
+        if (t[1]) snprintf(d, sizeof d, "%s (switch %s)", js_str(gc_json_get(en, "desc")), t + 1);
+        else snprintf(d, sizeof d, "%s", js_str(gc_json_get(en, "desc")));
+        cell_set(cell, e, NULL, d, 0);
+        return;
+    }
     if (gc_is_alpha((unsigned char)t[0]) && gc_is_alpha((unsigned char)t[1])) { /* CALL, RTS, GOTO */
         const gc_json *en = gc_entry(c, t);
         if (en) {

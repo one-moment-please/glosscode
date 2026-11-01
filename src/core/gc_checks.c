@@ -258,7 +258,7 @@ static void check_line(checker *ck, int li)
     const char *first_all = NULL;
     for (int i = 0; i < l->ntok; i++) {
         const char *t = l->tok[i];
-        if (t[0] == '(') continue;
+        if (t[0] == '(' || t[0] == '/') continue;
         if (!first_all) first_all = t;
         if (gc_is_alpha((unsigned char)t[0]) && gc_is_alpha((unsigned char)t[1])) continue; /* keyword */
         if (ln.nw >= 256) break;

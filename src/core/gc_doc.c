@@ -18,6 +18,17 @@ char **gc_tokenize(const char *s, size_t len, int *ntok)
     char **out = NULL;
     int n = 0, cap = 0;
     size_t i = 0;
+    /* A "/" at the start of a block is block delete (/1 to /9 on Fanuc-style controls): its own first word. */
+    while (i < len && (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r' || s[i] == '\f' || s[i] == '\v')) i++;
+    if (i < len && s[i] == '/') {
+        size_t end = i + 1;
+        if (end < len && gc_is_digit((unsigned char)s[end])) end++;
+        out = gc_xrealloc(out, 8 * sizeof *out);
+        cap = 8;
+        out[n++] = gc_strndup(s + i, end - i);
+        i = end;
+    } else
+        i = 0;
     while (i < len) {
         size_t start = i, end = 0;
         int comment = 0;
@@ -197,15 +208,15 @@ char *gc_doc_serialize(const gc_doc *doc, int eob, size_t *len)
     for (int i = 0; i < doc->nlines; i++) {
         const gc_line *l = &doc->lines[i];
         if (raw_matches(l)) {
-            /* Unchanged: keep the text as written (spacing, '%', block delete and macro text the
-               word list doesn't hold), less trailing spaces before a ';'. */
+            /* Unchanged: keep the text as written (spacing, '%' and macro text the word list
+               doesn't hold), less trailing spaces before a ';'. */
             size_t n = strlen(l->raw);
             if (eob)
                 while (n && (l->raw[n - 1] == ' ' || l->raw[n - 1] == '\t')) n--;
             gc_buf_putn(&b, l->raw, n);
         } else {
             for (int j = 0; j < l->ntok; j++) {
-                if (j) gc_buf_putc(&b, ' ');
+                if (j && l->tok[j - 1][0] != '/') gc_buf_putc(&b, ' '); /* "/N30", not "/ N30" */
                 gc_buf_puts(&b, l->tok[j]);
             }
         }

@@ -81,7 +81,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 
 **Previews**
 - XY toolpath view that follows subprogram calls, colored by move type or by tool. Moves after the selected line can be greyed out, hidden, or shown normally.
-- Simulation playback that draws the tool moves one line at a time, with step, play and speed controls.
+- Simulation playback that draws the tool moves one line at a time, with step, play and speed controls. It pauses at M00 (and M01 with optional stop on), can skip block delete (/) lines, and has an expanded view with a large toolpath.
 - A "Z by line" timeline in execution order that keeps the selected line centered.
 
 **Machines**
