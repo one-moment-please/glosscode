@@ -361,6 +361,17 @@
       "inherits": "linuxcnc",
       "inheritWords": true,
       "verified": false,
+      "mill": {
+        "source": { "manual": "Tormach 1500MX Operator's Manual UM10811 (0423A), PCNC 1100 UM10349 (0525A), PCNC 440 UM10372 (0124A)", "section": "1500MX chapter 9, PCNC 1100 and 440 chapter 7" },
+        "cycles": {
+          "G84": { "name": "Tap, floating holder", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "P", "L"], "feed": true, "speed": true, "startsSpindle": true },
+          "G88": { "name": "Bore, dwell, stop, jog out", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true }
+        },
+        "foreign": {
+          "G88": null,
+          "G76": { "severity": "error", "text": "Tormach mills have no G76. The 1500MX code table lists it as threading, copied from the lathe; use G33.1 or G84 instead." }
+        }
+      },
       "lathe": {
         "source": { "manual": "Tormach PathPilot User Guide for Lathes UM10751", "revision": "Dec. 2020, PathPilot 2.7.1", "section": "Programming, pp. 129 to 176" },
         "modalGroups": {

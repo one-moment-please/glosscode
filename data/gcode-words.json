@@ -234,6 +234,11 @@
       "G72": { "long": "RUFPROFX", "short": "RPX", "desc": "Rough the profile on the face" },
       "G76": { "long": "THREAD", "short": "THD", "desc": "Threading cycle" }
     },
+    "tormach.mill": {
+      "G47": { "long": "ENGRAVE", "short": "ENGR", "desc": "Engrave text or a serial number (Z depth, R retract, P and Q size, D digits)" },
+      "G37": { "long": "TOOLMEAS", "short": "TLMS", "desc": "Measure the tool length automatically with the tool setter" },
+      "G88": { "long": "BOREJOG", "short": "BRJG", "desc": "Boring cycle, dwell, spindle stop, jog out by hand" }
+    },
     "tormach.lathe": {
       "M10": { "long": "COLLETUNC", "short": "CLTU", "desc": "Collet closer unclamp" },
       "M11": { "long": "COLLETCLP", "short": "CLTC", "desc": "Collet closer clamp" },
