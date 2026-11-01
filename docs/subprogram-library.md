@@ -128,7 +128,7 @@ The same three folders as machine definition files, each with a `library` folder
 
 | Folder | Who writes it | Shared? |
 |---|---|---|
-| `library\` beside the program | GlossCode releases | Built in, read-only |
+| Built into the program (compiled into the .exe) | GlossCode releases | Built in, read-only |
 | `<shop folder>\library` (the shop folder set in Settings, often a network path) | The shop | With everyone who points at that folder |
 | `%APPDATA%\GlossCode\library` (`~/.config/glosscode/library` on Linux) | The user | No |
 

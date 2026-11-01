@@ -49,9 +49,11 @@ The same rules the rules file uses today:
 
 | Folder | Who writes it | Shared? |
 |---|---|---|
-| `machines/` beside the program | GlossCode releases | Built in, read-only |
+| Built into the program (compiled into the .exe) | GlossCode releases | Built in, read-only |
 | Shop folder (set in Settings, can be a network path) | The shop | With everyone who points at that folder |
 | `%APPDATA%\GlossCode\machines` (`~/.config/glosscode/machines` on Linux) | The user | No |
+
+The personal folder is the platform's standard user data folder, not a folder beside the program, so it works when GlossCode is installed in `Program Files` and survives updates. See [Packaging](architecture.md#packaging) for the portable mode that keeps everything beside the .exe instead.
 
 Ids are unique across all three. A shop or personal file that uses the same id as a built-in file replaces it, which lets a shop fix a mistake in a built-in table without waiting for a release; the editor marks the machine "modified built-in" so it isn't a surprise. The usual way is to extend, not replace.
 
