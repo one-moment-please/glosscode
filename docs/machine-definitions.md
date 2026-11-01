@@ -131,13 +131,27 @@ Because each file is for one process, the `mill` / `lathe` sub-entries in today'
 
 ### Codes with a decimal part
 
-Some controls use codes like `G05.1`, `G43.4`, `G68.2`, `G12.1`, `M98.1`, and some machines write every code with one decimal place (`G00.0`, `A00.0`).
+Many controls have codes with a decimal part, such as `G90.1`/`G91.1` (arc center distance mode), `G54.1 P1` (extra work offsets) and `G41.1`/`G42.1` (LinuxCNC cutter comp with a diameter word). A machine could also write every code with one decimal place (`G00.0`, `A00.0`). The file format and the parser handle all of these. The built-in files only include a decimal code once it has been checked against that control's manual, so anything else is left for users to add in their own machine files.
 
 - A letter's `role` says whether a number after it is a **value** (`axis`, `feed`, `speed`, `offset`, `count`, `time`…) or picks a **code** (`code`). G and M are `code` in `base.common`. A machine where A selects a function rather than a rotary axis sets `"A": { "role": "code" }`, and its `codes` table gets `A00.0`-style entries.
 - **Code keys** are the letter, the whole number padded to two digits, and the decimal part if it isn't zero: `G01`, `G43.4`, `A12.5`. When reading a program, `G1`, `G01`, `G001`, `G1.` and `G01.0` all find `G01`; `G43.4` only finds `G43.4`. An unknown `G43.4` is never shown as `G43`; it gets `unknown-word`.
 - A control where `.0` is a different code from no decimal (rare) sets `"exactDecimal": true` on that letter, and then `G01` and `G01.0` are separate keys.
 - `write` says how GlossCode writes codes it inserts (autocomplete, Insert menu, Renumber). `"G": { "role": "code", "write": "00.0" }` makes autocomplete insert `G00.0`. Words already in the program keep the form they were typed in.
 - For value letters, `numbers` keeps working the way it does today (a distance with no decimal point reads as the smallest increment on Fanuc-style controls).
+- A decimal code goes in `modalGroups` like any other code, so `G90.1` and `G91.1` form their own group, and `G59.1` can join the work offset group.
+- A code that takes a selector word (`G54.1 P3`, Haas `G154 P12`) lists the word in `wordHints` as `requires`, the same way `G43` lists `H`.
+
+Candidates for the built-in files, from a reference table. None of these have been checked against a manual yet, so they stay out of the built-in files until they are:
+
+| Control | Decimal codes |
+|---|---|
+| Fanuc (0i, 30i/31i/32i) | G90.1 / G91.1 (arc IJK distance), G54.1 P1–P48 (extended work offsets, option) |
+| Haas NGC | G90.1 / G91.1. Extended offsets use G154 P1–P99, not G54.1 |
+| Hurco WinMax | G51.1 (mirroring), G54.1 (auxiliary work offsets), G94.1 (rotary tangential velocity) |
+| LinuxCNC | G90.1 / G91.1, G41.1 / G42.1 (cutter comp with a D diameter word), G59.1 / G59.2 / G59.3 |
+| Mach3 / Mach4 | G90.1 / G91.1, G59.1 / G59.2 / G59.3; Mach4 also G54.1 P1–P248 |
+| Centroid | G90.1 / G91.1 (varies by CNC12 version). Extended fixtures are G54 P1–P12, with no decimal |
+| GRBL | G91.1 only (incremental arc IJK is the default; G90.1 isn't implemented) |
 
 Word-style codes like Okuma `CALL`, `RTS` and `GOTO` stay in `keywords`, with their English in `codes`.
 
