@@ -4,8 +4,9 @@
 
 ## Summary
 
-- **One file per machine, built in layers.** A machine file names the files it builds on (`extends`) and only holds what's different. The layers are: a process base (mill, lathe, router, laser, wire EDM…), a control or brand (Fanuc, Haas, Okuma…), an optional model chain (family, model, variant: Haas VF › VF-3 › VF-3SS), and the shop's own machine.
-- **The control and the model are picked separately.** The same model can be sold with different controls over the years (Haas classic, then NGC), so a machine is "this control on this model". Model files hold the hardware (travel, spindle, tool changer, gearbox, options); control files hold the language.
+- **Arranged around the control, like the manuals.** Control series › control model › machine type › machine model, with options as checkboxes: Haas › NGC › mill › VF-3SS, ☑ probing. The control decides the language; the machine model only holds hardware facts (travel, RPM, tool changer, gearbox) that turn some codes on or off.
+- **Every level has a Generic choice**, worked out by GlossCode from the entries under it, which shows only what they all share and flags codes that aren't on every machine.
+- **One file per node, built in layers.** Each file names the files it builds on (`extends`) and only holds what's different. Under the control tree sit the process bases (mill, lathe, router, laser, wire EDM…), and on top sits the shop's own machine.
 - **Everything about a machine goes in its file:** the English words, address letters and number format, modal groups, canned cycles and their help text, subprogram calls, machine options (travel, live tooling, Y axis), and which checks are on and how severe they are.
 - **The check logic and its wording stay in the app.** "Two codes from one group" works the same on every control; what differs is which codes are in which group. So the rule code and messages are shared, and the tables the rules read come from the machine file.
 - **Private or shared is decided by where the file lives.** Built-in files ship with GlossCode, shop files live in a shared folder the shop picks (a network drive), and personal files live in the user's settings folder. GlossCode never uploads anything. Sharing means exporting a file on purpose.
@@ -15,33 +16,29 @@
 ## Layers
 
 ```
-process base      base.mill            base.lathe          base.wire-edm   …
-      │                │                    │
-control/brand     fanuc.mill           fanuc.lathe
-      │                │                    │
-                  haas.mill            haas.lathe          (both also extend haas.common)
+process base      base.mill                    base.lathe          base.wire-edm   …
                        │
-                       │       family    haas.vf             (model chain: hardware only,
-                       │                    │                  never extends a control)
-                       │       model     haas.vf2   haas.vf3
-                       │                               │
-                       │       variant              haas.vf3ss   haas.vf3yt
-                       │                               │
-shop machine      acme.vf3ss-cell1   extends ["haas.mill", "haas.vf3ss"]   (private, in the shop folder)
+Fanuc-style base  fanuc.mill        control series   haas   (M97 local subprograms and other codes every Haas control shares)
+                       │                              │
+                       │            control model    haas.ngc     haas.classic     haas.1995
+                       │                              │
+machine type      haas.ngc.mill  extends ["fanuc.mill", "haas.ngc"]          haas.ngc.lathe …
+
+machine model     haas.vf3ss     (hardware only; never extends a control)
+
+shop machine      acme.vf3ss-cell1   extends ["haas.ngc.mill", "haas.vf3ss"]   (private, in the shop folder)
 ```
 
-A file's `extends` is a list. Files are applied in order, then the file itself goes on top. That lets a brand share pieces between its mill and lathe files: `haas.mill` extends `["fanuc.mill", "haas.common"]`, where `haas.common` holds M97 local subprograms and the other Haas codes both machine types use.
+A file's `extends` is a list. Files are applied in order, then the file itself goes on top. That lets a control share pieces between its mill and lathe files: `haas.ngc.mill` extends `["fanuc.mill", "haas.ngc"]`, where `haas.ngc` (and `haas` above it) holds M97 local subprograms and the other codes both machine types use.
 
 | Layer | Holds | Examples |
 |---|---|---|
 | `process` | What every machine of this kind has: address meanings (X, Y, Z, U, W, I, J, K…), the core G and M codes, modal groups, the "process on" codes (spindle, beam, torch, wire), which checks apply | `base.common`, `base.mill`, `base.lathe`, `base.mill-turn`, `base.router`, `base.laser`, `base.plasma`, `base.waterjet`, `base.wire-edm`, `base.sinker-edm` |
-| `control` | A control family's dialect: its cycles and their words, sub calls, foreign codes, number format | `fanuc.mill`, `haas.lathe`, `okuma.mill`, `grbl.router`, `linuxcnc.mill` |
-| `family` | What every model in a line shares, and which controls it was sold with | `haas.vf`, `haas.st`, `okuma.lb` |
-| `model` | One model's facts: travel, max RPM, tool count, standard options | `haas.vf2`, `haas.vf3`, `okuma.lb3000` |
-| `variant` | What a sub-model changes on its model: a faster spindle, another tool changer, more travel | `haas.vf3ss`, `haas.vf3yt` |
+| `series`, `control`, `type` | The control's language: its codes, cycles and their words, sub calls, foreign codes, number format, the options it knows about | `haas`, `haas.ngc`, `haas.ngc.mill`, `okuma.p200.lathe`, `fanuc.0i.mill`, `linuxcnc.mill` |
+| `model` | One machine model's hardware: travel, max RPM, rapids, tool changer, standard options | `haas.vf2`, `haas.vf3ss`, `okuma.lb3000` |
 | `machine` | One real machine in one shop: its options, in-house M-codes, custom macros, check settings | `acme.vf2-cell3` |
 
-Family, model and variant files make up the **model chain**. They never extend a control file, so one `haas.vf3ss` serves a VF-3SS on any Haas control. See [Models and variants](#models-and-variants).
+Model files never extend a control file, so one `haas.vf3ss` serves a VF-3SS with either Haas control. See [Controls, machine models and options](#controls-machine-models-and-options).
 
 The process bases for router, laser, plasma, waterjet and EDM are starting points. Their codes vary much more between builders than on mills and lathes, so they ship `verified: false` and get a brand layer as real programs come in.
 
@@ -98,8 +95,8 @@ One JSON file per layer. Keys that aren't needed are left out. A full example of
   "glosscode": "machine/1",          // format version
   "id": "acme.vf2-cell3",            // unique; lowercase, dots and dashes
   "name": "Haas VF-2 (cell 3)",
-  "layer": "machine",                // process | control | family | model | variant | machine
-  "extends": ["haas.mill", "haas.vf2"], // a control, then the model chain
+  "layer": "machine",                // process | series | control | type | model | machine
+  "extends": ["haas.ngc.mill", "haas.vf2"], // a machine type, then a model
   "private": true,
   "verified": true,                  // false = written from general knowledge
   "author": "Acme Machine, programming group",
@@ -233,13 +230,50 @@ The **Columns by word type** layout reads its columns from `columns`, in order f
 - Several words in one cell stack one above the other, so a column is only as wide as its widest single word and a line with a stacked cell gets taller.
 - Like other arrays, a layer that sets `columns` or `programOrderCodes` replaces the whole list. Only columns used by lines laid out in columns are shown, so extra columns cost nothing.
 
-## Models and variants
+## Controls, machine models and options
 
-Builders sell one line in several sizes and each size in several versions. Haas has the VF-2 and VF-3, and the VF-3 comes as a VF-3, VF-3SS (Super Speed) or VF-3YT (taller Y). Most of the time the versions program the same way and only the hardware differs, but some of that hardware changes which codes are valid and what the checks should flag. The model chain holds those facts once, so a shop picks "VF-3SS" instead of typing them in.
+Programming manuals are written for a control, not a machine. The Haas NGC mill manual covers every NGC mill, and none of the Haas manuals reviewed so far mentions the VF-3 or the Super Speed models (see [haas-ngc.md](manual-reviews/haas-ngc.md)). So the definitions are arranged the same way: the control decides the language, and the machine model only changes a handful of things that depend on the hardware.
 
-### What changes between models and variants
+### The tree
 
-What the Haas manuals reviewed so far say depends on the machine rather than the control. They describe these in general terms ("if your machine has a gearbox", "side-mount changer only", "varies by model") and don't say which model has what. That is exactly what the model chain fills in:
+```
+Control series     Haas                                    Okuma                 Fanuc
+                    │                                       │                     │
+Control model      Haas NGC        Haas classic   Haas 1995 OSP-P200L  OSP7000L   0i-MF   0i-TF …
+                    │
+Machine type       NGC mill        NGC lathe
+                    │                │
+Machine model      VF-2  VF-3  VF-3SS  UMC-750 …    ST-10  ST-20  ST-30 …
+                    │
+Options            ☑ Side-mount tool changer  ☐ Gearbox  ☑ Probing  ☑ Macros  ☐ Rotation and scaling  ☐ Through-spindle coolant …
+
+Every level also has   Generic   (only what all the entries under it share)
+```
+
+- **Control series** is the builder of the control: Haas, Okuma, Fanuc, Siemens, Mazak, LinuxCNC.
+- **Control model** is one generation of that control, written from one set of manuals: Haas NGC, Haas classic, the 1995 Haas control, Okuma OSP-P200L. Manual editions that agree go in one control model. Where an edition changed something, the entry says which (see **Editions** below), so Haas NGC doesn't split into "NGC 2020" and "NGC 2025".
+- **Machine type** is mill, lathe, mill-turn and so on, because the same control speaks a different language on each (G50 is the spindle limit on a Haas lathe and scaling off on a Haas mill). A control that only exists for one type, like the OSP-P200L lathe control, has one entry here.
+- **Machine model** holds the hardware: travel, max RPM, rapids, tool changer type and pocket count, gearbox, and which options are standard. Models with the same hardware facts can share a group node (VF-2 and VF-3 differ only in travel), and a model only needs its own entry when something about it differs.
+- **Options** are checkboxes, not a tree level, because they combine freely. A VF-3SS can have probing, macros and rotation and scaling in any mix, and a tree would need a branch for every mix. The model sets the defaults; the user ticks what their machine really has.
+
+A machine model that was sold with several controls appears under each of them, but it's one file. The VF-3SS file lists the control models it can go with, and the tree shows it under each.
+
+### Generic
+
+Each level has a **Generic** entry: "Haas NGC mill, any model", "Haas NGC, any type", "Haas, any control". It's for a program that has to run on more than one machine, or when you don't know the exact machine yet.
+
+Generic is worked out by GlossCode from the entries under it, never written by hand, so it can't fall out of step:
+
+- A code that every entry has, with the same meaning, is in Generic and reads normally.
+- A code that every entry has but with different meanings (G50 across mill and lathe, M39 on umbrella and side-mount changers) is shown as **varies by machine**. Hovering over it lists each meaning, and the check `varies-by-machine` gives an info.
+- A code that only some entries have isn't in Generic's autocomplete or Insert menu. If a program uses it, the check `not-on-every-machine` names the entries that lack it ("M41: not on machines without a gearbox"). This turns Generic into a portability check.
+- Options work the same way: Generic for a machine model assumes only the options that model always has.
+
+The higher the level, the smaller Generic gets. "Haas NGC mill, any model" is nearly the whole NGC mill language, while "Haas, any control" is little more than the shared Fanuc-style core. The picker shows how many codes each Generic has so that's not a surprise.
+
+### What changes between machine models and options
+
+What the Haas manuals say depends on the machine rather than the control. They describe these in general terms ("if your machine has a gearbox", "side-mount changer only", "varies by model") and don't say which model has what. That's what the machine model and options fill in:
 
 | Hardware fact | Changes in GlossCode | Manual reference |
 |---|---|---|
@@ -247,58 +281,77 @@ What the Haas manuals reviewed so far say depends on the machine rather than the
 | Rapid and max feed rate | Feed plausibility, cycle time estimate | Spec sheet; mill 2025 p. 474 says it varies by model |
 | Travel | A future out-of-travel check, the Z timeline scale | Spec sheet; VF 1995 p. 2 lists VF-0 to VF-3 |
 | Gearbox or not | M41/M42 valid, or flagged as having no effect | Mill 2025 pp. 203, 437; VF 1995 p. 91 (VF-0 has none) |
-| Tool changer: umbrella or side-mount | Tool pre-call ("T next after M06") hint, M39, the heavy-tool flags, tool count | Mill 2025 pp. 162–170, 437, 444 |
-| Option packages (TSC, high-speed machining, macros, rotation and scaling, probing) | Codes that need the option are hidden or flagged when it's missing | Mill 2025 pp. 242, 353, 438 |
+| Tool changer: umbrella or side-mount | Tool pre-call ("T next after M06") hint, M39, the heavy-tool flags, broken tool detection | Mill 2025 pp. 162–170, 437, 444, 524 |
+| Model-only codes | G143 (VR models only), tailstock settings (ST-20, 30 and 40), G199 (dual spindle) | Mill 2025 p. 397; lathe 2020 pp. 142–147, 227 |
+| Purchased options (through-spindle coolant, high-speed machining, macros, rotation and scaling, probing) | Codes that need the option are hidden or flagged when it's off | Mill 2025 pp. 242, 353, 438 |
 
-These go in `machine` and `machine.options`. A code or cycle that depends on hardware lists it in `needs`, the way lathe cycles already list `liveTooling`:
+A code or cycle that depends on hardware or an option lists it in `needs`, the way lathe cycles already list `liveTooling`. A code shows up in autocomplete and the Insert menu when everything in its `needs` is on:
 
 ```jsonc
-// haas.mill (control layer)
+// haas.ngc.mill (machine type)
 "codes": {
-  "M41": { "long": "GEARLOW",  "short": "GLOW", "desc": "Low gear", "needs": ["gearbox"] },
-  "M42": { "long": "GEARHIGH", "short": "GHI",  "desc": "High gear", "needs": ["gearbox"] }
+  "M41":  { "long": "GEARLOW",  "short": "GLOW", "desc": "Low gear",  "needs": ["gearbox"] },
+  "M42":  { "long": "GEARHIGH", "short": "GHI",  "desc": "High gear", "needs": ["gearbox"] },
+  "G143": { "long": "TLEN5AX",  "short": "TL5X", "desc": "Five-axis tool length offset", "needs": ["vr"] },
+  "G51":  { "long": "SCALEON",  "short": "SCLON", "desc": "Scaling on", "needs": ["rotationScaling"] }
 }
 ```
 
-(M41/M42 aren't in the dictionary yet; this shows the shape.) On a model without a gearbox, M41 and M42 still read as English, so old programs make sense, but a new `needs-option` check gives an info: "This machine has no gearbox, so M41 has no effect." A model file can also change a code or check directly when a `needs` flag isn't enough, but that should be rare: control behavior belongs in the control file.
+(M41, M42 and G143 aren't in the dictionary yet; this shows the shape.) In a program, a code whose `needs` aren't met still reads as English, so old programs make sense, and a new `needs-option` check says why: "This machine has no gearbox, so M41 has no effect."
+
+### Editions
+
+Manuals for one control model don't always agree. The 2020 NGC mill manual says M39 turns the side-mount changer and the 2025 one says the umbrella changer. Any entry can carry its own `source`, and an entry that changed between editions can give both:
+
+```jsonc
+"M39": { "long": "TCROTATE", "short": "TCROT", "desc": "Rotate the tool carousel",
+         "source": [{ "manual": "Haas Mill 96-8210", "revision": "N (2020)", "page": 417 },
+                    { "manual": "Haas Mill 96-8210", "revision": "V (2025)", "page": 444 }],
+         "unsettled": "2020 says side-mount changer, 2025 says umbrella" }
+```
+
+`unsettled` shows in the word's tooltip until someone checks it on a machine.
 
 ### The files
 
-A family file holds what the whole line shares and the list of models the picker shows. A model extends its family; a variant extends its model and only says what's different.
+One file per node, each extending its parent, so a level holds only what's different from the one above. The ids follow the tree:
+
+| Level | Holds | Examples |
+|---|---|---|
+| `series` | What every control from this builder shares | `haas`, `okuma`, `fanuc` |
+| `control` | One control generation's language for all machine types | `haas.ngc`, `haas.classic`, `haas.1995`, `okuma.p200` |
+| `type` | That control on one machine type: the codes, cycles, checks and options it knows | `haas.ngc.mill`, `haas.ngc.lathe`, `okuma.p200.lathe` |
+| `model` | Hardware only: travel, RPM, rapids, tool changer, standard options, and which `type`s it goes with | `haas.vf3ss`, `haas.st20`, `okuma.lb3000` |
+| `machine` | One real machine in a shop: the type and model, the options ticked, in-house codes | `acme.vf3ss-cell1` |
 
 ```jsonc
-// haas.vf (family)
-{ "id": "haas.vf", "layer": "family", "name": "Haas VF", "brand": "Haas",
-  "machine": { "process": "mill", "controls": ["haas.mill", "haas.mill-classic", "haas1995.mill"] } }
-
-// haas.vf3 (model)
-{ "id": "haas.vf3", "layer": "model", "name": "VF-3", "extends": ["haas.vf"],
-  "machine": { "travel": { "X": 40, "Y": 20, "Z": 25 } } }
-
-// haas.vf3ss (variant)
-{ "id": "haas.vf3ss", "layer": "variant", "name": "VF-3SS", "variantOf": "haas.vf3", "extends": ["haas.vf3"],
-  "about": "Super Speed: faster spindle, rapids and tool changer.",
-  "machine": { "maxRpm": 12000, "toolChanger": "side-mount", "tools": 25, "options": { "gearbox": false } },
+// haas.vf3ss (machine model)
+{ "id": "haas.vf3ss", "layer": "model", "name": "VF-3SS", "group": "VF",
+  "types": ["haas.ngc.mill", "haas.classic.mill"],
+  "machine": { "travel": { "X": 40, "Y": 20, "Z": 25 }, "maxRpm": 12000,
+               "toolChanger": "side-mount", "tools": 25,
+               "options": { "gearbox": false } },
   "verified": false }               // numbers from general knowledge; check the Haas spec sheet
+
+// acme.vf3ss-cell1 (shop machine)
+{ "id": "acme.vf3ss-cell1", "layer": "machine", "extends": ["haas.ngc.mill", "haas.vf3ss"],
+  "machine": { "options": { "probe": true, "macros": true, "tsc": true } } }
 ```
 
-- `machine.controls` on a family lists the controls that line was sold with, newest first. The picker offers those first and the rest under **Other controls**.
-- `variantOf` names the model the picker groups a variant under. It usually matches `extends`, but it's kept separate so a variant can extend a sibling (a VF-4SS could extend `haas.vf3ss` for the spindle and set its own travel).
-- Years can be given as `years: [2006, null]` on a model or variant, so the picker can show "VF-3 (1995)" separately when an old version differs enough to need its own file.
-- A shop machine extends a control, then a model or variant: `["haas.mill", "haas.vf3ss"]`. The model chain goes last, so its `needs` flags and limits apply on top of the control.
+- `types` lists the controls (as machine types) a model was sold with, newest first. The tree shows the model under each, and the picker selects the first.
+- `group` puts models that share hardware facts under one node (VF, UMC, ST). A model can extend another model for shared facts: a VF-4SS could extend `haas.vf3ss` and set its own travel.
+- A shop machine extends a machine type, then a model. The model goes last, so its limits and options apply on top of the control.
+- Model files never extend a control file, so one `haas.vf3ss` serves both the NGC and classic versions.
 
-Built-in model files follow the manual rule above: numbers come from the builder's spec sheet or the machine's own plate, with `source` saying which, and a model ships `verified: false` until someone checks it. The Haas programming manuals reviewed so far don't have spec tables for current VF models (see [haas-ngc.md](manual-reviews/haas-ngc.md)), so VF-3SS numbers need the Haas spec sheet.
+Built-in model files follow the manual rule above: numbers come from the builder's spec sheet or the machine's plate, with `source` saying which, and a model ships `verified: false` until someone checks it. The VF-3SS numbers need the Haas spec sheet.
 
-### Picking a model in GlossCode
+### Picking a machine in GlossCode
 
-The machine picker (File › New, the machine chip, and **New machine profile…**) asks two things:
+The machine picker (File › New, the machine chip, and **New machine profile…**) shows the tree as columns, left to right: series, control, type, model. Each column has **Generic** at the top. A search box above finds any entry ("3ss", "p200"), and searching a model that went with several controls shows one result per control ("VF-3SS · Haas NGC", "VF-3SS · Haas classic").
 
-1. **Model**: a search box over every model and variant, with a tree underneath (Haas › VF › VF-3 › VF-3SS). Typing "3ss" finds it. **Not listed** uses the family's or the process base's defaults.
-2. **Control**: the family's `controls`, with the newest one selected (Haas NGC, Haas classic, Haas 1995).
+Under the columns are the option checkboxes, ticked from the model's standard options. The profile window then shows the hardware with each value's source ("12000 from VF-3SS"), and the user can change any of it. The saved profile is a small machine file, so a later fix to the built-in VF-3SS file reaches it.
 
-The profile window then shows the model's hardware prefilled with each value's source ("12000 from VF-3SS"), and the user can change any of it. The saved profile is a small machine file that extends the control and the model, so a later fix to the built-in VF-3SS file reaches it.
-
-The machine menu shows the variant name and control: "Haas VF-3SS · Haas NGC · mill". Switching a profile from VF-3 to VF-3SS is one change in **Edit this profile…**, and the Problems panel re-checks the open program.
+The machine menu shows the whole path: "Haas NGC mill · VF-3SS". Picking a different model or Generic is one change in **Edit this profile…**, and the Problems panel re-checks the open program.
 
 ## Checks: how much is machine-specific
 
@@ -351,7 +404,7 @@ Two limits keep it safe. It only writes to personal or shop files, so editing a 
 
 1. Add the loader with merge and `extends` in the core, and a converter script that splits today's two files into `machines/base.*`, `machines/fanuc.*`, `machines/haas.*` and `machines/okuma.*`. Check that the resolved Haas, Fanuc and Okuma mill and lathe definitions match today's tables exactly.
 2. Move check titles and messages to `data/checks.json`, and point the mockup at the resolved definitions instead of `DICT` and `RULES` (the sync script embeds the resolved machines).
-3. Add the `machine` section in place of the mockup's `MACHINES` list, and the shop and personal folders. Split today's profiles into a control plus a model file (the VF-2 profile becomes `["haas.mill", "haas.vf2"]`), and add the model search and control choice to the machine picker.
+3. Add the `machine` section in place of the mockup's `MACHINES` list, and the shop and personal folders. Split today's profiles into a machine type plus a model file (the VF-2 profile becomes `["haas.ngc.mill", "haas.vf2"]`), and replace the machine picker with the control tree, Generic entries and option checkboxes.
 4. Add `checks`, `lineRules` and the `process` table.
 5. The GUI editor.
 6. Thin `verified: false` bases for router, laser, plasma, waterjet and EDM, then brand layers as real programs arrive.
