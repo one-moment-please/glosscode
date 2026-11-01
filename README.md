@@ -4,7 +4,7 @@
 
 GlossCode is a G-code editor that shows a plain-English line above every line of code, with each code lined up under its English word. It tracks active modes, colors rapid and feed moves, and expands subprogram calls inline.
 
-> **Status: design stage.** Nothing is built yet. The screenshots below come from the clickable mockup in [`docs/mockup/`](docs/mockup/index.html).
+> **Status: early development.** The core (parser, mode tracking, English words and checks) is written in C and the program opens and saves files on Windows and Linux, using the UI from the clickable mockup in [`docs/mockup/`](docs/mockup/index.html). There is no release yet. The screenshots below come from the mockup. To build it, see [`docs/building.md`](docs/building.md).
 
 ![GlossCode editor mockup](docs/images/editor-overview.png)
 
@@ -91,7 +91,7 @@ See [`docs/features.md`](docs/features.md) for the full list and what is still u
 Windows first, with a native Linux build later.
 
 - **Core in portable C**: parser, translator, mode tracking, checks and dictionary loading. Only the C standard library, no `windows.h`, UTF-8 throughout.
-- **One small platform file per OS**: `platform_win32.c` now, `platform_linux.c` later, each with the same handful of functions (read and write files, watch for changes, find the settings folder, open the window).
+- **One small platform file per OS**: `platform_win32.c` and `platform_posix.c`, each with the same handful of functions (read and write files, list a folder, find the settings folder, portable mode, open a link).
 - **UI in a native webview** through the [webview](https://github.com/webview/webview) library: WebView2 on Windows 10/11, WebKitGTK on Linux. The same HTML/JS UI runs on both.
 - **System file dialogs** through [nativefiledialog-extended](https://github.com/btzy/nativefiledialog-extended).
 - **Build with MinGW-w64 or clang** so the same toolchain works on both systems.
@@ -106,7 +106,13 @@ More detail is in [`docs/architecture.md`](docs/architecture.md). Releases, inst
 data/gcode-words.json   Starter abbreviation dictionary (long and short styles, mill/lathe splits, Haas and Okuma overrides)
 data/gcode-rules.json   Problems-panel rules and per-control tables (modal groups, canned cycle words, dialect traps)
 data/library/           Built-in subprogram library (reusable subprograms with variables)
+src/core/               The core in portable C: parser, mode tracking, English words, checks, JSON interface
+src/platform/           Platform files: platform_win32.c, platform_posix.c
+src/app/                The program: webview window, bindings to the core, Windows icon and version info
+tests/                  Core tests, golden files from the mockup, edge-case programs, smoke test
+CMakeLists.txt          Build (see docs/building.md)
 docs/architecture.md    Core, platform layer, UI and build plan
+docs/building.md        How to build and test on Windows and Linux
 docs/checks.md          Every check, the rules file format, and Haas/Okuma coverage
 docs/features.md        Feature list and open questions
 docs/releasing.md       Version number, release files, update check, and what a first release still needs

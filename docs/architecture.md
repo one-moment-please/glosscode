@@ -16,7 +16,7 @@ GlossCode targets Windows first. Everything is arranged so that a native Linux b
 +------------------------------^-------------------------------+
                                |  ~8 functions
 +------------------------------v-------------------------------+
-|  Platform file: platform_win32.c  (later platform_linux.c)   |
+|  Platform file: platform_win32.c / platform_posix.c          |
 +--------------------------------------------------------------+
 ```
 
@@ -30,22 +30,24 @@ GlossCode targets Windows first. Everything is arranged so that a native Linux b
 
 Rules for the core: C standard library only (`stdio`, `stdlib`, `string`), no `windows.h`, UTF-8 everywhere, `/` in paths, and no compiler-specific extensions.
 
+The core lives in `src/core/`: `gc_doc.c` (reading and writing files), `gc_data.c` (data files, dialect chain, dictionary lookups), `gc_translate.c` (mode tracker and translator), `gc_checks.c` (checks), and `gc_api.c` (the JSON methods the UI calls). It follows the mockup's JavaScript line for line, and `tests/test_golden.c` checks that both give the same English and the same problems for every sample program; see [building.md](building.md#tests). A file that isn't valid UTF-8 is read as Latin-1, as older controls and DNC software write, and saved back as Latin-1.
+
 ### Platform file
 
 One file per OS with the same small set of functions:
 
-| Function | Windows | Linux (later) |
+| Function | Windows | Linux |
 |---|---|---|
 | List a folder | `FindFirstFileW` | `opendir` |
-| Read / write a file | `CreateFileW` | `open` |
-| Watch a file for changes | `ReadDirectoryChangesW` | `inotify` |
+| Read / write a file (written to a temporary file, then swapped in) | `CreateFileW`, `MoveFileExW` | `open`, `rename` |
+| Watch a file for changes (not written yet) | `ReadDirectoryChangesW` | `inotify` |
 | Settings folder | `%APPDATA%\GlossCode` | `$XDG_CONFIG_HOME/glosscode` (usually `~/.config/glosscode`) |
 | Open / save dialog | nativefiledialog-extended (`IFileOpenDialog`) | nativefiledialog-extended (GTK / portal) |
 | Create the window | webview (WebView2) | webview (WebKitGTK) |
 
 ### UI
 
-The UI is plain HTML, CSS and JavaScript loaded into the webview. It talks to the core through the webview library's bind and eval calls, passing JSON. The clickable mockup in [`mockup/index.html`](mockup/index.html) is the visual reference.
+The UI is plain HTML, CSS and JavaScript loaded into the webview. It talks to the core through the webview library's bind calls, passing JSON (`window.GlossCodeNative`, listed in [building.md](building.md#how-the-ui-talks-to-the-program)). For now the program shows the clickable mockup in [`mockup/index.html`](mockup/index.html) itself: in the program, the page around the window is hidden and the window fills the screen.
 
 ## Build
 
