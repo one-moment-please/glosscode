@@ -82,6 +82,8 @@ A machine definition file will be able to change any rule's severity or turn it 
 
 A dialect inherits from another and overrides by key. Objects like `cycles` and `foreign` merge one entry at a time, and `null` removes an inherited entry (Haas has no G87 back bore; it uses G77). Each cycle entry lists `requires`, `optional`, `choices` (one of several sets), `labels` (words that name N numbers), and flags: `feed` (uses F as a feed rate), `leadF` (F is the thread lead), `speed` (needs S), `spindle` (needs the spindle running), `startsSpindle` (the cycle starts it) and `modal` (false for one-shot lathe cycles).
 
+Other dialect keys the checks read: `unitCodes` (the codes that switch inch and metric; `null` when units come from a parameter, as on Okuma lathes where G20 and G21 are home returns), `leadCodes` (motion codes whose F is a thread lead, so the feed checks skip it), `mPerBlock` and `dwellNoDecimal`. A cycle can carry `meaning` to say what a required word does in that cycle, for the missing-word message.
+
 ### Word hints
 
 `wordHints` lists the words other codes need, so the editor can show them as grey hint text after the code (`G02` shows `R## or I## J##`). An entry is either `{ "arc": true }` (R, or the two centers for the active plane: I/J under G17, I/K under G18, J/K under G19) or `{ "requires": [...] }`. Canned cycles don't need entries here: their hints come from `requires` and `choices` in `cycles`, G04 uses `dwellWords`, and subprogram calls use `subCalls`, so the hints always match the checks. Once a line uses any word from one choice, the other choices' hints go away.
@@ -103,7 +105,7 @@ The word list in the guide (and whether each word is required, one of a choice, 
 | Fanuc (0i/30i) | Same base as Haas | Same, with Fanuc cycle words and M97 flagged as Haas-only | High |
 | Haas mill, 1995 control (`haas1995`) | Same as Haas mill, plus G87/G88 manual-retract bores, G110–G129 work offsets and M16 | Haas rules with the 1995 cycle words (no P on G73/G83, no J on G74/G84), one M-code per line, P without a decimal as milliseconds, and G93/G95/G96/G154/M88/M89 flagged | High: checked against the June 1995 VF-Series Operator's Manual (see [manual-reviews/haas-vf-1995.md](manual-reviews/haas-vf-1995.md)) |
 | Okuma mill (OSP) | G15 H work offsets, G56 H length offset, G53 offset cancel, CALL / RTS subprograms, M02 | All the generic rules, plus Okuma's traps: G54–G59 (length offsets on Okuma), G43, G28, M97, M98, M99 | Medium: first draft, not yet checked against an OSP manual |
-| Okuma lathe (OSP) | G90/G91, G94/G95 feed modes, LAP and threading codes named | Generic rules, plus G98/G99, G28, M97, M98 flagged | Low: LAP and threading cycles aren't checked yet |
+| Okuma lathe (OSP) | G90/G91, G94/G95 feed modes, G20 home return, G28/G29 torque limit, G31–G35 thread cycles, LAP codes named | Generic rules, plus G71/G72 thread, G73/G74 grooving and G77/G78 tapping cycles, G54–G59, G98/G99, G28 and M97/M98 flagged | Medium: lathe tables checked against the OSP-P200L manual (see [manual-reviews/okuma-osp-p200l.md](manual-reviews/okuma-osp-p200l.md)); LAP isn't checked yet |
 
 ### Not covered yet
 
@@ -117,7 +119,7 @@ The word list in the guide (and whether each word is required, one of a choice, 
 - User Task variables (`VC1`, `V1`, named variables) and `IF [..] N..` / `GOTO` branches.
 - Schedule programs and file types (`.MIN`, `.SSB`, `.SDF`).
 - Okuma lathe LAP: the G85/G86/G87/G88 roughing and finishing cycles read a contour defined between G81/G82 and G80, named by a sequence name. Checking these needs the contour block support above.
-- Okuma lathe compound threading (G71/G72) and 6-digit tool calls (`T010101`).
+- Okuma lathe 6-digit tool calls (`T010101`) and two-letter words (DA, SB, QA, SA).
 - Twin-turret G13/G14 and the Okuma M-codes that differ from Fanuc.
 
 To take Okuma past draft quality, the next step is a handful of real programs from each Okuma machine, plus the control model (P300, P500…) so the tables can be checked against its manual.

@@ -4,9 +4,12 @@ Use this procedure whenever a programming manual for a control or machine arrive
 
 ## 1. Get readable text
 
-- Put the PDF in `manuals/` (gitignored) or leave it in the project files.
-- Try `pdftotext -layout`. Many archive manuals are scans with no text layer, so if that comes back nearly empty, OCR it: `pdftoppm -r 200 -gray -png` for each page, then `tesseract page.png out --psm 6`. Set `OMP_THREAD_LIMIT=1` and run four pages at a time, or tesseract crawls. A 420-page manual takes about 4 minutes.
+- **A PDF with a text layer:** `pdftotext -layout`.
+- **A scanned PDF** (pdftotext comes back nearly empty): OCR it. Run `pdftoppm -r 200 -gray -png` on each page, then `tesseract page.png out --psm 6`. Set `OMP_THREAD_LIMIT=1` and run four pages at a time, or tesseract crawls. A 420-page manual takes about 4 minutes.
+- **A text extract** (from a manuals site, or a `.txt` someone made): use it as it is. Look for the page footer the manual prints (Okuma's is `5238-E P-n`) and write a small helper that prints a range of printed pages, so you can cite them.
 - Find the offset between the PDF page and the manual's printed page number, so findings can cite the printed number.
+- **Tables and figures don't survive well.** OCR and text extracts scramble table columns and drop figures entirely. Anything that comes from a table (number formats, modal groups, word lists laid out in columns) needs checking against the page image before it's marked verified. If you can't see the page, say so and leave that item unverified.
+- Note the manual's edition and the exact control model. If it's a different generation from the dialect you're checking (P200L against a dialect labeled P300), say so in the review and decide whether the differences belong in the existing dialect or a new one.
 
 ## 2. Map the manual
 
@@ -18,7 +21,7 @@ Read the table of contents and sort every section into one of these:
 | **High** | G-code summary with modal groups and defaults | `modalGroups`, dictionary, `unknown-word`, `foreign` |
 | **High** | Canned cycle pages (words, which are optional, alternatives) | `cycles`, `cycleHelp`, word hints |
 | **High** | M-code summary (and how many M-codes a line can hold) | dictionary, `mConflicts`, `mPerBlock`, `programEnds` |
-| **High** | Subprograms and local calls | `subCalls`, `subReturn`, `missing-label` |
+| **High** | Subprograms and local calls. On some controls these are under macros (Okuma's CALL and RTS are in User Task) | `subCalls`, `subReturn`, `missing-label` |
 | Medium | Dwell, units, work offsets, tool length and cutter comp details | `dwellWords`, `dwellNoDecimal`, `toolLength`, comp checks |
 | Medium | Settings or parameters that change how codes behave | notes for the machine definition |
 | Low | Macros, programming tutorials, example programs | later parser work; test programs |
@@ -36,6 +39,9 @@ Resolve the dialect the machine would use (base plus every layer it inherits), t
 4. **Address letters.** What a number with no decimal point means for each letter, ranges, and letters with more than one meaning.
 5. **Subprograms.** Call codes, what P names (an O program or an N label), repeat words, return codes.
 6. **The checks.** Go through the rule list in [checks.md](../checks.md) and ask for each one whether this control behaves the way the rule assumes. G28, dwell units and feed modes are the usual surprises.
+7. **Codes the dialect inherits.** Walk the resolved tables (every modal group, foreign entry and dictionary word the dialect inherits from its base), not only the manual's list. A base code can mean something completely different on this control: on Okuma lathes G20/G21 are home returns, G28 is torque limit cancel and M88/M89 are the air blower.
+8. **Words that look like feeds but aren't.** F can be a dwell time (Okuma G04 F), a thread lead (G32, G33, G76) or a pitch; P can be milliseconds. Check every check that reads F, S or P.
+9. **Hard-coded codes in the editor.** Search `docs/mockup/index.html` for codes written into the logic (`"G20"`, `"G94"`, `"M06"`). If the control uses that code differently, turn it into a dialect key (as `unitCodes` and `leadCodes` were) rather than special-casing the brand.
 
 Note each difference with its page number. Mark anything the manual doesn't settle as unverified rather than guessing.
 
@@ -44,5 +50,6 @@ Note each difference with its page number. Mark anything the manual doesn't sett
 - Write the review file: the manual and revision, the map, what differs, what matches, and what's left out. Use our own words. No copied text, tables or drawings.
 - Put the differences in the data. Today that means a dialect in `data/gcode-rules.json` (with `inherits`, `verified: true` and `source`), entries in `machineOverrides` in `data/gcode-words.json`, and `cycleHelp` text. Once the loader exists, it means a machine definition file. Run `node scripts/sync-mockup-data.mjs` afterwards.
 - A difference that needs new check logic gets a data key (like `mPerBlock`) and a rule in `checks.md`, so other controls can use it.
+- Cycles need three things to read well: the entry in `cycles` (with `meaning` for the words a missing-word message should explain), English words for any letters the base dictionary doesn't know (in `cycleHelp` words), and help text in `cycleHelp` under `<brand>.<type>`. Without the `cycleHelp` override, the base help text shows, and it may describe a different cycle with the same number.
 - Try the result in the mockup on a short program that hits each difference, and on the old dialect to make sure nothing changed there.
 - If the manual's terms say it's confidential, the definition goes somewhere private instead (see machine-definitions.md).
