@@ -2,6 +2,18 @@
 
 What changed in each GlossCode release. The newest release is at the top. Versions follow `MAJOR.MINOR.PATCH` (see [docs/releasing.md](docs/releasing.md)); while the version starts with `0.`, file formats may still change between releases.
 
+## [0.1.2] - 2026-11-01
+
+### Editor
+- Select whole lines by dragging the mouse across them, with Shift+↑↓ or Shift+click, or all of them with Ctrl+A.
+- Right-click selected lines (or any line) to cut, copy, paste, duplicate or delete them. Ctrl+X, Ctrl+C, Ctrl+V and Delete do the same.
+- Copy puts only the G-code on the clipboard, the same text Save writes, so it pastes cleanly into other programs.
+- Ctrl+D duplicates the selected lines (or the current line) right below them. Pasting several lines over a selection replaces it.
+
+### Simulation
+- Playback goes on to the end of the program (normally M30) instead of stopping at the last move.
+- Canned cycles keep Z and R for the following holes, and the tool returns to R (G99) or the starting Z (G98), so Z by line and the final retract are drawn right.
+
 ## [0.1.1] - 2026-11-01
 
 ### Editor
