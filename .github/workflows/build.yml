@@ -24,8 +24,8 @@ jobs:
       matrix:
         cc: [gcc, clang]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - name: Golden files match the mockup
@@ -49,7 +49,7 @@ jobs:
     name: Linux program
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install GTK and WebKitGTK
         run: |
           sudo apt-get update
@@ -60,7 +60,7 @@ jobs:
         run: cmake --build build
       - name: Test (core and smoke test)
         run: ctest --test-dir build --output-on-failure
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: glosscode-linux-x86_64
           path: build/glosscode
@@ -73,7 +73,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
@@ -95,7 +95,7 @@ jobs:
           fi
       - name: Test (core and smoke test)
         run: ctest --test-dir build --output-on-failure --timeout 180
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: GlossCode-windows-x64
           path: build/GlossCode.exe
@@ -105,8 +105,8 @@ jobs:
     name: Example programs
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/upload-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/upload-artifact@v6
         with:
           name: GlossCode-examples
           path: |
