@@ -24,10 +24,12 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Menu bar: File, Edit, View, Insert, Program, Simulate
 - [ ] Hole pattern tool (Insert › Hole pattern…): grid (distance, angle and hole count along each axis) or bolt circle (diameter or radius, hole count, start angle, direction, complete circle or an arc by angle or by distance), in the active plane (G17 XY, G18 XZ, G19 YZ), with a preview; inserts one line per hole after the canned-cycle line, absolute or incremental to match G90/G91
 - [ ] Insert › canned cycle by category (drilling, tapping, boring; roughing, finishing, turning and facing, grooving, threading, live tooling): sketch, a box per word with required ones marked, and the finished line with its English; categories the machine can't run are hidden
+- [ ] Subprogram library (Insert › Subprogram library…, see [subprogram-library.md](subprogram-library.md)): reusable subprograms with named variables, stored in built-in, shop and personal folders. Search, filter to this machine, fill in the values, and insert as a `G65` call or as plain lines worked out from the values (for controls without the macro option). New, edit, make my own copy, delete and export; Insert › Save N1000 to the library… turns a local subprogram into a library one
 - [ ] Lathe options in the machine profile (live tooling, Y axis) that decide which cycles and words are offered
 
 **Reading**
 - [ ] Inline expansion of subprogram calls, marked with purple N numbers; edits change the subprogram
+- [ ] Library calls read by name (`G65 P9101` reads MACRO SLOTMILL, `Z-0.15` reads DEP-0.15) and expand to show the lines they run, in green; the toolpath preview follows them
 - [ ] Show toggle: both lines, English only, or G-code only
 - [ ] Layout toggle: words in program order, or columns by word type with rare words at the end
 - [ ] Active-modes panel for the selected line, with a mark on modes set on that line
@@ -61,5 +63,6 @@ This list tracks what the mockup shows. Nothing is implemented yet.
 - [ ] Native Linux build
 - [ ] Machine definition file format and a few starter machines
 - [ ] Okuma checked against an OSP manual and real programs; LAP cycles, sequence names, User Task variables
-- [ ] Macro programs (#vars, IF, WHILE) and 4th/5th axis checks
+- [ ] Macro programs (#vars, IF, WHILE) and 4th/5th axis checks. The subprogram library's reader already runs a subset (see subprogram-library.md)
+- [ ] Checks inside library calls, save called library programs with the program, re-insert written-in lines, Okuma CALL with variables
 - [ ] Machine limits (travel, max RPM and feed) and part/fixture models for rapid-into-part checks

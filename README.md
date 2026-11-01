@@ -61,6 +61,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 - Automatic N numbers on new lines (step 10, or the midpoint when there's no room), plus a Renumber command that leaves subprogram labels alone.
 - An Insert menu. **Insert › Hole pattern…** is a tool that works out drilling positions and inserts them after the canned-cycle line. Grid mode takes a distance, angle and hole count along each axis; bolt circle mode takes a diameter or radius, hole count, start angle and direction, for a complete circle or an arc spaced by angle or by distance. It follows the active plane (G17 XY, G18 XZ, G19 YZ) and G90/G91, and writes every number with a decimal point.
 - Canned cycles from the Insert menu, grouped by category (drilling, tapping, boring on a mill; roughing, finishing, turning and facing, grooving, threading, drilling and live tooling on a lathe). Each opens a window with a rough sketch of the cycle, a box for each word it takes (required ones marked, with what each does), and the finished line with its English before it goes in. Categories the selected machine can't run are hidden, such as live tooling on a lathe without it, and Y and C words are hidden on lathes without a Y axis or live tooling. Those options are set in the machine profile.
+- A subprogram library: reusable subprograms with named variables (a slotting routine where only the positions and depths change between parts). Find one under **Insert › Subprogram library…**, fill in the values, and insert it as one `G65 P9101 …` call or as plain lines worked out from the values for controls without the macro option. Calls read by name in English (`SLOTMILL`, `DEP-0.15`) and expand to show the lines they run. Library files live in built-in, shop or personal folders, like machine definitions. See [`docs/subprogram-library.md`](docs/subprogram-library.md).
 - Warnings when a word clashes with the active mode, such as an inches-per-rev feed while G94 is on.
 - A Problems panel that checks the program as you type: canned cycles missing words (G83 with no Q), feed moves with no F or with the spindle off, a word repeated in a line, two codes from one group, numbers with no decimal point, arcs that don't close, missing length offsets, and codes that mean something else on the selected control (G54 on an Okuma). See [`docs/checks.md`](docs/checks.md).
 - Opens and saves through the standard system file dialog, and keeps each file's original line endings.
@@ -104,9 +105,11 @@ More detail is in [`docs/architecture.md`](docs/architecture.md).
 ```
 data/gcode-words.json   Starter abbreviation dictionary (long and short styles, mill/lathe splits, Haas and Okuma overrides)
 data/gcode-rules.json   Problems-panel rules and per-control tables (modal groups, canned cycle words, dialect traps)
+data/library/           Built-in subprogram library (reusable subprograms with variables)
 docs/architecture.md    Core, platform layer, UI and build plan
 docs/checks.md          Every check, the rules file format, and Haas/Okuma coverage
 docs/features.md        Feature list and open questions
+docs/subprogram-library.md  Subprogram library: file format, variables, call or write in, folders
 docs/images/            Mockup screenshots
 docs/mockup/index.html  Clickable mockup; open it in a browser
 examples/               Sample programs used by the mockup (Haas, Fanuc and Okuma; BRACKET_0MC.nc ends lines with ;)

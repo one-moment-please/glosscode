@@ -1,0 +1,42 @@
+{
+  "glosscode": "subprogram/1",
+  "id": "slot-mill",
+  "name": "Straight slot, ramped",
+  "word": { "long": "SLOTMILL", "short": "SLOT" },
+  "program": 9101,
+  "category": "Slots and keyways",
+  "tags": ["slot", "keyway", "ramp", "step down"],
+  "machines": ["fanuc.mill"],
+  "units": "inch",
+  "verified": false,
+  "author": "GlossCode",
+  "about": "Mills a straight slot one tool wide from the start point to the end point. Each pass ramps down along the slot by STEP, then cuts back to the start at that depth. A last pass finishes at the end point. The top of the slot is Z0.",
+  "args": [
+    { "letter": "X", "name": "STX",    "kind": "distance", "required": true,  "desc": "X at the start of the slot" },
+    { "letter": "Y", "name": "STY",    "kind": "distance", "required": true,  "desc": "Y at the start of the slot" },
+    { "letter": "I", "name": "ENX",    "kind": "distance", "required": true,  "desc": "X at the end of the slot" },
+    { "letter": "J", "name": "ENY",    "kind": "distance", "required": true,  "desc": "Y at the end of the slot" },
+    { "letter": "Z", "name": "DEP",    "kind": "distance", "required": true,  "desc": "Final depth (negative, Z0 is the top)" },
+    { "letter": "Q", "name": "STEP",   "kind": "distance", "required": true,  "desc": "How much deeper each pass goes", "default": { "inch": "0.05", "mm": "1.25" } },
+    { "letter": "R", "name": "CLR",    "kind": "distance", "required": false, "desc": "Rapid to this height before and after", "default": { "inch": "0.1", "mm": "2.5" } },
+    { "letter": "F", "name": "FEED",   "kind": "feed",     "required": true,  "desc": "Cutting feed along the slot" },
+    { "letter": "E", "name": "RAMP",   "kind": "feed",     "required": false, "desc": "Feed for the ramp passes (defaults to half of FEED)" }
+  ],
+  "body": [
+    "O9101 (STRAIGHT SLOT, RAMPED)",
+    "IF [#8 EQ #0] THEN #8=#9/2",
+    "G00 X#24 Y#25",
+    "G00 Z#18",
+    "G01 Z0. F#8",
+    "#30=0.",
+    "WHILE [#30 GT #26] DO1",
+    "#30=#30-#17",
+    "IF [#30 LT #26] THEN #30=#26",
+    "G01 X#4 Y#5 Z#30 F#8",
+    "G01 X#24 Y#25 F#9",
+    "END1",
+    "G01 X#4 Y#5 F#9",
+    "G00 Z#18",
+    "M99"
+  ]
+}
