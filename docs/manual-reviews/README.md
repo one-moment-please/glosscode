@@ -7,7 +7,7 @@ Don't skip a manual because of its title. Haas puts its whole programming refere
 ## 1. Get readable text
 
 - **A PDF with a text layer:** `pdftotext -layout`.
-- **A scanned PDF** (pdftotext comes back nearly empty): OCR it. Run `pdftoppm -r 200 -gray -png` on each page, then `tesseract page.png out --psm 6`. Set `OMP_THREAD_LIMIT=1` and run four pages at a time, or tesseract crawls. Speed depends on the machine: 4 minutes for 420 pages on a fast container, about 7 pages a minute on a laptop. OCR the high-priority chapters first (step 2) so a stopped run still leaves something useful.
+- **A scanned PDF** (pdftotext comes back nearly empty): OCR it. Run `pdftoppm -r 200 -gray -png` on each page, then `tesseract page.png out --psm 6`. Set `OMP_THREAD_LIMIT=1` and run four pages at a time, or tesseract crawls. It can take anywhere from a few minutes to over an hour for a few hundred pages, depending on the computer. OCR the high-priority chapters first (step 2) so a stopped run still leaves something useful.
 - **No tesseract and no admin rights:** download the `tesseract-ocr`, `tesseract-ocr-eng` and library packages with `apt-get download`, unpack them with `dpkg -x` into a folder in `/tmp`, and point `PATH`, `LD_LIBRARY_PATH` and `TESSDATA_PREFIX` at it.
 - **Ruled tables** (G and M code lists with grid lines) come out as noise at 200 dpi. Redo those pages at 300 dpi with `--psm 4`.
 - **A text extract** (from a manuals site, or a `.txt` someone made): use it as it is. Look for the page footer the manual prints (Okuma's is `5238-E P-n`) and write a small helper that prints a range of printed pages, so you can cite them.
