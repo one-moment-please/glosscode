@@ -35,7 +35,7 @@ No confidentiality notice was found in the extract. The manual still stays out o
 - **G20 and G21 aren't inch and metric** (p. 331). G20 is home position return and G21 is ATC home. Units come from a parameter (p. 20). The `units` modal group is removed for Okuma lathes, and a new dialect key `unitCodes: null` stops the editor treating G20/G21 as unit changes.
 - **G28 is torque limit cancel** and G29 sets it (pp. 36, 331). The old warning said Okuma returns home with G30; on the P200L G30 is a skip cycle. The warning now says G20 is the return home.
 - **G33 is a thread-cutting cycle**, not a single thread pass (p. 97). G31 is the same cycle, G32 is the face version (p. 99), and G34/G35 are variable-lead versions (p. 102). All five are now in the motion group, with F read as the lead, not a feed (new dialect key `leadCodes`).
-- **G54–G59 aren't defined** on the P200L lathe (p. 332), so they're now flagged.
+- **G54–G59 aren't in the P200L lathe's G-code table** (p. 332). They're a mill work-offset feature; a lathe sets its work zero with the zero offset or G50. They're flagged as info, not an error, since a live-tool or Y-axis lathe might differ (not checked).
 - **M88/M89 are the air blower** (p. 339), not coolant. They have English words now and conflict with each other.
 - **G71 and G72 are compound thread cycles** (pp. 109–111), and **G73/G74 are grooving cycles** (pp. 126–129). They were reference-only before; now they're checked, with their words, hints and help text.
 - **G77/G78 are tapping cycles** that start the spindle themselves and leave it stopped (pp. 130–131).

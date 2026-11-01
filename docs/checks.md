@@ -105,7 +105,7 @@ The word list in the guide (and whether each word is required, one of a choice, 
 | Fanuc (0i/30i) | Same base as Haas | Same, with Fanuc cycle words and M97 flagged as Haas-only | High |
 | Haas mill, 1995 control (`haas1995`) | Same as Haas mill, plus G87/G88 manual-retract bores, G110–G129 work offsets and M16 | Haas rules with the 1995 cycle words (no P on G73/G83, no J on G74/G84), one M-code per line, P without a decimal as milliseconds, and G93/G95/G96/G154/M88/M89 flagged | High: checked against the June 1995 VF-Series Operator's Manual (see [manual-reviews/haas-vf-1995.md](manual-reviews/haas-vf-1995.md)) |
 | Okuma mill (OSP) | G15 H work offsets, G56 H length offset, G53 offset cancel, CALL / RTS subprograms, M02 | All the generic rules, plus Okuma's traps: G54–G59 (length offsets on Okuma), G43, G28, M97, M98, M99 | Medium: first draft, not yet checked against an OSP manual |
-| Okuma lathe (OSP) | G90/G91, G94/G95 feed modes, G20 home return, G28/G29 torque limit, G31–G35 thread cycles, LAP codes named | Generic rules, plus G71/G72 thread, G73/G74 grooving and G77/G78 tapping cycles, G54–G59, G98/G99, G28 and M97/M98 flagged | Medium: lathe tables checked against the OSP-P200L manual (see [manual-reviews/okuma-osp-p200l.md](manual-reviews/okuma-osp-p200l.md)); LAP isn't checked yet |
+| Okuma lathe (OSP) | G90/G91, G94/G95 feed modes, G20 home return, G28/G29 torque limit, G31–G35 thread cycles, LAP codes named | Generic rules, plus G71/G72 thread, G73/G74 grooving and G77/G78 tapping cycles, G54–G59 (info), G98/G99, G28 and M97/M98 flagged | Medium: lathe tables checked against the OSP-P200L manual (see [manual-reviews/okuma-osp-p200l.md](manual-reviews/okuma-osp-p200l.md)); LAP isn't checked yet |
 
 ### Not covered yet
 

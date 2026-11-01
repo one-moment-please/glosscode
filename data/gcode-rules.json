@@ -276,12 +276,12 @@
           "G99": { "severity": "warning", "text": "Okuma lathes set feed per revolution with G95, not G99." },
           "G91": null,
           "G28": { "severity": "warning", "text": "On an Okuma OSP lathe G28 cancels the torque limit (G29 sets it). It isn't a return home; that's G20." },
-          "G54": { "severity": "warning", "text": "The OSP-P200L lathe has no G54 to G59 work offsets. Use the zero offset or G50 zero shift." },
-          "G55": { "severity": "warning", "text": "The OSP-P200L lathe has no G54 to G59 work offsets. Use the zero offset or G50 zero shift." },
-          "G56": { "severity": "warning", "text": "The OSP-P200L lathe has no G54 to G59 work offsets. Use the zero offset or G50 zero shift." },
-          "G57": { "severity": "warning", "text": "The OSP-P200L lathe has no G54 to G59 work offsets. Use the zero offset or G50 zero shift." },
-          "G58": { "severity": "warning", "text": "The OSP-P200L lathe has no G54 to G59 work offsets. Use the zero offset or G50 zero shift." },
-          "G59": { "severity": "warning", "text": "The OSP-P200L lathe has no G54 to G59 work offsets. Use the zero offset or G50 zero shift." },
+          "G54": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
+          "G55": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
+          "G56": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
+          "G57": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
+          "G58": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
+          "G59": { "severity": "info", "text": "G54 to G59 are mill work offsets; the OSP-P200L lathe manual doesn't list them. Lathes set the work zero with the zero offset or G50. Check the manual if this lathe has live tooling or a Y axis." },
           "M97": { "severity": "error",   "text": "Okuma has no M97. Put the subprogram in its own O block and call it with CALL O_, ending it with RTS." },
           "M98": { "severity": "warning", "text": "Okuma calls subprograms with CALL O_ and returns with RTS." }
         }
