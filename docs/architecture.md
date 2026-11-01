@@ -39,7 +39,7 @@ One file per OS with the same small set of functions:
 | List a folder | `FindFirstFileW` | `opendir` |
 | Read / write a file | `CreateFileW` | `open` |
 | Watch a file for changes | `ReadDirectoryChangesW` | `inotify` |
-| Settings folder | `%APPDATA%\GlossCode` | `~/.config/glosscode` |
+| Settings folder | `%APPDATA%\GlossCode` | `$XDG_CONFIG_HOME/glosscode` (usually `~/.config/glosscode`) |
 | Open / save dialog | nativefiledialog-extended (`IFileOpenDialog`) | nativefiledialog-extended (GTK / portal) |
 | Create the window | webview (WebView2) | webview (WebKitGTK) |
 
@@ -52,6 +52,34 @@ The UI is plain HTML, CSS and JavaScript loaded into the webview. It talks to th
 - MinGW-w64 or clang on Windows, gcc or clang on Linux.
 - Avoid .NET, MFC, the registry and MSVC-only features.
 - WebView2 ships with Windows 10 and 11, so the .exe stays small.
+
+## Packaging
+
+GlossCode ships as **one executable**. Nothing it needs to start sits beside it.
+
+- **The UI is embedded.** The HTML, CSS and JavaScript are compiled into the program (a generated C array, or a Windows resource) and served to the webview from memory.
+- **The built-in data is embedded.** `gcode-words.json`, `gcode-rules.json`, the built-in machine definitions and the built-in subprogram library are compiled in the same way. They are read-only and are replaced by each release.
+- **Windows**: build with `-static` so the MinGW runtime is inside the .exe, and use the webview library's built-in WebView2 loader so `WebView2Loader.dll` isn't needed. The WebView2 runtime itself comes with Windows 10 and 11.
+- **Linux**: the same single executable, linked against the system's GTK and WebKitGTK packages, which are listed as dependencies rather than bundled. An AppImage or distribution package can come later if needed.
+- A development flag (`--data <folder>`) loads the built-in files from a folder on disk instead, so tables can be edited without a rebuild.
+
+### Where user files go
+
+The program never writes beside itself. Everything the user or shop creates goes in the platform's standard user data folder:
+
+| What | Windows | Linux |
+|---|---|---|
+| Settings, personal machine definitions, personal library | `%APPDATA%\GlossCode\` (`machines\`, `library\`) | `$XDG_CONFIG_HOME/glosscode/` (usually `~/.config/glosscode/`) |
+| WebView data and caches (safe to delete) | `%LOCALAPPDATA%\GlossCode\` | `$XDG_CACHE_HOME/glosscode/` (usually `~/.cache/glosscode/`) |
+| Shop folder | Wherever Settings points (often a network path) | Same |
+
+The WebView2 user data folder must be set to `%LOCALAPPDATA%\GlossCode\WebView2` explicitly; by default WebView2 creates it beside the .exe, which fails under `Program Files`.
+
+To change a built-in machine, the user picks **Make my own copy** (a new file that `extends` the built-in one) or saves a file with the same id in the personal or shop folder to replace it (marked **modified built-in**). **Export** writes out any built-in file for reference. Because the built-in files are inside the program, an update can never overwrite a user's changes, and a user's changes can never break the built-in files.
+
+### Portable mode
+
+If a file named `portable` sits beside the .exe, GlossCode keeps settings, personal files and caches in a `GlossCode-data` folder beside the .exe instead. This is for running from a USB drive or a shared folder at the machine. Without that file, the standard folders above are used.
 
 ## Data files
 
