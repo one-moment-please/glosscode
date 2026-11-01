@@ -64,6 +64,20 @@ Location is what keeps a file private: nothing in a personal or shop folder leav
 
 Import copies the file into the personal folder and lists any `extends` it can't find.
 
+### Definitions written from manuals
+
+Most built-in tables will be checked against builders' programming manuals. Manuals are copyrighted, and some come with license terms or confidentiality notices, so these rules apply:
+
+- **Manuals never go in the repository.** Keep the PDFs on your own computer or the shop's drive. `manuals/` is in `.gitignore` as a local place for them.
+- **Write facts in our own words.** A definition records what a code does, which words it takes and which modal group it's in. Codes and their meanings are facts. Descriptions, cycle help and examples are written fresh and kept short, never copied from the manual. Never copy tables, drawings or examples from a manual.
+- **Record the source without quoting it.** `"source": { "manual": "Haas Mill Operator's Manual", "revision": "2024", "section": "G-codes" }` says where to look. `verified: true` means someone checked the file against that source.
+- **When in doubt, keep it private.** If a manual's terms forbid sharing what's in it (an NDA, or a "confidential" or "for the licensed user only" notice), or nobody is sure, the definition goes somewhere private rather than in the built-in files:
+  - the personal folder or the shop folder, which never leave the computer or the network;
+  - or a **separate private git repository** (for example `glosscode-machines-private`) that the shop folder points at, for a team that wants history and review;
+  - `machines/private/` in a local checkout of this repository, which is also in `.gitignore`, for trying a definition out before deciding where it goes.
+
+Whether a given definition can be published is a legal question this document can't answer. The defaults above keep the safe choice easy: private unless someone decides otherwise.
+
 ## The file
 
 One JSON file per layer. Keys that aren't needed are left out. A full example of each layer is in [`machine-definitions/examples/`](machine-definitions/examples/).
