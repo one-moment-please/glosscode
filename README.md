@@ -61,7 +61,7 @@ The English words come from a dictionary of consistent abbreviations ([`data/gco
 - Starts on a home page with recent programs, New program and Open. Each open program gets a tab, and each tab remembers its machine and the selected line and word.
 - A new program asks which machine it's for. A file opened before reopens with the same machine; any other file uses the default machine for its extension (.nc, .MIN…) if one is set, and otherwise asks.
 - Edit either line. View › Edit in (or Caps Lock) switches between typing G-code and typing English, and clicking a word on the other line switches to it, with autocomplete from the dictionary (type `cool` to get COOLON, COOLOFF, and TSCON on a Haas).
-- Keyboard editing by word: arrows move between words and lines, Enter edits and Enter again finishes, Space starts the next word, Shift+Enter breaks the line.
+- Keyboard editing by word: arrows move between words and lines, Enter edits and Enter again finishes, Space starts the next word, Shift+Enter breaks the line. Pasting a few lines or a whole program puts each line in its own row and each word in its own cell.
 - Grey hint text after a code shows the words it still needs (`G02` shows `R## or I## J##`). Click one to fill it in; picking R hides I and J.
 - A canned cycle guide (F1) with a sketch of each cycle, an example line, and what every word does.
 - Automatic N numbers on new lines (step 10, or the midpoint when there's no room), plus a Renumber command that leaves subprogram labels alone.

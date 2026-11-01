@@ -2041,6 +2041,79 @@ function breakLine(li, after){
   render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`)); ed.focus({preventScroll:true});
   setMsg(`Moved ${rest.join(" ")} to a new line${nn.n!=null ? " numbered N"+nn.n : ""}.`);
 }
+/* ---------- Paste ----------
+   Pasted text is read the same way as an opened file: split into lines (and at ";"), then into words,
+   so "G01X1.Y2." becomes three words. One line goes into the current line, each word in its own cell.
+   Several lines go in as their own lines below the current one, or replace it when it's blank. */
+function pasteLines(text){
+  const out = []; let eob = false;
+  for (const line of text.split(/\r\n|\r|\n/)){ const b = splitBlocks(line); if (b.eob) eob = true; b.blocks.forEach(x => out.push(tokenize(x))); }
+  while (out.length && !out[0].length) out.shift();
+  while (out.length && !out[out.length-1].length) out.pop();
+  return { lines: out, eob };
+}
+// Words from text typed or pasted on one line. In English, words that read as English are translated;
+// anything else (pasted G-code, comments) is split the way a file is.
+function pasteWords(s, st){
+  const ws = s.trim().split(/\s+/).filter(Boolean);
+  if (editMode==="en" && ws.length && ws.every(w => !fromEnglish(w, st).err)) return ws.map(w => fromEnglish(w, st).g).filter(Boolean);
+  return tokenize(s);
+}
+// True when the paste was handled here. A single word typed into a cell is left to the browser.
+function pasteText(text, fromMenu){
+  if (activeTab < 0 || text==null) return false;
+  const { lines, eob } = pasteLines(text);
+  if (!lines.length) return !!fromMenu;
+  if (simIdx!=null) stopSim(true);
+  if (lines.length===1){
+    const li = editing ? editing.li : curLine, st = lineState[li] || newState();
+    const words = pasteWords(text, st);
+    if (editing && words.length < 2 && !/[;\r\n]/.test(text)) return false;
+    const toks = doc[li], dropped = [];
+    let at;
+    if (editing){
+      const { slot, input } = editing, v = input.value;
+      // Whatever was already typed around the cursor stays, as long as it's a whole word.
+      const kept = t => t.trim().split(/\s+/).filter(Boolean).flatMap(w => { const g = editMode==="en" ? fromEnglish(w, st) : null; return g && !g.err ? [g.g] : /^[A-Z][-+]?[\d.]+$/i.test(w) ? [w.toUpperCase()] : (dropped.push(w), []); });
+      words.unshift(...kept(v.slice(0, input.selectionStart)));
+      words.push(...kept(v.slice(input.selectionEnd)));
+      closeAC(); editing = null; pendingIns = null;
+      at = slot.idx.length ? slot.idx[0] : (slot.ins ?? insertPos(toks, slot));
+      pushUndo();
+      [...slot.idx].sort((a, b) => b - a).forEach(i => toks.splice(i, 1));
+    } else {
+      const s = selSlot();
+      at = s?.idx.length ? Math.max(...s.idx) + 1 : insertPos(toks, s || {});
+      pushUndo();
+    }
+    toks.splice(at, 0, ...words);
+    curLine = li; if (layout==="order") curRef = String(at + words.length - 1);
+    render(); ed.focus({preventScroll:true}); showSelInfo();
+    setMsg((dropped.length ? `Left out ${dropped.join(" ")}, which was typed but isn't a whole word. ` : "") + `Pasted ${words.length} word${words.length===1 ? "" : "s"}: ${words.join(" ")}`);
+    return true;
+  }
+  if (editing && !commit()) return true;
+  const li = curLine, t = doc[li];
+  const blank = !t.length || (t.length===1 && /^N\d+$/.test(t[0]));   // empty, or only the N number a new line gets
+  const wasEmpty = blank && doc.length===1;
+  pushUndo();
+  doc.splice(blank ? li : li+1, blank ? 1 : 0, ...lines);
+  const shift = lines.length - (blank ? 1 : 0);
+  expanded = new Set([...expanded].filter(i => !(blank && i===li)).map(i => i > li ? i + shift : i));
+  if (wasEmpty && eob) fileEob = true;
+  curLine = (blank ? li : li+1) + lines.length - 1; curRef = "0";
+  render(); scrollToLn(ed.querySelector(`.ln[data-key="m${curLine}"]`)); ed.focus({preventScroll:true}); showSelInfo();
+  setMsg(`Pasted ${lines.length} lines${blank ? "" : " below line " + (li+1)}. Ctrl+Z takes them out again.`);
+  return true;
+}
+function pasteFromMenu(){
+  if (!navigator.clipboard?.readText){ setMsg("Press Ctrl+V to paste.", true); return; }
+  navigator.clipboard.readText().then(t => pasteText(t, true)).catch(() => setMsg("GlossCode couldn't read the clipboard. Press Ctrl+V to paste.", true));
+}
+ed.addEventListener("paste", e => {
+  const t = e.clipboardData?.getData("text/plain");
+  if (t && pasteText(t)) e.preventDefault();
+});
 function deleteLine(){
   if (editing) { editing = null; closeAC(); }
   if (doc.length < 2) return;
@@ -2776,6 +2849,8 @@ const MENUS = {
     { label:"Undo", sc:"Ctrl+Z", fn:undo, dis:() => !undoStack.length },
     { label:"Redo", sc:"Ctrl+Y", fn:redo, dis:() => !redoStack.length },
     "-",
+    { label:"Paste", sc:"Ctrl+V", fn:pasteFromMenu },
+    "-",
     { label:"Find…", sc:"Ctrl+F", fn:openFind },
     { label:"Find next", sc:"F3", fn:() => findNext(1), dis:() => !findQ },
     "-",
@@ -3069,6 +3144,7 @@ const FEATURES = [
   ["Editing", "Caps Lock switches between editing G-code and English", 1],
   ["Editing", "Hint text for the words a code still needs (G02 shows R## or I## J##); click one to fill it in", 1],
   ["Editing", "Insert menu: hole patterns (grid or bolt circle) and canned cycles by category, with a sketch and a box for each word", 1],
+  ["Editing", "Paste a few lines or a whole program: each line gets its own row and each word its own cell", 1],
   ["Editing", "Select several lines to copy, cut, paste, move or delete together", 0],
   ["Editing", "Comment out or block-delete (/) a line with one key", 0],
   ["Editing", "Go to line or N number (Ctrl+G), and bookmarks", 0],
