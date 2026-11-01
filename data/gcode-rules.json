@@ -568,6 +568,18 @@
       }
     },
 
+    "siemensiso": {
+      "label": "Siemens SINUMERIK ISO mode (840D sl, 828D)",
+      "inherits": "fanuc",
+      "inheritWords": true,
+      "verified": false,
+      "mill": {
+        "source": { "manual": "SINUMERIK ONE / 840D sl / 828D ISO Milling Programming Manual", "revision": "07/2021, CNC 4.95/6.15", "section": "3 Programming principles, 5 Auxiliary functions, 6 Cycles and subprograms, appendix B G code groups" },
+        "mPerBlock": 5,
+        "subCalls": { "M98": { "word": "P", "target": "program" }, "G65": { "word": "P", "target": "program" } }
+      }
+    },
+
     "okuma": {
       "label": "Okuma OSP (P300 and later)",
       "inherits": "fanuc",

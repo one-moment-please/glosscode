@@ -118,6 +118,11 @@
     }
   },
   "machineOverrides": {
+    "siemensiso": {
+      "G290": { "long": "SIEMENS", "short": "SIEM", "desc": "Switch to Siemens language mode (alone on its line)" },
+      "G291": { "long": "ISOMODE", "short": "ISO", "desc": "Switch to ISO (Fanuc-style) mode (alone on its line)" },
+      "M29": { "long": "SPINAXIS", "short": "SAX", "desc": "Spindle in axis mode for rigid tapping (Siemens ISO)" }
+    },
     "mitsubishi.mill": {
       "G12": { "long": "CIRCCW", "short": "CCW", "desc": "Circular cutting, clockwise (Mitsubishi)" },
       "G13": { "long": "CIRCCCW", "short": "CCCW", "desc": "Circular cutting, counterclockwise (Mitsubishi)" },
