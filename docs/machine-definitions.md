@@ -325,13 +325,21 @@ One file per node, each extending its parent, so a level holds only what's diffe
 | `machine` | One real machine in a shop: the type and model, the options ticked, in-house codes | `acme.vf3ss-cell1` |
 
 ```jsonc
-// haas.vf3ss (machine model)
-{ "id": "haas.vf3ss", "layer": "model", "name": "VF-3SS", "group": "VF",
+// haas.vf3 (machine model)
+{ "id": "haas.vf3", "layer": "model", "name": "VF-3", "group": "VF",
   "types": ["haas.ngc.mill", "haas.classic.mill"],
-  "machine": { "travel": { "X": 40, "Y": 20, "Z": 25 }, "maxRpm": 12000,
-               "toolChanger": "side-mount", "tools": 25,
+  "machine": { "travel": { "X": 40, "Y": 20, "Z": 25 }, "maxRpm": 8100,
+               "rapid": 1000, "maxFeed": 650,
+               "toolChanger": "umbrella", "tools": 20 } }
+
+// haas.vf3ss (machine model): the VF-3 with the Super Speed hardware
+{ "id": "haas.vf3ss", "layer": "model", "name": "VF-3SS", "extends": ["haas.vf3"],
+  "machine": { "maxRpm": 12000, "rapid": 1400, "maxFeed": 833,
+               "toolChanger": "side-mount", "tools": 31,
                "options": { "gearbox": false } },
-  "verified": false }               // numbers from general knowledge; check the Haas spec sheet
+  "optional": {                     // options with values: ticking one applies its machine section
+    "spindle15k": { "label": "15,000 rpm spindle", "machine": { "maxRpm": 15000 } }
+  } }
 
 // acme.vf3ss-cell1 (shop machine)
 { "id": "acme.vf3ss-cell1", "layer": "machine", "extends": ["haas.ngc.mill", "haas.vf3ss"],
@@ -339,11 +347,13 @@ One file per node, each extending its parent, so a level holds only what's diffe
 ```
 
 - `types` lists the controls (as machine types) a model was sold with, newest first. The tree shows the model under each, and the picker selects the first.
-- `group` puts models that share hardware facts under one node (VF, UMC, ST). A model can extend another model for shared facts: a VF-4SS could extend `haas.vf3ss` and set its own travel.
+- `group` puts models under one node in the tree (VF, UMC, ST). A model can extend another model and only say what's different: the VF-3SS extends the VF-3 and changes the spindle, rapids, feed and tool changer, keeping its travel and group.
+- `optional` lists options that change a value, not just turn codes on. Ticking the 15,000 rpm spindle raises `maxRpm`, so the S check follows. Plain on/off options (probing, macros) stay in `options`.
+- Facts that don't change the program, like table load and ballscrew pitch, stay out. They can go in `notes`.
 - A shop machine extends a machine type, then a model. The model goes last, so its limits and options apply on top of the control.
 - Model files never extend a control file, so one `haas.vf3ss` serves both the NGC and classic versions.
 
-Built-in model files follow the manual rule above: numbers come from the builder's spec sheet or the machine's plate, with `source` saying which, and a model ships `verified: false` until someone checks it. The VF-3SS numbers need the Haas spec sheet.
+Built-in model files follow the manual rule above: numbers come from the builder's spec sheet or the machine's plate, with `source` saying which, and a model ships `verified: false` until someone checks it. The VF-3 and VF-3SS numbers above are from a summary of Haas's published specs, not yet checked against the spec sheets.
 
 ### Picking a machine in GlossCode
 

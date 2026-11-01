@@ -1,0 +1,21 @@
+{
+  "glosscode": "machine/1",
+  "id": "haas.vf3",
+  "name": "VF-3",
+  "layer": "model",
+  "group": "VF",
+  "types": ["haas.ngc.mill", "haas.classic.mill"],
+  "extends": [],
+  "verified": false,
+  "source": { "note": "Travel from the Haas VF-Series Operator's Manual (1995, p. 2). Speeds, feeds and tool changer from a summary of Haas's published specs, not yet checked against the spec sheet." },
+  "about": "Example machine model file: hardware only, never extends a control.",
+
+  "machine": {
+    "travel": { "X": 40, "Y": 20, "Z": 25 },
+    "maxRpm": 8100,
+    "rapid": 1000,
+    "maxFeed": 650,
+    "toolChanger": "umbrella",
+    "tools": 20
+  }
+}

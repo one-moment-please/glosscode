@@ -3,17 +3,23 @@
   "id": "haas.vf3ss",
   "name": "VF-3SS",
   "layer": "model",
-  "group": "VF",
-  "types": ["haas.ngc.mill", "haas.classic.mill"],
-  "extends": [],
+  "extends": ["haas.vf3"],
   "verified": false,
-  "about": "Example machine model file: hardware only, never extends a control. Travel matches the VF-3 in the 1995 VF manual (p. 2). Speed, tool changer and tool count are from general knowledge and must be checked against the Haas spec sheet before this ships as a built-in file.",
+  "source": { "note": "Summary of Haas's published specs, not yet checked against the spec sheet." },
+  "about": "Example machine model file. The Super Speed VF-3: inline direct-drive spindle, faster rapids and feeds, and a side-mount tool changer. Travel, group and types come from haas.vf3.",
 
   "machine": {
-    "travel": { "X": 40, "Y": 20, "Z": 25 },
     "maxRpm": 12000,
+    "rapid": 1400,
+    "maxFeed": 833,
     "toolChanger": "side-mount",
-    "tools": 25,
+    "tools": 31,
     "options": { "gearbox": false }
-  }
+  },
+
+  "optional": {
+    "spindle15k": { "label": "15,000 rpm spindle", "machine": { "maxRpm": 15000 } }
+  },
+
+  "notes": "Lower table load than the VF-3 and a coarser ballscrew; neither changes the program."
 }
