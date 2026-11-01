@@ -957,9 +957,8 @@
      },
      {
       "g": "G15",
-      "e": "?G15",
-      "d": "G15 isn't in the dictionary or this machine's file.",
-      "unk": true
+      "e": "POLAROFF",
+      "d": "Polar coordinates off"
      },
      {
       "g": "H2",
@@ -1184,12 +1183,6 @@
     []
    ],
    "problems": [
-    {
-     "li": 2,
-     "id": "unknown-word",
-     "sev": "info",
-     "msg": "G15 isn't in the dictionary or this machine's file."
-    },
     {
      "li": 5,
      "id": "empty-value",
@@ -1266,9 +1259,8 @@
      },
      {
       "g": "G15",
-      "e": "?G15",
-      "d": "G15 isn't in the dictionary or this machine's file.",
-      "unk": true
+      "e": "POLAROFF",
+      "d": "Polar coordinates off"
      },
      {
       "g": "H2",
@@ -1493,12 +1485,6 @@
     []
    ],
    "problems": [
-    {
-     "li": 2,
-     "id": "unknown-word",
-     "sev": "info",
-     "msg": "G15 isn't in the dictionary or this machine's file."
-    },
     {
      "li": 5,
      "id": "empty-value",

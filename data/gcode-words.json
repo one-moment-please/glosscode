@@ -118,6 +118,34 @@
     }
   },
   "machineOverrides": {
+    "fanuc.mill": {
+      "G09": { "long": "EXSTOP1", "short": "EXS1", "desc": "Exact stop for this line only" },
+      "G10": { "long": "DATASET", "short": "DSET", "desc": "Set offsets or parameters from the program" },
+      "G15": { "long": "POLAROFF", "short": "POLOF", "desc": "Polar coordinates off" },
+      "G16": { "long": "POLARON", "short": "POLON", "desc": "Polar coordinates on (X radius, Y angle)" },
+      "G22": { "long": "STRKON", "short": "STKON", "desc": "Stored stroke check on" },
+      "G23": { "long": "STRKOFF", "short": "STKOF", "desc": "Stored stroke check off" },
+      "G27": { "long": "REFCHK", "short": "RCHK", "desc": "Check the return to the reference point" },
+      "G29": { "long": "FROMREF", "short": "FREF", "desc": "Return from the reference point" },
+      "G31": { "long": "SKIP", "short": "SKP", "desc": "Skip move: stop when the probe triggers" },
+      "G33": { "long": "THDCUT", "short": "THC", "desc": "Thread cutting move" },
+      "G44": { "long": "TLENNEG", "short": "TLNEG", "desc": "Tool length offset, minus direction" },
+      "G51": { "long": "SCALEON", "short": "SCLON", "desc": "Scaling on" },
+      "G52": { "long": "LOCALCRD", "short": "LCS", "desc": "Local coordinate shift" },
+      "G60": { "long": "ONEDIR", "short": "1DIR", "desc": "Single-direction positioning" },
+      "G61": { "long": "EXSTOP", "short": "EXS", "desc": "Exact stop mode" },
+      "G62": { "long": "CORNOVR", "short": "CORO", "desc": "Automatic corner override" },
+      "G63": { "long": "TAPMODE", "short": "TAPM", "desc": "Tapping mode (no override)" },
+      "G64": { "long": "CUTMODE", "short": "CUTM", "desc": "Cutting mode (no exact stop)" },
+      "G66": { "long": "MACMODAL", "short": "MACM", "desc": "Call a macro after every move" },
+      "G67": { "long": "MACMOFF", "short": "MACOF", "desc": "Cancel the modal macro call" },
+      "G68": { "long": "ROTON", "short": "ROTON", "desc": "Coordinate rotation on" },
+      "G69": { "long": "ROTOFF", "short": "ROTOF", "desc": "Coordinate rotation off" },
+      "G87": { "long": "BACKBORE", "short": "BKBR", "desc": "Back boring cycle" },
+      "G88": { "long": "BOREJOG", "short": "BRJG", "desc": "Boring cycle, dwell, spindle stop, jog out by hand" },
+      "G93": { "long": "INVTIME", "short": "INVT", "desc": "Inverse time feed" },
+      "M29": { "long": "RIGIDTAP", "short": "RTAP", "desc": "Rigid tapping mode for the next G84 or G74" }
+    },
     "haas": {
       "M97": { "long": "LOCSUB", "short": "LSUB", "desc": "Local subprogram call" }
     },

@@ -42,6 +42,7 @@
       "label": "Fanuc-style (0i, 30i and compatibles)",
       "verified": true,
       "mill": {
+        "source": { "manual": "FANUC Series 0i-MODEL F Operator's Manual, Machining Center System B-64604EN-2/01", "revision": "1st edition", "section": "Part II Programming: G code list, canned cycles, compensation, Series 10/11 format" },
         "modalGroups": {
           "motion":      ["G00", "G01", "G02", "G03"],
           "plane":       ["G17", "G18", "G19"],
@@ -53,7 +54,13 @@
           "canned cycle":["G73", "G74", "G76", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "G88", "G89"],
           "cycle return":["G98", "G99"],
           "work offset": ["G54", "G55", "G56", "G57", "G58", "G59"],
-          "speed mode":  ["G96", "G97"]
+          "speed mode":  ["G96", "G97"],
+          "stroke check":["G22", "G23"],
+          "scaling":     ["G50", "G51"],
+          "macro modal": ["G66", "G67"],
+          "exact stop":  ["G61", "G62", "G63", "G64"],
+          "rotation":    ["G68", "G69"],
+          "polar":       ["G15", "G16"]
         },
         "numbers": { "noDecimal": "leastIncrement", "increment": { "inch": 0.0001, "mm": 0.001 }, "words": ["X", "Y", "Z", "U", "W", "I", "J", "K", "R", "Q"] },
         "columns": [
@@ -93,7 +100,8 @@
           "G84": { "name": "Tap",             "requires": ["Z", "R"], "optional": ["X", "Y", "F", "P", "K"], "feed": true, "spindle": true, "speed": true },
           "G85": { "name": "Bore, feed out",  "requires": ["Z", "R"], "optional": ["X", "Y", "F", "K"], "feed": true, "spindle": true },
           "G86": { "name": "Bore, rapid out", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "K"], "feed": true, "spindle": true },
-          "G87": { "name": "Back bore",       "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F", "K"], "feed": true, "spindle": true },
+          "G87": { "name": "Back bore",       "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F", "P", "K"], "feed": true, "spindle": true },
+          "G88": { "name": "Bore, dwell, stop, jog out", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "K"], "feed": true, "spindle": true },
           "G89": { "name": "Bore with dwell", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "K"], "feed": true, "spindle": true }
         },
         "wordMeaning": { "Z": "the hole bottom", "R": "the retract plane", "Q": "the peck depth or shift", "P": "the dwell time", "F": "the feed rate" },
@@ -181,7 +189,7 @@
           "G84": { "name": "Tap",             "requires": ["Z", "R"], "optional": ["X", "Y", "F", "J", "L"], "feed": true, "speed": true, "startsSpindle": true },
           "G85": { "name": "Bore, feed out",  "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
           "G86": { "name": "Bore, rapid out", "requires": ["Z", "R"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true },
-          "G87": null,
+          "G87": null, "G88": null,
           "G89": { "name": "Bore with dwell", "requires": ["Z", "R", "P"], "optional": ["X", "Y", "F", "L"], "feed": true, "spindle": true }
         },
         "foreign": { "M97": null, "M88": null, "M89": null }
@@ -259,7 +267,8 @@
         "subCalls": { "CALL": { "word": "O", "target": "program" } },
         "subReturn": ["RTS"],
         "cycles": {
-          "G87": { "name": "Back bore", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true }
+          "G87": { "name": "Back bore", "requires": ["Z", "R", "Q"], "optional": ["X", "Y", "F"], "feed": true, "spindle": true },
+          "G88": null
         },
         "wordHints": { "G43": null, "G44": null, "G56": { "requires": ["H"] }, "G15": { "requires": ["H"] } },
         "foreign": {
