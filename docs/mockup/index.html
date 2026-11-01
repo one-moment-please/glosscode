@@ -359,6 +359,15 @@ small.u{font-size:.62em;font-weight:500;margin-left:1px;opacity:.85;letter-spaci
 .need.req{background:#fdecea;color:#a3271b}.need.one{background:#fff4e5;color:#8a4b00}.need.opt{background:#f0f0f0;color:#666}
 .cfoot{display:flex;justify-content:space-between;align-items:center}
 .cfoot .note2{font-size:11.5px;color:#777}
+/* ---------- In the app ----------
+   The program (src/app/bridge.js) adds class "native" to <html>: the page around the window goes, the
+   window fills the real one, and the drawn title bar gives way to the system's. */
+html.native,html.native body{height:100%;overflow:hidden;background:#f3f3f3}
+html.native .wrap{max-width:none;padding:0;gap:0;height:100%}
+html.native .wrap>:not(.scroller){display:none}
+html.native .scroller{overflow:hidden;padding:0;height:100%}
+html.native .app{width:100%!important;height:100%!important;border:0;border-radius:0;box-shadow:none}
+html.native .app>.tbar{display:none}
 </style>
 <style>
 /* Hole pattern dialog (Insert › Hole pattern…). Kept in its own block so it can move into the app as one piece. */
@@ -2692,7 +2701,7 @@ const MENUS = {
   File: [
     { label:"Open…", sc:"Ctrl+O", fn:() => openDlg() },
     { label:"Save", sc:"Ctrl+S", fn:save },
-    { label:"Save As…", sc:"Ctrl+Shift+S", fn:() => setMsg("Save As shows the standard Windows Save dialog.") },
+    { label:"Save As…", sc:"Ctrl+Shift+S", fn:saveAs },
     "-",
     { label:"Machine profiles…", fn:() => openProfiles(machineId) },
     "-", { grp:"Recent files" },
@@ -2797,7 +2806,7 @@ document.getElementById("app").addEventListener("keydown", e => {
   if (e.key==="F8"){ e.preventDefault(); if (editing && !commit()) return; nextProblem(e.shiftKey ? -1 : 1); return; }
   if (ctrl && e.shiftKey && k==="m"){ e.preventDefault(); toggleProblems(); return; }
   if (ctrl && k==="o"){ e.preventDefault(); openDlg(); return; }
-  if (ctrl && k==="s"){ e.preventDefault(); save(); return; }
+  if (ctrl && k==="s"){ e.preventDefault(); e.shiftKey ? saveAs() : save(); return; }
   if (editing || e.target===findq) return;
   if (ctrl && k==="z" && !e.shiftKey){ e.preventDefault(); undo(); return; }
   if (ctrl && (k==="y" || (k==="z" && e.shiftKey))){ e.preventDefault(); redo(); return; }
@@ -2834,11 +2843,13 @@ const eobOn = () => !!MACHINES[machineId].eob || fileEob;
 function serialize(){ return doc.map(t => t.join(" ") + (eobOn() ? ";" : "")).join("\r\n") + "\r\n"; }
 function save(){
   if (editing) commit();
+  if (window.GlossCodeNative) return nativeSave(false);
   const n = serialize().length;
   setMsg(`Saved ${fileName} (${n} bytes). Only the G-code is written, with CRLF line endings${eobOn() ? " and ; at the end of every line" : ""}.`);
 }
 
 /* ---------- Machine profiles ---------- */
+function saveAs(){ if (editing) commit(); if (window.GlossCodeNative) return nativeSave(true); setMsg("Save As shows the standard Windows Save dialog."); }
 function bumpRecent(id){ recentMachines = [id, ...recentMachines.filter(x => x!==id)].slice(0, 5); }
 function useMachine(id){
   if (editing && !commit()) return;
@@ -2970,7 +2981,7 @@ function drawDlg(){
   document.getElementById("dlg-files").innerHTML = LIST.map(([n,d,t,s,dir]) => `<tr class="f${n===dlgSel?" sel":""}" data-n="${n}" data-dir="${dir?1:""}"><td><span class="ic ${dir?"dir":"nc"}"></span>${n}</td><td>${d}</td><td>${t}</td><td>${s}</td></tr>`).join("");
   dlgName.textContent = dlgSel || "";
 }
-function openDlg(){ if (editing) commit(); dlgSel = fileName; drawDlg(); dlg.hidden = false; }
+function openDlg(){ if (editing) commit(); if (window.GlossCodeNative) return nativeOpen(); dlgSel = fileName; drawDlg(); dlg.hidden = false; }
 document.getElementById("dlg-files").addEventListener("click", e => { const r = e.target.closest("tr"); if (!r || r.dataset.dir) return; dlgSel = r.dataset.n; document.querySelectorAll("#dlg-files tr").forEach(x => x.classList.toggle("sel", x===r)); dlgName.textContent = dlgSel; });
 document.getElementById("dlg-files").addEventListener("dblclick", e => { const r = e.target.closest("tr"); if (!r || r.dataset.dir) return; dlg.hidden = true; load(r.dataset.n); });
 document.getElementById("dlg-open").onclick = () => { dlg.hidden = true; if (dlgSel && FILES[dlgSel]) load(dlgSel); };
@@ -4014,6 +4025,48 @@ render();
 })();
 </script>
 <script>
+/* ---------- Running inside the app ----------
+   In the GlossCode program, window.GlossCodeNative is set before this page loads (src/app/bridge.js), and
+   File › Open, Save and Save As use the system file dialogs and the core in C: the core reads the file
+   (line endings, ';' marks, Latin-1 or UTF-8) and writes it back, keeping every line that wasn't changed
+   exactly as it was. In a browser, GlossCodeNative is missing and the mockup's sample files are used. */
+const NATIVE_FILE = { path:null, eol:"\r\n", finalEol:true, latin1:false, raw:new Map() };
+function nativeTake(r){
+  // Each block's original text, by its words, so unchanged lines are written back as they were.
+  NATIVE_FILE.raw = new Map();
+  for (const l of r.doc.lines){ const k = l.tok.join(" "); if (!NATIVE_FILE.raw.has(k)) NATIVE_FILE.raw.set(k, []); NATIVE_FILE.raw.get(k).push(l.raw); }
+  Object.assign(NATIVE_FILE, { path:r.path, eol:r.doc.eol, finalEol:r.doc.finalEol, latin1:r.latin1 });
+}
+async function nativeOpen(){
+  let r;
+  try { r = await window.GlossCodeNative.open(NATIVE_FILE.path); } catch (e){ setMsg(String(e?.message || e), true); return; }
+  if (!r) return;
+  nativeTake(r);
+  FILES[r.name] = { machine:machineId, src:r.doc.lines.map(l => l.raw + (r.doc.eob ? ";" : "")) };
+  load(r.name);
+}
+async function nativeSave(as){
+  const pool = new Map([...NATIVE_FILE.raw].map(([k, v]) => [k, [...v]]));
+  const lines = doc.map(t => { const k = t.join(" "), raws = pool.get(k); return raws?.length ? { tok:t, raw:raws.shift() } : { tok:t }; });
+  let r;
+  try {
+    r = await window.GlossCodeNative.save({ path:as ? null : NATIVE_FILE.path, name:fileName, latin1:NATIVE_FILE.latin1,
+      doc:{ lines, eob:eobOn(), eol:NATIVE_FILE.eol, finalEol:NATIVE_FILE.finalEol } });
+  } catch (e){ setMsg(String(e?.message || e), true); return; }
+  if (!r) return;
+  NATIVE_FILE.path = r.path;
+  NATIVE_FILE.raw = new Map(); lines.forEach(l => { const k = l.tok.join(" "); if (!NATIVE_FILE.raw.has(k)) NATIVE_FILE.raw.set(k, []); NATIVE_FILE.raw.get(k).push(l.raw ?? k); });
+  if (r.name !== fileName){ fileName = r.name; document.getElementById("wtitle").textContent = r.name + " - GlossCode"; document.getElementById("tabname").textContent = r.name; }
+  setMsg(`Saved ${r.path} (${r.bytes} bytes)${eobOn() ? ", with ; at the end of every line" : ""}.`);
+}
+if (window.GlossCodeNative){
+  // The window's own title follows the drawn one ("NAME.nc - GlossCode").
+  const t = document.getElementById("wtitle"), sync = () => window.GlossCodeNative.setTitle(t.textContent);
+  new MutationObserver(sync).observe(t, { childList:true, characterData:true, subtree:true }); sync();
+}
+if (window.GlossCodeNative) window.GlossCodeNative.startup().then(r => { if (r){ nativeTake(r); FILES[r.name] = { machine:machineId, src:r.doc.lines.map(l => l.raw + (r.doc.eob ? ";" : "")) }; load(r.name); } }).catch(() => {});
+</script>
+<script>
 /* ---------- About window ----------
    Help › About GlossCode shows the version, the website and an update check. The check asks the GitHub
    Releases API for the latest published release, compares its tag (v0.2.0) with APP_VERSION, and offers
@@ -4030,8 +4083,9 @@ const SITE = `https://github.com/${REPO}`;
 const API = `https://api.github.com/repos/${REPO}/releases/latest`;
 const $ = id => document.getElementById(id);
 const adlg = $("adlg");
-const os = /Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent) ? "linux" : "windows";
-const portable = new URLSearchParams(location.search).has("portable");   // the app checks for a "portable" file beside itself
+const NATIVE = window.GlossCodeNative;   // set when running in the app; the app checks for a "portable" file beside itself
+const os = NATIVE ? NATIVE.platform : /Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent) ? "linux" : "windows";
+const portable = NATIVE ? NATIVE.portable : new URLSearchParams(location.search).has("portable");
 // Which release files fit this copy, best first.
 const WANT = {
   windows: portable ? [[/-windows-x64-portable\.zip$/i, "Download portable (.zip)"]]

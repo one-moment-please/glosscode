@@ -1,0 +1,101 @@
+# Builds and tests GlossCode on every push and pull request:
+# - core: the portable C core and its tests with gcc and clang (sanitizers on), plus a check that the
+#   golden files still match the mockup's JavaScript
+# - linux: the whole program with GTK 3 and WebKitGTK, including a smoke test in a virtual display
+# - windows: the whole program with MinGW-w64 as one static GlossCode.exe, uploaded as an artifact
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    name: Core (${{ matrix.cc }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Golden files match the mockup
+        run: node scripts/make-core-goldens.mjs --check
+      - name: Mockup data is in sync
+        run: |
+          node scripts/sync-mockup-data.mjs
+          git diff --exit-code docs/mockup/index.html
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja -DGLOSSCODE_APP=OFF -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_C_COMPILER=${{ matrix.cc }}
+          "-DCMAKE_C_FLAGS=-fsanitize=address,undefined -fno-sanitize-recover=all -Werror"
+          -DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  linux:
+    name: Linux program
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GTK and WebKitGTK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ninja-build libgtk-3-dev libwebkit2gtk-4.1-dev xvfb
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build
+      - name: Test (core and smoke test)
+        run: ctest --test-dir build --output-on-failure
+      - uses: actions/upload-artifact@v4
+        with:
+          name: glosscode-linux-x86_64
+          path: build/glosscode
+          if-no-files-found: error
+
+  windows:
+    name: Windows program
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            git
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build
+      - name: Check that the .exe needs no DLLs beyond Windows'
+        run: |
+          objdump -p build/GlossCode.exe | grep "DLL Name" | tee dlls.txt
+          if grep -iE "libgcc|libstdc|libwinpthread|WebView2Loader" dlls.txt; then
+            echo "GlossCode.exe depends on a DLL that isn't part of Windows"; exit 1
+          fi
+      - name: Test (core and smoke test)
+        run: ctest --test-dir build --output-on-failure --timeout 180
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GlossCode-windows-x64
+          path: build/GlossCode.exe
+          if-no-files-found: error
